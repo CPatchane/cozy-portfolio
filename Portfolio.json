@@ -1,0 +1,121 @@
+{
+	"user": {
+		"firstName" : "Cédric",
+		"lastName" : "PATCHANE LACANE",
+		"age" : 23,
+		"email" : "patchane.cedric@gmail.com",
+		"links" : {
+			"websiteFR" : "cedricpatchane.fr",
+			"websiteEN" : "cedricpatchane.com"
+		},
+		"description" : "Etudiant ingénieur à Telecom Bretagne, spécialité Systèmes logiciels et réseaux.\nPassionné d'informatique, je désire faire de cette passion mon métier.",
+		"position" : "Etudiant",
+		"headline" : "Recherche stage développement web / logiciel",
+		"localisation" : "Plouzané"
+	},
+	
+	"documents" : {
+		"pictures" : [
+			{
+				"title" : "Image 1",
+				"url" : "urldelimage.png",
+				"relatedWebsite" : "cedricpatchane.fr",
+				"description" : "première image de test",
+				"creationDate" : "20/11/2015",
+				"source" : "DoYouBuzz.com",
+				"idSource" : 284390
+			}
+		],
+		"videos" : [
+			{
+				"title" : "video 1",
+				"url" : "videourl/path",
+				"relatedWebsite" : "cedricpatchane.fr",
+				"description" : "première vidéo de test",
+				"creationDate" : "20/11/2015",
+				"source" : "DoYouBuzz.com",
+				"idSource" : 637892
+			}
+		],
+		"audios" : [
+			{
+				"title" : "audio 1",
+				"url" : "audiourl/path",
+				"relatedWebsite" : "cedricpatchane.fr",
+				"description" : "première audio de test",
+				"creationDate" : "20/11/2015",
+				"source" : "DoYouBuzz.com",
+				"idSource" : 673232
+			}
+		],
+		"diaporamas" : [
+			{
+				"title" : "diaporama 1",
+				"url" : "diaporamaurl/path",
+				"relatedWebsite" : "cedricpatchane.fr",
+				"description" : "première diaporama de test",
+				"creationDate" : "20/11/2015",
+				"source" : "DoYouBuzz.com",
+				"idSource" : 628738
+			}
+		],
+		"others" : [
+			{
+				"title" : "pdf 1",
+				"url" : "path/path.pdf",
+				"relatedWebsite" : "cedricpatchane.fr",
+				"description" : "première document pdf de test",
+				"creationDate" : "20/11/2015",
+				"source" : "DoYouBuzz.com",
+				"idSource" : 123731
+			}
+		]
+	},
+	
+	"openBadgesGroups" : [
+        {
+            "groupId" : 67890,
+            "name" : "My Badge Group",
+            "totalBadges" : 1,
+			"badges" : [
+    			{
+					"lastValidated": "2014-04-28T17:27:22.000Z",
+					"hostedUrl": "http://example.org/badge-assertion.json",
+					"assertion": {
+						"uid": "abcde12345",
+						"recipient": "sha256$abcde1345",
+						"badge": {
+							"name": "Badge Name",
+							"description": "Badge description.",
+							"image": "https://example.org/badge.png",
+							"criteria": "https://example.org/criteria",
+							"issuer": {
+								"name": "Issuer Name",
+								"url": "http://issuersite.org",
+								"_location": "http://example.org/issuer-organization.json",
+								"origin": "http://issuersite.org"
+							},
+							"_location": "http://issuersite.org/badge-class.json"
+						},
+						"verify": {
+							"url": "http://example.org/badge-assertion.json",
+							"type": "hosted"
+						},
+						"issuedOn": 1398705955,
+						"_originalRecipient": {
+							"identity": "sha256$abcde1345",
+							"type": "email",
+							"hashed": true
+						},
+						"issued_on": 1398705955
+					},
+					"imageUrl": "https://backpack.openbadges.org/images/badge/abcde12345.png"
+				}
+    		]
+        }
+	],
+	
+	"hobbies" : ["Jeux-vidéos", "Informatique", "Infographie", "Musique", "Sport", "Trainer sur Stackoverflow", "aider sur GitHub"],
+	
+	"keywords" : ["Passionné", "Informatique", "Développement web", "Javascript", "Développement web", "Enthousiaste", "Team player"] 
+}
