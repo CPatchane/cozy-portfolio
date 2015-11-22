@@ -2,7 +2,7 @@
 
 var cozydb = require('cozydb');
 
-var badgeGroup = cozydb.getModel('badgeGroup', {
+var badgeGroupModel = cozydb.getModel('badgeGroup', {
 	"groupId" : Number,
 	"name" : String,
 	"totalBadges" : Number,
@@ -43,4 +43,14 @@ var badgeGroup = cozydb.getModel('badgeGroup', {
 	]
 });
 
-module.exports  = badgeGroup;
+badgeGroupModel.all = function(callback) {
+  badgeGroupModel.request("all", {}, function(err, badgeGroup) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, badgeGroup);
+    }
+  });
+};
+
+module.exports  = badgeGroupModel;

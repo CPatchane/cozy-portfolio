@@ -14,11 +14,11 @@ var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
 });
 
 portfolioDocumentModel.all = function(callback) {
-  portfolioDocumentModel.request("all", {}, function(err, bookmarks) {
+  portfolioDocumentModel.request("all", {}, function(err, portfolioDocument) {
     if (err) {
       callback(err);
     } else {
-      callback(null, bookmarks);
+      callback(null, portfolioDocument);
     }
   });
 };

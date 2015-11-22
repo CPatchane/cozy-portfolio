@@ -23,4 +23,14 @@ var userModel = cozydb.getModel('user', {
 	"keywords" : [String] 
 });
 
+userModel.all = function(callback) {
+  userModel.request("all", {}, function(err, user) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, user);
+    }
+  });
+};
+
 module.exports = userModel;

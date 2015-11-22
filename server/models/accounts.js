@@ -13,4 +13,14 @@ var accountsModel = cozydb.getModel('accounts', {
 	}
 });
 
+accountsModel.all = function(callback) {
+  accountsModel.request("all", {}, function(err, accounts) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, accounts);
+    }
+  });
+};
+
 module.exports = accountsModel;
