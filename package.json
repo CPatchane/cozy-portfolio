@@ -8,12 +8,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://CPatchane@bitbucket.org/CPatchane/cozyportfolio.git"
+    "url": "https://CPatchane@bitbucket.org/CPatchane/cozy-portfolio.git"
   },
   "main": "server.js",
   "dependencies": {
     "americano": "0.4.2",
-    "cozydb": "0.1.3"
+    "cozydb": "0.1.3",
+    "jade": "^1.11.0"
   },
   "devDependencies": {
     "should": "7.1.1",

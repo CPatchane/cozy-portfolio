@@ -1,10 +1,14 @@
 var americano = require('americano');
+var jade = require('jade').__express;
+
 var config = {
   common: [
     americano.bodyParser(),
     americano.methodOverride(),
     americano.errorHandler({ dumpExceptions: true, showStack: true}),
-    americano.static(__dirname + '/../client/public', {maxAge: 86400000})
+    americano.static(__dirname + '/../client/public', {maxAge: 86400000}),
+    americano.set('views', __dirname + '/../client'),
+    americano.engine('.html', jade)
   ],
   development: [
     americano.logger('dev')
