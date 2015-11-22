@@ -1,10 +1,26 @@
 // See documentation on https://github.com/cozy/americano#routes
 
-var index = require('./index');
+var badgesGroups = require('./badgesGroups');
+var portfolioDocuments = require('./portfolioDocuments');
 
 module.exports = {
-  'foo': {
-    get: index.main
+  'getBadgesGroup': {
+    get: badgesGroups.list
+  },
+  'addBadgesGroup': {
+    post: portfolioDocuments.add
+  },
+  'deleteBadgesGroup': {
+    get: portfolioDocuments.delete
+  },
+  'getPortfolioDocument': {
+    get: portfolioDocuments.list
+  },
+  'addPortfolioDocument': {
+    post: portfolioDocuments.add
+  },
+  'deletePortfolioDocument': {
+    get: portfolioDocuments.delete
   }
 };
 
