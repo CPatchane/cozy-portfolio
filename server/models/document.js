@@ -2,7 +2,7 @@
 
 var cozydb = require('cozydb');
 
-var documentModel = cozydb.getModel('document', {
+var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
  	"title" : String,
 	"url" : String,
 	"relatedWebsite" : String,
@@ -13,4 +13,4 @@ var documentModel = cozydb.getModel('document', {
 	"type" : String
 });
 
-module.exports = documentModel;
+module.exports = portfolioDocumentModel;

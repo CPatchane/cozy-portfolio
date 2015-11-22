@@ -24,7 +24,7 @@ module.exports = {
     all: cozydb.defaultRequests.all,
   },
   
-  "document": {
+  portfolioDocument: {
     all: cozydb.defaultRequests.all,
   },
   
