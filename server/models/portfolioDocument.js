@@ -3,6 +3,7 @@
 var cozydb = require('cozydb');
 
 var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
+	"id_document" : Number,
  	"title" : String,
 	"url" : String,
 	"relatedWebsite" : String,

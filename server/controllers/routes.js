@@ -24,10 +24,10 @@ module.exports = {
   'addBadgesGroup': {
     post: badgesGroups.add
   },
-  'deleteBadgesGroup': {
+  'deleteBadgesGroup/:id': {
     get: badgesGroups.delete
   },
-  'updateBadgesGroup': {
+  'updateBadgesGroup/:id': {
     put: badgesGroups.update
   },
   'getPortfolioDocument': {
@@ -36,10 +36,10 @@ module.exports = {
   'addPortfolioDocument': {
     post: portfolioDocuments.add
   },
-  'deletePortfolioDocument': {
+  'deletePortfolioDocument/:id': {
     get: portfolioDocuments.delete
   },
-  'updatePortfolioDocument': {
+  'updatePortfolioDocument/:id': {
     put: portfolioDocuments.update
   }
   
