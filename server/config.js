@@ -7,8 +7,8 @@ var config = {
     americano.methodOverride(),
     americano.errorHandler({ dumpExceptions: true, showStack: true}),
     americano.static(__dirname + '/../client/public', {maxAge: 86400000}),
-    americano.set('views', __dirname + '/../client'),
-    americano.engine('.html', jade)
+    americano().set('views', __dirname + '/../client/app'),
+    americano().engine('.html', jade)
   ],
   development: [
     americano.logger('dev')

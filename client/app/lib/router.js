@@ -1,4 +1,4 @@
-var application = require('application');
+var application = require('../application');
 
 module.exports = Backbone.Router.extend({
   routes: {
@@ -22,5 +22,5 @@ module.exports = Backbone.Router.extend({
   
   accountSettings: function () {
     $('body').html(application.accountSettingsView.render().el);
-  },
+  }
 });

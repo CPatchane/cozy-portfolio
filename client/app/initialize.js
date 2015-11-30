@@ -1,4 +1,4 @@
-var application = require('application');
+var application = require('./application');
 
 $(function () {
   application.initialize();
