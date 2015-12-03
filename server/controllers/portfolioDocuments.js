@@ -7,7 +7,7 @@ module.exports.list = function(req, res, next) {
     }
     else {
       var data = {"portfolioDocuments": portfolioDocuments}
-      res.render('index.jade', data, function(err, html) {
+      res.render('portfolio.jade', data, function(err, html) {
         res.send(html);
       });
     }

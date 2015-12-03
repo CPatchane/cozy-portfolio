@@ -7,7 +7,7 @@ module.exports.list = function(req, res, next) {
     }
     else {
       var data = {"badgesGroups": badgesGroups}
-      res.render('index.jade', data, function(err, html) {
+      res.render('choices.jade', data, function(err, html) {
         res.send(html);
       });
     }
