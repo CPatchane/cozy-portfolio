@@ -49,6 +49,10 @@ div.container{
   padding:0;
 }
 
-div.col-md-2{
+div.leftMenu{
   padding:0;
+}
+
+div.submitButton{
+  margin-top:30px;
 }
