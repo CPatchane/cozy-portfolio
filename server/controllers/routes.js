@@ -6,6 +6,9 @@ var userInfos = require('./userInfos');
 var accountsInfos = require('./accountsInfos');
 
 module.exports = {
+  '': {
+    get: userInfos.list
+  },
   'getUserInfos': {
     get: userInfos.list
   },

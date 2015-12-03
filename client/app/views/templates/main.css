@@ -1,0 +1,54 @@
+/* make sidebar nav vertical */ 
+@media (min-width: 768px) {
+  .sidebar-nav .navbar .navbar-collapse {
+    padding: 0;
+    max-height: none;
+  }
+  .sidebar-nav .navbar ul {
+    float: none;
+  }
+  .sidebar-nav .navbar ul:not {
+    display: block;
+  }
+  .sidebar-nav .navbar li {
+    float: none;
+    display: block;
+  }
+  .sidebar-nav .navbar li a {
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  
+  div.navbar{
+    border-radius:0px;
+    background-color:rgba(0,0,0,0);
+  }
+  
+  div.navbar ul.nav li a{
+    color:#444;
+    font-weight:700;
+  }
+  
+  div.navbar ul.nav li a:hover{
+    color:#BBB;
+    font-weight:700;
+    background-color:rgb(44, 62, 80);
+  }
+}
+
+@media (max-width: 767px) {
+  h3.nav-header{
+    display: none;
+  }
+}
+
+
+/*Global*/
+div.container{
+  width:100%;
+  padding:0;
+}
+
+div.col-md-2{
+  padding:0;
+}

@@ -7,7 +7,7 @@ module.exports.list = function(req, res, next) {
     }
     else {
       var data = {"userInfos": userInfos}
-      res.render('index.jade', data, function(err, html) {
+      res.render('accountSettings.jade', data, function(err, html) {
         res.send(html);
       });
     }

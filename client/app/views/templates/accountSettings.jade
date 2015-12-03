@@ -1,0 +1,33 @@
+//-Bootstrap links and main style
+script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
+script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
+link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+style
+  include main.css
+  
+div.container
+  div.col-md-2
+    h3.nav-header Navigation
+    div.sidebar-nav
+      div.navbar.navbar-default(role='navigation')
+        div.navbar-header
+          button.navbar-toggle(type='button', data-toggle='collapse', data-target = '.sidebar-navbar-collapse')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+          span.visible-xs.navbar-brand Menu
+        div.navbar-collapse.collapse.sidebar-navbar-collapse
+          ul.nav.navbar-nav
+            li
+              a(href='#') Mon Portfolio
+            li
+              a(href='#') Mes choix
+            li.active
+              a(href='#') Paramètres
+  div.col-md-10
+    h1.col-md-12 Configurations des comptes
+    div.col-md-6
+      h2 DoYouBuzz
+    div.col-md-6
+      h2 OpenBadges
