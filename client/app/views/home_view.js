@@ -1,5 +1,5 @@
 var View = require('./view');
-var template = require('./templates/home.jade');
+var template = require('./templates/home');
 
 module.exports = View.extend({
   id: 'portfolio',
