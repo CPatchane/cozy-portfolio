@@ -14,7 +14,7 @@ config = {
   common: {
     set: {
       'view engine': useBuildView ? 'js' : 'jade',
-      'views': path.resolve(__dirname, '..', 'client', 'app', 'views', 'templates')
+      'views': path.resolve(__dirname, '..', 'client')
     },
     engine: {
       js: function(path, locales, callback) {

@@ -1,7 +1,7 @@
 {
-  "author": "Your Name",
-  "name": "package-name",
-  "description": "Package description",
+  "author": "Cédric Patchane",
+  "name": "cozy-portfolio",
+  "description": "Portfolio on CozyCloud",
   "version": "0.0.1",
   "homepage": "",
   "repository": {
