@@ -2,10 +2,10 @@ var application = require('../application');
 
 module.exports = Backbone.Router.extend({
   routes: {
-    '': 'home',
-    'portfolio': 'portfolio',
-    'preferences': 'preferences',
-    'accountSettings': 'accountSettings'
+    '/': 'home',
+    '/portfolio': 'portfolio',
+    '/choices': 'choices',
+    '/accountSettings': 'accountSettings'
   },
 
   home: function () {
@@ -16,8 +16,8 @@ module.exports = Backbone.Router.extend({
     $('body').html(application.portfolioView.render().el);
   },
   
-  preferences: function () {
-    $('body').html(application.preferencesView.render().el);
+  choices: function () {
+    $('body').html(application.choicesView.render().el);
   },
   
   accountSettings: function () {

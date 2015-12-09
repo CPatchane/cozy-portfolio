@@ -1,7 +1,7 @@
 var View = require('./view');
-var template = require('./templates/home');
+var template = require('./templates/portfolio');
 
 module.exports = View.extend({
-  id: 'home',
+  id: 'portfolio',
   template: template
 });
