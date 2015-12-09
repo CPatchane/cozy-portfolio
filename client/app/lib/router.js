@@ -2,10 +2,10 @@ var application = require('../application');
 
 module.exports = Backbone.Router.extend({
   routes: {
-    '/': 'home',
-    '/portfolio': 'portfolio',
-    '/choices': 'choices',
-    '/accountSettings': 'accountSettings'
+    '': 'home',
+    'portfolio': 'portfolio',
+    'choices': 'choices',
+    'accountSettings': 'accountSettings'
   },
 
   home: function () {
