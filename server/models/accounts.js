@@ -9,7 +9,9 @@ var accountsModel = cozydb.getModel('accounts', {
 	},
 	"doYouBuzz" : {
 		"API key" : String,
-		"oauthVerifierToken" : String
+        "API Secret" : String,
+		"oauthVerifierToken" : String,
+        "oauthVerifierTokenSecret": String
 	}
 });
 
