@@ -1,4 +1,5 @@
 var accounts = require('../models/accounts');
+var request = require("request");
 
 module.exports.list = function(req, res, next) {
   accounts.all(function(err, accountsInfos) {
@@ -6,18 +7,41 @@ module.exports.list = function(req, res, next) {
       next(err);
     }
     else {
-      var data = {"accountsInfos": accountsInfos}
-      res.render('index.jade', data, function(err, html) {
-        res.send(html);
-      });
+      res.status(200).send(accountsInfos);
     }
   });
 };
 
 // We define another route that will handle accounts update (and first creation)
 module.exports.update = function(req, res, next) {
-  if(req.params.id === null){ //first time execution -> so we create it
-    accounts.create(req.body, function(err) {
+  //res.status(200).send(JSON.stringify(req.params));
+  //res.render('index');
+  //get userId from OpenBadges
+  request({
+		uri: "https://backpack.openbadges.org/displayer/convert/email",
+		method: "POST",
+		form: {
+			email: req.body.OBemail
+		}
+		}, function(error, response, body) {
+			var userId = JSON.parse(body).userId;
+      //console.log(userId);
+			storeAndContinue(userId);
+	});
+
+  function storeAndContinue(userId){
+    var data = {
+      "openBadgesEmail" : req.body.OBemail,
+      "openBadgesUserId" : userId || 0,
+      "doYouBuzzAPIKey" : req.body.DYBapiKey,
+      "doYouBuzzAPISecret" : req.body.DYBapiSecret,
+      "doYouBuzzOauthVerifierToken" : "",
+      "doYouBuzzOauthVerifierTokenSecret" : ""
+    }
+  //console.log(data);
+  
+  if(req.body.id == ""){ //first time execution -> so we create it
+    accounts.create(data, function(err) {
       if(err !== null) {
         next(err);
       }
@@ -26,7 +50,7 @@ module.exports.update = function(req, res, next) {
       }
     });
   }else{
-    accounts.find(req.params.id, function(err, accounts) {
+    accounts.find(req.body.id, function(err, accounts) {
       if(err !== null) {
         next(err);
       }
@@ -34,7 +58,7 @@ module.exports.update = function(req, res, next) {
         res.status(404).send("Accounts infos not found. ERROR.");
       }
       else {
-        accounts.updateAttributes(req.body, function(err) {
+        accounts.updateAttributes(data, function(err) {
           if(err !== null) {
             next(err);
           }
@@ -44,5 +68,6 @@ module.exports.update = function(req, res, next) {
         });
       }
     });
+  }
   }
 };

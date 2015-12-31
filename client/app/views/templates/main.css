@@ -57,3 +57,7 @@ div.leftMenu{
 div.submitButton{
   margin-top:30px;
 }
+
+div.submitButton button{
+  margin-bottom:20px;
+}
