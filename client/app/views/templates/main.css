@@ -61,3 +61,7 @@ div.submitButton{
 div.submitButton button{
   margin-bottom:20px;
 }
+
+input{
+  width: 250px;
+}

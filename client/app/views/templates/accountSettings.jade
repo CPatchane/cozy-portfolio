@@ -34,15 +34,14 @@ div.container(onload="init()")
         h2 DoYouBuzz
         p Entrer votre clé API obtenu de DoYouBuzz (#[a(href='#') Aide]) :
         input#apiKey(type='text', name='DYBapiKey', placeholder='API Key')
-        p Entrer votre clé API secrète obtenu de DoYouBuzz :
+        p Entrer votre clé API secrète obtenu de DoYouBuzz (#[a(href='#') Aide]) :
         input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret')
       div.col-md-6
         h2 OpenBadges
         p Entrer l'adresse email associée à votre compte OpenBadges :
         input#openBadgesEmail(type='text', name='OBemail', placeholder='name@example.com')
-        input#docId(type="text" hidden)
+
       script(type="text/javascript").
-        console.log("INIT");
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", "getAccountsInfos", false ); // false for synchronous request
         xmlHttp.send( null );
@@ -50,7 +49,6 @@ div.container(onload="init()")
         document.getElementById("apiKey").value = data.doYouBuzzAPIKey;
         document.getElementById("apiSecret").value = data.doYouBuzzAPISecret;
         document.getElementById("openBadgesEmail").value = data.openBadgesEmail;
-        document.getElementById("docId").value = data.id;
     div.row
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(onclick="submitAccountInfos()") Valider les changements
@@ -63,7 +61,7 @@ script(type="text/javascript").
         var DYBapiKey = document.getElementById("apiKey").value;
         var DYBapiSecret = document.getElementById("apiSecret").value;
         var OBemail = document.getElementById("openBadgesEmail").value;
-        var docId = document.getElementById("docId").value;
+        var docId = data.id;
         if(DYBapiKey == "" || DYBapiSecret == "" || OBemail == ""){
             document.getElementById("missingArguments").removeAttribute("hidden");
             return;
