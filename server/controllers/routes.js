@@ -7,7 +7,7 @@ var accountsInfos = require('./accountsInfos');
 
 module.exports = {
   '': {
-    get: userInfos.list
+    get: userInfos.start
   },
   'getUserInfos': {
     get: userInfos.list

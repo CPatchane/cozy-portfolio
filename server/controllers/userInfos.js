@@ -1,15 +1,19 @@
 var user = require('../models/user');
 
+//fist entry of the client application
+module.exports.start = function(req, res, next){
+  res.render('index.jade', {}, function(err, html) {
+    res.send(html);
+  });
+}
+
 module.exports.list = function(req, res, next) {
   user.all(function(err, userInfos) {
     if(err !== null) {
       next(err);
     }
     else {
-      var data = {"userInfos": userInfos}
-      res.render('index.jade', data, function(err, html) {
-        res.send(html);
-      });
+      res.status(200).send(userInfos);
     }
   });
 };

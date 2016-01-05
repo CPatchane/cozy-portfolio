@@ -68,7 +68,7 @@ input{
   width: 250px;
 }
 
-button{
+button#DYBconnection, button#DYBconnected{
   margin : 20px 0px;
 }
 
