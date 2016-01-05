@@ -21,6 +21,9 @@ module.exports = {
   'updateAccountsInfos': {
     put: accountsInfos.update
   },
+  'getDYBConnection':{
+    post: accountsInfos.getDYBConnection
+  },
   'getBadgesGroup': {
     get: badgesGroups.list
   },

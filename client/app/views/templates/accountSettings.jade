@@ -33,9 +33,11 @@ div.container(onload="init()")
       div.col-md-6
         h2 DoYouBuzz
         p Entrer votre clé API obtenu de DoYouBuzz (#[a(href='#') Aide]) :
-        input#apiKey(type='text', name='DYBapiKey', placeholder='API Key')
+        input#apiKey(type='text', name='DYBapiKey', placeholder='API Key', onchange="checkDYBchange()")
         p Entrer votre clé API secrète obtenu de DoYouBuzz (#[a(href='#') Aide]) :
-        input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret')
+        input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret', onchange="checkDYBchange()")
+        button.btn.btn-warning#DYBconnection(type="button", style="display: none;", onclick="getDYBConnection()") (Re)Connecter mon compte DoYouBuzz.
+        button.btn.btn-success#DYBconnected(type="button", style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
       div.col-md-6
         h2 OpenBadges
         p Entrer l'adresse email associée à votre compte OpenBadges :
@@ -49,27 +51,70 @@ div.container(onload="init()")
         document.getElementById("apiKey").value = data.doYouBuzzAPIKey;
         document.getElementById("apiSecret").value = data.doYouBuzzAPISecret;
         document.getElementById("openBadgesEmail").value = data.openBadgesEmail;
+        if(data.DYBResponse != "OK"){
+          document.getElementById("DYBconnection").setAttribute("style", "");
+        }else{
+          document.getElementById("DYBconnected").setAttribute("style", "");
+        }
     div.row
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(onclick="submitAccountInfos()") Valider les changements
-        div.alert.alert-success#savedMessage(hidden) Preferences enregistrées !
-        div.alert.alert-danger#missingArguments(hidden) Des données sont manquantes ou invalides, merci de vérifier avant de réessayer.
+        div.alert.alert-success#savedMessage(hidden="true") Preferences enregistrées !
+        div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier avant de réessayer.
         
 script(type="text/javascript").
+    function getDYBConnection(){
+      var DYBapiKey = document.getElementById("apiKey").value;
+      var DYBapiSecret = document.getElementById("apiSecret").value;
+      if(DYBapiKey == "" || DYBapiSecret == ""){
+            console.log("Missing arguments");
+            return;
+      }
+      var callback = window.location;
+      var xmlHttp = new XMLHttpRequest();
+      var parameters = "DYBapiKey=" + DYBapiKey + "&DYBapiSecret=" + DYBapiSecret + "&callback=" + callback;
+      xmlHttp.open( "POST", "getDYBConnection", true ); // true for asynchronous request
+      xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xmlHttp.onreadystatechange = function(){
+        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                 var uri = "http://www.doyoubuzz.com/fr/oauth/authorize" + "?" + xmlHttp.responseText;
+                 window.location = uri;
+            }
+      }
+      xmlHttp.send( parameters );
+    }
+
     function submitAccountInfos(){
         document.getElementById("missingArguments").setAttribute("hidden", true);
         var DYBapiKey = document.getElementById("apiKey").value;
         var DYBapiSecret = document.getElementById("apiSecret").value;
         var OBemail = document.getElementById("openBadgesEmail").value;
         var docId = data.id;
+        var DYBoauth_token = urlArguments.oauth_token || "";
+        var DYBoauth_verifier = urlArguments.oauth_verifier || "";
         if(DYBapiKey == "" || DYBapiSecret == "" || OBemail == ""){
             document.getElementById("missingArguments").removeAttribute("hidden");
             return;
         }
-        var parameters = "DYBapiKey=" + DYBapiKey + "&DYBapiSecret=" + DYBapiSecret + "&OBemail=" + OBemail + "&id=" + docId;
+        var parameters = "DYBapiKey=" + DYBapiKey + "&DYBapiSecret=" + DYBapiSecret + "&OBemail=" + OBemail + "&id=" + docId; 
         var xhttpInfos = new XMLHttpRequest();
         xhttpInfos.open("PUT", "updateAccountsInfos", false);
         xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttpInfos.send(parameters);
         document.getElementById("savedMessage").removeAttribute("hidden");
+    }
+    
+    function checkDYBchange(){
+      var DYBapiKey = document.getElementById("apiKey").value;
+      var DYBapiSecret = document.getElementById("apiSecret").value;
+      var changes = DYBapiKey == data.doYouBuzzAPIKey || DYBapiSecret == data.doYouBuzzAPISecret;
+      if(data.doYouBuzzOauthVerifierTokenSecret == "" && !data.DYBresponse || changes){
+        console.log("need connection");
+        //document.getElementById("DYBconnection").setAttribute("style", "");
+        //document.getElementById("DYBconnected").setAttribute("style", "display: none;");
+      }else if(data.doYouBuzzOauthVerifierTokenSecret != "" || !data.DYBresponse && !changes){
+        console.log("connected");
+        //document.getElementById("DYBconnection").setAttribute("style", "display: none;");
+        //document.getElementById("DYBconnected").setAttribute("style", "");
+      }
     }
