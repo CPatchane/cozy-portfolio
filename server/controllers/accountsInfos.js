@@ -167,6 +167,7 @@ function getFinalTokenFromDYB(urlArguments, accountsInfos, res){
     if(Object.keys(bodyArguments).length == 0){ //no information returned by DYB
       accountsInfos[0].DYBResponse = "Nothing from DoYouBuzz. ERROR.";
       res.status(200).send(accountsInfos);
+      return;
     }
     var data = {
       "doYouBuzzOauthVerifierToken" : bodyArguments.oauth_token,
