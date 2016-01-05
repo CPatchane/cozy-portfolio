@@ -8,7 +8,7 @@ module.exports.list = function(req, res, next) {
   gets.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
      urlArguments[key] = value;
   });
-  console.log(urlArguments);
+  //console.log(urlArguments);
   accounts.all(function(err, accountsInfos) {
     if(err !== null) {
       next(err);
@@ -95,7 +95,7 @@ module.exports.getDYBConnection = function(req, res, next){
     gets.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
       bodyArguments[key] = value;
     });
-    console.log(bodyArguments);
+    //console.log(bodyArguments);
     accounts.all(function(err, accountsInfos) {
       if(err !== null) {
         next(err);

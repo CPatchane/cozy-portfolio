@@ -37,6 +37,7 @@ div.container(onload="init()")
         p Entrer votre clé API secrète obtenu de DoYouBuzz (#[a(href='#') Aide]) :
         input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret', onchange="checkDYBchange()")
         button.btn.btn-warning#DYBconnection(type="button", style="display: none;", onclick="getDYBConnection()") (Re)Connecter mon compte DoYouBuzz.
+        div.spinner#DYBloadingIcon(style="display:none;")
         button.btn.btn-success#DYBconnected(type="button", style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
       div.col-md-6
         h2 OpenBadges
@@ -59,11 +60,12 @@ div.container(onload="init()")
     div.row
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(onclick="submitAccountInfos()") Valider les changements
-        div.alert.alert-success#savedMessage(hidden="true") Preferences enregistrées !
-        div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier avant de réessayer.
+        div.alert.alert-success#savedMessage(hidden="true") Vos paramètres sont enregistrées
+        div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier puis de réessayer.
         
 script(type="text/javascript").
     function getDYBConnection(){
+      document.getElementById("DYBloadingIcon").setAttribute("style", "");
       var DYBapiKey = document.getElementById("apiKey").value;
       var DYBapiSecret = document.getElementById("apiSecret").value;
       if(DYBapiKey == "" || DYBapiSecret == ""){
@@ -90,8 +92,6 @@ script(type="text/javascript").
         var DYBapiSecret = document.getElementById("apiSecret").value;
         var OBemail = document.getElementById("openBadgesEmail").value;
         var docId = data.id;
-        var DYBoauth_token = urlArguments.oauth_token || "";
-        var DYBoauth_verifier = urlArguments.oauth_verifier || "";
         if(DYBapiKey == "" || DYBapiSecret == "" || OBemail == ""){
             document.getElementById("missingArguments").removeAttribute("hidden");
             return;

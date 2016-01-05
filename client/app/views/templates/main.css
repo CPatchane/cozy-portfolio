@@ -54,6 +54,8 @@ div.leftMenu{
   padding:0;
 }
 
+
+/*Settings part*/
 div.submitButton{
   margin-top:30px;
 }
@@ -64,4 +66,34 @@ div.submitButton button{
 
 input{
   width: 250px;
+}
+
+button{
+  margin : 20px 0px;
+}
+
+#DYBconnection{
+  display:block;
+}
+
+#DYBloadingIcon{
+  position:absolute;
+  margin-top:-35px;
+  margin-left:320px;
+}
+
+
+/*Spinner loading icon*/
+.spinner {
+  height: 28px;
+  width: 28px;
+  animation: rotate 0.8s infinite linear;
+  border: 5px solid #f39c12;
+  border-right-color: transparent;
+  border-radius: 50%;
+}
+
+@keyframes rotate {
+  0%    { transform: rotate(0deg); }
+  100%  { transform: rotate(360deg); }
 }
