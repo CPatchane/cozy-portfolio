@@ -2,17 +2,19 @@
 
 var cozydb = require('cozydb');
 
+var stringBoolObject = cozydb.getModel('stringBoolObject', {"value": String, "display": Boolean});
+
 var userModel = cozydb.getModel('user', {
-  "firstName" : String,
-  "lastName" : String,
-  "birthdayDate" : String,
-  "email" : String,
-  "description" : String,
-  "position" : String,
-  "localisation" : String,
-  "resumes" : cozydb.NoSchema, //{id, title}
-	"hobbies" : [String],
-	"keywords" : [String] 
+  "firstName" : stringBoolObject,
+  "lastName" : stringBoolObject,
+  "birthdayDate" : stringBoolObject,
+  "email" : stringBoolObject,
+  "description" : stringBoolObject,
+  "status" : stringBoolObject,
+  "localisation" : stringBoolObject,
+  "resumes" : cozydb.NoSchema, //[{id, title}]
+	"hobbies" : stringBoolObject,
+	"keywords" : stringBoolObject
 });
 
 userModel.all = function(callback) {
