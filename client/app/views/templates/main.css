@@ -54,6 +54,10 @@ div.leftMenu{
   padding:0;
 }
 
+p{
+  margin-top:15px;
+}
+
 
 /*Settings part*/
 .settingsContainer div.submitButton{
@@ -62,6 +66,7 @@ div.leftMenu{
 
 .settingsContainer div.submitButton button{
   margin-bottom:20px;
+  margin-left:-200px;
 }
 
 .settingsContainer input{
@@ -82,6 +87,50 @@ div.leftMenu{
   margin-left:320px;
 }
 
+
+/*profil view*/
+.profilContainer input{
+  width: 300px;
+}
+
+.profilContainer div.submitButton{
+  margin-top:30px;
+}
+
+.profilContainer div.submitButton button{
+  margin-bottom:20px;
+}
+
+.profilContainer #DYBSyncing{
+  margin-left:20px;
+}
+
+.profilContainer input[type="checkbox"]{
+  display:inline-block;
+  width:50px;
+  margin-left:30px;
+  vertical-align: top;
+  display:none;
+}
+
+.profilContainer input[type="checkbox"] + label{
+  position:absolute;
+  content:"";
+  width:27px;
+  height:27px;
+  border:1px solid black;
+  background-color: red;
+  cursor: pointer;
+}
+
+.profilContainer input[type="checkbox"]:checked + label{
+  background-color: green;
+}
+
+
+/***********************/
+/**    COMPONENTS     **/
+/***********************/
 
 /*Spinner loading icon*/
 .spinner {

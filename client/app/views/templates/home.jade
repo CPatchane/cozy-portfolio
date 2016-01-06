@@ -26,6 +26,54 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
-  div.col-md-10
+  div.col-md-10.profilContainer
     div.row.text-center
-      h1.col-md-12 Mon profil
+      h1.col-md-12(style="margin-left:-100px;") Mon profil
+    div.row
+      div.col-md-6
+        p Prénom
+        input(type="text", placeholder="Votre prénom")
+        input#firstNameCB(type="checkbox")
+        label(for="firstNameCB")
+        p Nom
+        input(type="text", placeholder="Votre nom")
+        input#lastNameCB(type="checkbox")
+        label(for="lastNameCB")
+        p Date de naissance
+        input(type="text", placeholder="jj/mm/aaaa")
+        input#birthdayCB(type="checkbox")
+        label(for="birthdayCB")
+        p Email
+        input(type="text", placeholder="example@domain.xyz")
+        input#emailCB(type="checkbox")
+        label(for="emailCB")
+        p Description
+        textarea(style="resize:none;width:300px;height:100px;", placeholder="Une petite description de vous")
+        input#descriptionCB(type="checkbox")
+        label(for="descriptionCB")
+      div.col-md-6
+        p Situation professionnelle
+        input(type="text", placeholder="Etudiant, expert chez ...")
+        input#statusCB(type="checkbox")
+        label(for="statusCB")
+        p Situation géographique
+        input(type="text", placeholder="Votre position géographique actuelle")
+        input#localisationCB(type="checkbox")
+        label(for="localisationCB")
+        p Loisirs (séparés par des  " , ")
+        input(type="text", placeholder="Vos loisirs")
+        input#hobbiesCB(type="checkbox")
+        label(for="hobbiesCB")
+        p Mots-clés (séparés par des  " , ")
+        input(type="text", placeholder="Des mots-clés décrivant vous ou votre profil")
+        input#keywordsCB(type="checkbox")
+        label(for="keywordsCB")
+    div.row
+      div.col-md-12
+        hr
+        p Vos CVs DoYouBuzz (Un seul choix possible pour récupérer les informations)
+    div.row
+      div.col-md-12.submitButton.text-center
+        hr
+        button.btn.btn-primary#submitChanges(onclick="") Valider les changements
+        button.btn.btn-warning#DYBSyncing(type="button") Récupérer les données depuis mon CV DoYouBuzz

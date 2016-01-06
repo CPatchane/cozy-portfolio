@@ -3,23 +3,15 @@
 var cozydb = require('cozydb');
 
 var userModel = cozydb.getModel('user', {
-  "user": {
-		"firstName" : String,
-		"lastName" : String,
-		"age" : Number,
-		"email" : String,
-		"links" : {
-			"websiteFR" : String,
-			"websiteEN" : String
-		},
-		"description" : String,
-		"position" : String,
-		"headline" : String,
-		"localisation" : String
-	},
-	
+  "firstName" : String,
+  "lastName" : String,
+  "birthdayDate" : String,
+  "email" : String,
+  "description" : String,
+  "position" : String,
+  "localisation" : String,
+  "resumes" : cozydb.NoSchema, //{id, title}
 	"hobbies" : [String],
-	
 	"keywords" : [String] 
 });
 
