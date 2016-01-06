@@ -15,6 +15,9 @@ module.exports = {
   'updateUserInfos': {
     put: userInfos.update
   },
+  'getDYBUserInfos': {
+    post: userInfos.getFromDYB
+  },
   'getAccountsInfos': {
     get: accountsInfos.list
   },
