@@ -56,27 +56,27 @@ div.leftMenu{
 
 
 /*Settings part*/
-div.submitButton{
+.settingsContainer div.submitButton{
   margin-top:30px;
 }
 
-div.submitButton button{
+.settingsContainer div.submitButton button{
   margin-bottom:20px;
 }
 
-input{
+.settingsContainer input{
   width: 250px;
 }
 
-button#DYBconnection, button#DYBconnected{
+.settingsContainer button#DYBconnection, button#DYBconnected{
   margin : 20px 0px;
 }
 
-#DYBconnection{
+.settingsContainer #DYBconnection{
   display:block;
 }
 
-#DYBloadingIcon{
+.settingsContainer #DYBloadingIcon{
   position:absolute;
   margin-top:-35px;
   margin-left:320px;
