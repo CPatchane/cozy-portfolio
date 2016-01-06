@@ -13,6 +13,7 @@ var userModel = cozydb.getModel('user', {
   "status" : stringBoolObject,
   "localisation" : stringBoolObject,
   "resumes" : cozydb.NoSchema, //[{id, title}]
+  "activeResumeId" : String,
 	"hobbies" : stringBoolObject,
 	"keywords" : stringBoolObject
 });
