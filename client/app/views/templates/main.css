@@ -118,13 +118,91 @@ p{
   content:"";
   width:27px;
   height:27px;
-  border:1px solid black;
-  background-color: red;
+  border:3px solid #bbb;
+  background-color: #777;
   cursor: pointer;
+  box-shadow: 0px 0px 2px #333 inset;
+  transition: all 0.3s ease-out;
 }
 
 .profilContainer input[type="checkbox"]:checked + label{
-  background-color: green;
+  background-color: #27ae60;
+  box-shadow: 0px 0px 5px #333 inset;
+  transition: all 0.3s ease-out;
+}
+
+.profilContainer input[type="checkbox"] + label:hover::after, .profilContainer input[type="checkbox"]:checked + label:hover::after{
+  display: block;
+  position: absolute;
+  padding: .5em;
+  min-width: 120px;
+  text-align: center;
+  width: auto;
+  height: auto;
+  white-space: nowrap;
+  top: -35px;
+  left:10px;
+  background: rgba(0,0,0,.7);
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  color: #fff;
+  font-size: .86em;
+}
+
+.profilContainer input[type="checkbox"] + label:hover::after{
+  content: "Afficher sur mon portfolio";
+}
+
+.profilContainer input[type="checkbox"]:checked + label:hover::after{
+  content: "Enlever de mon portfolio";
+}
+
+.profilContainer #resumesContainer .resume{
+  display:block;
+  width:200px;
+  height:100px;
+  float:left;
+  border:2px solid #777;
+  box-shadow: 0px 0px 0px #555;
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  cursor:pointer;
+  margin:7px;
+  opacity:0.5;
+  transition: all 0.5s ease;
+}
+
+.profilContainer #resumesContainer .resume.choice{
+  border:2px solid #27ae60;
+  box-shadow: 0px 0px 5px #555;
+  opacity:1;
+  transition: all 0.2s ease;
+}
+
+.profilContainer #resumesContainer .resume:hover{
+  box-shadow: 0px 0px 10px #555;
+  opacity:1;
+  transition: all 0.2s ease;
+}
+
+.profilContainer #resumesContainer .resumeTitle{
+  color:#2980b9;
+  font-size: 10pt;
+  width:180px;
+  height:80px;
+  margin:auto;
+  margin-top:8px;
+  text-align: center;
+  padding:3px;
+  border-bottom: 1px solid #2980b9;
+  border-top: 1px solid #2980b9;
+  overflow: scroll;
+}
+.profilContainer #DYBloadingIcon{
+  display: inline-block;
+  margin-left: 20px;
 }
 
 

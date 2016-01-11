@@ -26,54 +26,157 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
-  div.col-md-10.profilContainer
+  div.col-md-10.profilContainer#profilElements
     div.row.text-center
       h1.col-md-12(style="margin-left:-100px;") Mon profil
     div.row
       div.col-md-6
         p Prénom
-        input(type="text", placeholder="Votre prénom")
-        input#firstNameCB(type="checkbox")
+        input#firstName(type="text", placeholder="Votre prénom" name="firstName")
+        input#firstNameCB(type="checkbox" name="firstNameCB")
         label(for="firstNameCB")
         p Nom
-        input(type="text", placeholder="Votre nom")
-        input#lastNameCB(type="checkbox")
+        input#lastName(type="text", placeholder="Votre nom", name="lastName")
+        input#lastNameCB(type="checkbox", name="lastNameCB")
         label(for="lastNameCB")
         p Date de naissance
-        input(type="text", placeholder="jj/mm/aaaa")
-        input#birthdayCB(type="checkbox")
-        label(for="birthdayCB")
+        input#birthdayDate(type="text", placeholder="jj/mm/aaaa", name="birthdayDate")
+        input#birthdayDateCB(type="checkbox", name="birthdayDateCB")
+        label(for="birthdayDateCB")
         p Email
-        input(type="text", placeholder="example@domain.xyz")
-        input#emailCB(type="checkbox")
+        input#email(type="text", placeholder="example@domain.xyz", name="email")
+        input#emailCB(type="checkbox", name="emailCB")
         label(for="emailCB")
         p Description
-        textarea(style="resize:none;width:300px;height:100px;", placeholder="Une petite description de vous")
-        input#descriptionCB(type="checkbox")
+        textarea#description(style="resize:none;width:300px;height:100px;", placeholder="Une petite description de vous", name="description")
+        input#descriptionCB(type="checkbox", name="descriptionCB")
         label(for="descriptionCB")
       div.col-md-6
         p Situation professionnelle
-        input(type="text", placeholder="Etudiant, expert chez ...")
-        input#statusCB(type="checkbox")
+        input#status(type="text", placeholder="Etudiant, expert chez ...", name="status")
+        input#statusCB(type="checkbox", name="statusCB")
         label(for="statusCB")
         p Situation géographique
-        input(type="text", placeholder="Votre position géographique actuelle")
-        input#localisationCB(type="checkbox")
+        input#localisation(type="text", placeholder="Votre position géographique actuelle", name="localisation")
+        input#localisationCB(type="checkbox", name="localisationCB")
         label(for="localisationCB")
         p Loisirs (séparés par des  " , ")
-        input(type="text", placeholder="Vos loisirs")
-        input#hobbiesCB(type="checkbox")
+        input#hobbies(type="text", placeholder="Vos loisirs", name="hobbies")
+        input#hobbiesCB(type="checkbox", name="hobbiesCB")
         label(for="hobbiesCB")
         p Mots-clés (séparés par des  " , ")
-        input(type="text", placeholder="Des mots-clés décrivant vous ou votre profil")
-        input#keywordsCB(type="checkbox")
+        input#keywords(type="text", placeholder="Des mots-clés décrivant votre profil", name="keywords")
+        input#keywordsCB(type="checkbox", name="keywordsCB")
         label(for="keywordsCB")
-    div.row
+    div.row#resumesPart(hidden="true")
       div.col-md-12
-        hr
-        p Vos CVs DoYouBuzz (Un seul choix possible pour récupérer les informations)
+        p Vos CVs DoYouBuzz pour récupérer les informations du portfolio (un seul choix possible)
+        div#resumesContainer
     div.row
       div.col-md-12.submitButton.text-center
-        hr
-        button.btn.btn-primary#submitChanges(onclick="") Valider les changements
-        button.btn.btn-warning#DYBSyncing(type="button") Récupérer les données depuis mon CV DoYouBuzz
+        button.btn.btn-primary#submitChanges(type="button", onclick="submitInfos()") Valider les changements
+        button.btn.btn-warning#DYBSyncing(type="button" onclick="getDataFromDYBResume()") Récupérer les données depuis mon CV DoYouBuzz
+        div.spinner#DYBloadingIcon(style="display:none;")
+        div.alert.alert-success#savedMessage(hidden="true")
+        div.alert.alert-danger#ErrorMessage(hidden="true")
+        
+        
+script(type="text/javascript").
+  var data = {};
+  getInfos();
+  function getInfos(){
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "getUserInfos", false ); // false for synchronous request
+    xmlHttp.send( null );
+    data = JSON.parse(xmlHttp.responseText)[0];
+    console.log(data);
+    for(var propertyName in data){
+      if(propertyName == "resumes"){//for resumes
+        if(data[propertyName].length)document.getElementById("resumesPart").removeAttribute("hidden");
+        for(var resume in data[propertyName]){
+          if(document.getElementById("resumeId"+data[propertyName][resume].id) !== null) continue;
+          var resumeElement = document.createElement("div");
+          resumeElement.className = "resume";
+          resumeElement.addEventListener("click", function(){chooseResume(this);}, false);
+          var titleElement = document.createElement("p");
+          titleElement.innerHTML = data[propertyName][resume].title;
+          titleElement.className = "resumeTitle";
+          titleElement.id = "resumeId" + data[propertyName][resume].id;
+          titleElement.setAttribute("resumeId", data[propertyName][resume].id);
+          resumeElement.appendChild(titleElement);
+          document.getElementById("resumesContainer").appendChild(resumeElement);
+        }
+        continue;
+      }
+      if(propertyName == "activeResumeId"){
+        if(document.getElementById("resumeId"+data[propertyName]) !== null)document.getElementById("resumeId"+data[propertyName]).parentNode.className = "resume choice";
+      }
+      if(document.getElementById(propertyName) === null) continue;
+      document.getElementById(propertyName).value = data[propertyName].value;
+      document.getElementById(propertyName+"CB").checked = data[propertyName].display;
+    }
+  }
+
+  function submitInfos(){
+    var formElements = document.getElementById("profilElements").getElementsByTagName("input");
+    var description = document.getElementsByTagName("textarea")[0]; //for description
+    var dataToSend = {};
+    dataToSend[description.getAttribute("name")] = description.value;
+    var choice = document.getElementsByClassName("choice")[0];
+    if(choice !== undefined) dataToSend.activeResumeId = choice.childNodes[0].getAttribute("resumeId");
+    for(var i=0; i<formElements.length; i++){
+      if(formElements[i].getAttribute("name") === null) continue;
+      if(formElements[i].getAttribute('type') == 'checkbox'){
+        var name = formElements[i].getAttribute("name");
+        dataToSend[name] = formElements[i].checked;
+      }else{
+        var name = [formElements[i].getAttribute("name")];
+        dataToSend[name] = formElements[i].value;
+      }
+    }
+    var parameters = "data="+JSON.stringify(dataToSend)+"&id="+data.id;
+    var xhttpInfos = new XMLHttpRequest();
+    xhttpInfos.open("PUT", "updateUserInfos", true);
+    xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhttpInfos.onreadystatechange = function(){
+        if (xhttpInfos.readyState == 4 && xhttpInfos.status == 200) {
+          document.getElementById("savedMessage").removeAttribute("hidden");
+          document.getElementById("savedMessage").innerHTML = xhttpInfos.responseText;
+        }else if(xhttpInfos.readyState == 4 && xhttpInfos.status != 200){
+          document.getElementById("ErrorMessage").removeAttribute("hidden");
+          document.getElementById("ErrorMessage").innerHTML = xhttpInfos.responseText;
+        }
+    }
+    xhttpInfos.send(parameters);
+  }
+  
+  function chooseResume(element){
+    var resumesDIVs = document.getElementById("resumesContainer").getElementsByClassName("resume");
+    for(var i in resumesDIVs){
+      resumesDIVs[i].className = "resume";
+    }
+    element.className = "resume choice";
+  }
+  
+  function getDataFromDYBResume(){
+    if(confirm("Cette action mettre à jour les valeurs nom, prénom, email ainsi que la liste de vos CV DoYouBuzz. Continuer?")){
+      document.getElementById("DYBloadingIcon").setAttribute("style", "");
+      var xmlHttp = new XMLHttpRequest();
+      xmlHttp.open( "POST", "getDYBUserInfos", true ); // true for asynchronous request
+      xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xmlHttp.onreadystatechange = function(){
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
+            document.getElementById("savedMessage").removeAttribute("hidden");
+            document.getElementById("savedMessage").innerHTML = xmlHttp.responseText;
+            getInfos();
+          }else if(xmlHttp.readyState == 4 && xmlHttp.status != 200){
+            document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
+            document.getElementById("ErrorMessage").removeAttribute("hidden");
+            document.getElementById("ErrorMessage").innerHTML = xmlHttp.responseText;
+          }
+      }
+      xmlHttp.send();
+    }
+  }
+  
