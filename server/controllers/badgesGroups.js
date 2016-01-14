@@ -44,7 +44,7 @@ module.exports.destroy = function(req, res, next){
           }
         });
       });
-      res.status(200).send("No groups to removed");
+      if(badgesGroups.length == 0) res.status(200).send("No groups to removed");
     }
   });
 };
@@ -92,9 +92,10 @@ module.exports.update = function(req, res, next) {
            }else{
              res.status(200).send("All badges updated");
            }
-        }
-        if(dataToUpdate.totalBadges > 0){//we don't want empty groups
-          getBadgesFromGroup(dataToUpdate, false); //get all badges for each group
+        }else{
+          if(dataToUpdate.totalBadges > 0){//we don't want empty groups
+            getBadgesFromGroup(dataToUpdate, false); //get all badges for each group
+          }
         }
 			});
 	  });

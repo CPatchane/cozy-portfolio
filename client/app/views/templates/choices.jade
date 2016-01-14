@@ -49,19 +49,19 @@ script(type="text/javascript").
   var data = {};
   getInfos();
   function getInfos(){
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
-    xmlHttp.send( null );
-    console.log(xmlHttp.responseText);
+    var xmlHttpDestroy = new XMLHttpRequest();
+    xmlHttpDestroy.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
+    xmlHttpDestroy.send( null );
+    console.log(xmlHttpDestroy.responseText);
     
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
-    xmlHttp.send( null );
+    var xmlHttpUpdate = new XMLHttpRequest();
+    xmlHttpUpdate.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
+    xmlHttpUpdate.send( null );
     
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "getBadgesGroup", false ); // false for synchronous request
-    xmlHttp.send( null );
-    data = JSON.parse(xmlHttp.responseText);
+    var xmlHttpInfos = new XMLHttpRequest();
+    xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
+    xmlHttpInfos.send( null );
+    data = JSON.parse(xmlHttpInfos.responseText);
     console.log(data);
     
   }
