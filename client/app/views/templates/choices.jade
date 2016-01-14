@@ -26,6 +26,42 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
-  div.col-md-10
+  div.col-md-10#choicesContainer
     div.row.text-center
       h1.col-md-12 Mes choix
+    div.row
+      a.col-md-12 Aperçu
+    div.row
+      a.col-md-12 Images
+    div.row
+      a.col-md-12 Vidéos
+    div.row
+      a.col-md-12 Audios
+    div.row
+      a.col-md-12 Documents
+    div.row
+      a.col-md-12 Mes badges
+    div.row 
+      a.col-md-12 Projets
+      
+      
+script(type="text/javascript").
+  var data = {};
+  getInfos();
+  function getInfos(){
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
+    xmlHttp.send( null );
+    console.log(xmlHttp.responseText);
+    
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
+    xmlHttp.send( null );
+    
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "getBadgesGroup", false ); // false for synchronous request
+    xmlHttp.send( null );
+    data = JSON.parse(xmlHttp.responseText);
+    console.log(data);
+    
+  }

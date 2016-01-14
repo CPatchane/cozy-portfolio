@@ -30,14 +30,11 @@ module.exports = {
   'getBadgesGroup': {
     get: badgesGroups.list
   },
-  'addBadgesGroup': {
-    post: badgesGroups.add
+  'deleteBadgesGroups': {
+    get: badgesGroups.destroy
   },
-  'deleteBadgesGroup/:id': {
-    get: badgesGroups.delete
-  },
-  'updateBadgesGroup/:id': {
-    put: badgesGroups.update
+  'updateBadgesGroup': {
+    get: badgesGroups.update
   },
   'getPortfolioDocument': {
     get: portfolioDocuments.list

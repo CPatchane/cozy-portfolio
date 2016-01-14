@@ -2,46 +2,25 @@
 
 var cozydb = require('cozydb');
 
+var badgeModel = cozydb.getModel('badge', {
+  "lastValidated": String,
+  "hostedUrl": String,
+  "name": String,
+  "description": String,
+  "imageUrl": String,
+  "criteria": String,
+  "issuerName": String,
+  "issuerUrl": String,
+  "issuedOn": String,
+  "visible":Boolean
+});
+
 var badgeGroupModel = cozydb.getModel('badgeGroup', {
-	"id_badgeGroup" : Number,
+	"id" : Number,
 	"groupId" : Number,
 	"name" : String,
 	"totalBadges" : Number,
-	"badges" : [
-		{
-			"lastValidated": String,
-			"hostedUrl": String,
-			"assertion": {
-				"uid": String,
-				"recipient": String,
-				"badge": {
-					"name": String,
-					"description": String,
-					"image": String,
-					"criteria": String,
-					"issuer": {
-						"name": String,
-						"url": String,
-						"_location": String,
-						"origin": String
-					},
-					"_location": String
-				},
-				"verify": {
-					"url": String,
-					"type": String
-				},
-				"issuedOn": Number,
-				"_originalRecipient": {
-					"identity": String,
-					"type": String,
-					"hashed": Boolean
-				},
-				"issued_on": Number
-			},
-			"imageUrl": String
-		}
-	]
+	"badges" : [badgeModel]
 });
 
 badgeGroupModel.all = function(callback) {
