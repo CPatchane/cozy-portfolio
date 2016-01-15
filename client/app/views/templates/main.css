@@ -58,8 +58,9 @@ p{
   margin-top:15px;
 }
 
-
-/*Settings part*/
+/*****************/
+/* Settings View */
+/*****************/
 .settingsContainer div.submitButton{
   margin-top:30px;
 }
@@ -87,8 +88,9 @@ p{
   margin-left:320px;
 }
 
-
-/*profil view*/
+/***************/
+/* Profil View */
+/***************/
 .profilContainer input{
   width: 300px;
 }
@@ -203,6 +205,122 @@ p{
 .profilContainer #DYBloadingIcon{
   display: inline-block;
   margin-left: 20px;
+}
+
+
+
+/*************************/
+/**    CHOICES VIEW     **/
+/*************************/
+
+.choicesContainer .tab{
+  border:1px solid #555;
+  margin:0 10px;
+  position: relative;
+  border-radius: 15px 15px 0px 0px;
+  padding-bottom: 10px;
+  background-color: #eee;
+}
+
+.choicesContainer .tabTitle{
+  padding:15px;
+  border-radius: 15px 15px 0px 0px;
+  font-size: 18px;
+}
+
+.choicesContainer .docsContainer{
+  padding:5px;
+}
+
+.choicesContainer .badgeBlock{
+  padding:5px;
+}
+
+.choicesContainer .badgeBlock .badgeContent{
+  box-shadow: 0px 0px 5px #999;
+  padding:2px;
+  background-color: rgba(255,255,255,0.3);
+  border:2px solid rgba(255,255,255,0.3);
+  opacity:0.5;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.choicesContainer img.badgeImage{
+  width:100px;
+  height:100px;
+  float:left;
+  margin:10px;
+  padding:8px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #333 inset;
+  border:2px solid #bbb;
+}
+
+.choicesContainer .badgeDetails span.badgeName{
+  font-weight: 900;
+}
+
+.choicesContainer .badgeDetails p.badgeIssuer{
+  margin-bottom:0px;
+  margin-top: 7px;
+  font-size: 17px;
+}
+.choicesContainer .badgeDetails p.badgeDescription{
+  margin-top:0px;
+  margin-bottom:0px;
+  font-size: 14px;
+  margin-left:5px;
+  margin-right:5px;
+}
+
+.choicesContainer .badgeDetails .badgeLink{
+  float:right;
+  margin-right:10px;
+  padding:10px;
+}
+
+.choicesContainer .badgeBlock a{
+  color:black;
+  text-decoration: underline;
+}
+
+.choicesContainer .badgeBlock .badgeContent.choice{
+  border:2px solid #27ae60;
+  opacity:1;
+  transition: all 0.2s ease;
+}
+
+.choicesContainer .badgeBlock .badgeContent:hover{
+  opacity:1;
+  transition: all 0.2s ease;
+}
+.choicesContainer .badgeBlock .badgeContent:hover::after, .choicesContainer .badgeBlock .badgeContent.choice:hover::after{ 
+  display: block;
+  position: absolute;
+  padding: .5em;
+  min-width: 120px;
+  text-align: center;
+  width: auto;
+  height: auto;
+  white-space: nowrap;
+  top: -35px;
+  left:10px;
+  background: rgba(0,0,0,.7);
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  color: #fff;
+  font-size: .86em;
+}
+
+
+.choicesContainer .badgeBlock .badgeContent:hover::after{
+  content: "Afficher sur mon portfolio";
+}
+
+.choicesContainer .badgeBlock .badgeContent.choice:hover::after{
+  content: "Enlever de mon portfolio";
 }
 
 

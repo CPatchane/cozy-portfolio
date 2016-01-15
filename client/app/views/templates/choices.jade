@@ -26,42 +26,133 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
-  div.col-md-10#choicesContainer
+  div.col-md-10.choicesContainer
     div.row.text-center
       h1.col-md-12 Mes choix
-    div.row
-      a.col-md-12 Aperçu
-    div.row
-      a.col-md-12 Images
-    div.row
-      a.col-md-12 Vidéos
-    div.row
-      a.col-md-12 Audios
-    div.row
-      a.col-md-12 Documents
-    div.row
-      a.col-md-12 Mes badges
-    div.row 
-      a.col-md-12 Projets
+    div.row.tab
+      a.tabTitle.col-md-12 Aperçu
+    div.row.tab
+      a.tabTitle.col-md-12 Images
+    div.row.tab
+      a.tabTitle.col-md-12 Vidéos
+    div.row.tab
+      a.tabTitle.col-md-12 Audios
+    div.row.tab
+      a.tabTitle.col-md-12 Documents
+    div.row.tab#badgesTab
+      a.tabTitle.col-md-12 Mes badges
+      //- badges will be built here   
+    div.row.tab
+      a.tabTitle.col-md-12 Projets
       
       
 script(type="text/javascript").
-  var data = {};
-  getInfos();
-  function getInfos(){
-    var xmlHttpDestroy = new XMLHttpRequest();
-    xmlHttpDestroy.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
-    xmlHttpDestroy.send( null );
-    console.log(xmlHttpDestroy.responseText);
-    
-    var xmlHttpUpdate = new XMLHttpRequest();
-    xmlHttpUpdate.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
-    xmlHttpUpdate.send( null );
-    
+  var groups = {};
+  init();
+  
+  function init(){
     var xmlHttpInfos = new XMLHttpRequest();
     xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpInfos.send( null );
-    data = JSON.parse(xmlHttpInfos.responseText);
-    console.log(data);
+    groups = JSON.parse(xmlHttpInfos.responseText);
+    if(groups.length == 0) return;
+    var badges = {};
+    groups.forEach(function(group, index, array){
+      badges = group.badges;
+      badges.forEach(function(badge, index, array){
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria); 
+      });
+    });
+  }
+  
+  function chooseBadge(element){
+    if(element.className == "badgeContent col-md-12 choice"){
+      element.className = "badgeContent col-md-12";
+    }else{
+      element.className = "badgeContent col-md-12 choice";
+      }
+  }
+  
+  /*var xmlHttpDestroy = new XMLHttpRequest();
+  xmlHttpDestroy.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
+  xmlHttpDestroy.send( null );
+  console.log(xmlHttpDestroy.responseText);
+  
+  var xmlHttpUpdate = new XMLHttpRequest();
+  xmlHttpUpdate.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
+  xmlHttpUpdate.send( null );
+  
+  var xmlHttpInfos = new XMLHttpRequest();
+  xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
+  xmlHttpInfos.send( null );
+  data = JSON.parse(xmlHttpInfos.responseText);
+  console.log(data);*/
     
+  function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl){
+      /*
+        Structure of a badge (inside #badgesTab):
+        
+        div.docsContainer
+          div.badgeBlock.col-md-6
+            div.badgeContent.col-md-12
+              img.badgeImage(src="imageUrl")
+              div.badgeDetails
+                p.badgeIssuer Délivré par 
+                  a(href='issuerUrl') issuerName
+                  span , le issueDate
+                p.badgeDescription description
+                a.badgeLink(href="hostedUrl") Voir sur le site d'origine >
+      */
+      
+      var container = document.createElement("div");
+      container.className = "docsContainer";
+      var badgeBlock = document.createElement("div");
+      badgeBlock.className = "badgeBlock col-md-6";
+      var content = document.createElement("div");
+      content.className = "badgeContent col-md-12";
+      content.addEventListener("click", function(){chooseBadge(this);}, false);
+      //badge image
+      var image = document.createElement("img");
+      image.className = "badgeImage";
+      image.src = imageUrl;
+      //badge details;
+      var badgeDetails = document.createElement("div");
+      badgeDetails.className = "badgeDetails";
+      //badge issuer part with badge name
+      var badgeNameSpan = document.createElement("span");
+      badgeNameSpan.className = "badgeName";
+      badgeNameSpan.innerHTML = badgeName;
+      var badgeIssuer = document.createElement("p");
+      badgeIssuer.appendChild(badgeNameSpan);
+      badgeIssuer.innerHTML += ", délivré par ";
+      var issuerLink = document.createElement("a");
+      issuerLink.href = issuerUrl;
+      issuerLink.innerHTML = issuerName;
+      var dateSpan = document.createElement("span");
+      dateSpan.innerHTML = ", le " + issueDate;
+      //badge Issuer building
+      badgeIssuer.appendChild(issuerLink);
+      badgeIssuer.appendChild(dateSpan);
+      //badge description
+      var badgeDescription = document.createElement("p");
+      badgeDescription.className = "badgeDescription";
+      badgeDescription.innerHTML = description;
+      var badgeLink = document.createElement("a");
+      badgeLink.href = hostedUrl;
+      badgeLink.className = "badgeLink";
+      badgeLink.innerHTML = "Voir sur le site d'origine >";
+      //badge details building
+      badgeDetails.appendChild(badgeIssuer);
+      badgeDetails.appendChild(badgeDescription);
+      badgeDetails.appendChild(badgeLink);
+      //badge content building
+      content.appendChild(image);
+      content.appendChild(badgeDetails);
+      //add to badgeBlock
+      badgeBlock.appendChild(content);
+      //add to container
+      container.appendChild(badgeBlock);
+      
+      //add to badges tab
+      document.getElementById("badgesTab").appendChild(container);
   }

@@ -8,8 +8,7 @@ module.exports.list = function(req, res, next) {
       next(err);
     }
     else {
-      var data = {"badgesGroups": badgesGroups}
-      res.status(200).send(data);
+      res.status(200).send(badgesGroups);
     }
   });
 };
