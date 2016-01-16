@@ -44,6 +44,11 @@ div.container
       //- badges will be built here   
     div.row.tab
       a.tabTitle.col-md-12 Projets
+    div.row#submitPart
+      div.col-md-12.submitButton.text-center
+        button.btn.btn-primary#submitChanges(type="button", onclick="submitChanges()") Valider les changements
+        div.alert.alert-success#savedMessage(hidden="true")
+        div.alert.alert-danger#ErrorMessage(hidden="true")
       
       
 script(type="text/javascript").
@@ -51,26 +56,22 @@ script(type="text/javascript").
   init();
   
   function init(){
+    
+    //get all badges from database and build them on page
     var xmlHttpInfos = new XMLHttpRequest();
     xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpInfos.send( null );
     groups = JSON.parse(xmlHttpInfos.responseText);
+    console.log(groups);
+    
     if(groups.length == 0) return;
     var badges = {};
     groups.forEach(function(group, index, array){
       badges = group.badges;
       badges.forEach(function(badge, index, array){
-        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria); 
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, index); 
       });
     });
-  }
-  
-  function chooseBadge(element){
-    if(element.className == "badgeContent col-md-12 choice"){
-      element.className = "badgeContent col-md-12";
-    }else{
-      element.className = "badgeContent col-md-12 choice";
-      }
   }
   
   /*var xmlHttpDestroy = new XMLHttpRequest();
@@ -88,71 +89,42 @@ script(type="text/javascript").
   data = JSON.parse(xmlHttpInfos.responseText);
   console.log(data);*/
     
-  function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl){
-      /*
-        Structure of a badge (inside #badgesTab):
-        
-        div.docsContainer
-          div.badgeBlock.col-md-6
-            div.badgeContent.col-md-12
-              img.badgeImage(src="imageUrl")
-              div.badgeDetails
-                p.badgeIssuer Délivré par 
-                  a(href='issuerUrl') issuerName
-                  span , le issueDate
-                p.badgeDescription description
-                a.badgeLink(href="hostedUrl") Voir sur le site d'origine >
-      */
-      
-      var container = document.createElement("div");
-      container.className = "docsContainer";
-      var badgeBlock = document.createElement("div");
-      badgeBlock.className = "badgeBlock col-md-6";
-      var content = document.createElement("div");
-      content.className = "badgeContent col-md-12";
-      content.addEventListener("click", function(){chooseBadge(this);}, false);
-      //badge image
-      var image = document.createElement("img");
-      image.className = "badgeImage";
-      image.src = imageUrl;
-      //badge details;
-      var badgeDetails = document.createElement("div");
-      badgeDetails.className = "badgeDetails";
-      //badge issuer part with badge name
-      var badgeNameSpan = document.createElement("span");
-      badgeNameSpan.className = "badgeName";
-      badgeNameSpan.innerHTML = badgeName;
-      var badgeIssuer = document.createElement("p");
-      badgeIssuer.appendChild(badgeNameSpan);
-      badgeIssuer.innerHTML += ", délivré par ";
-      var issuerLink = document.createElement("a");
-      issuerLink.href = issuerUrl;
-      issuerLink.innerHTML = issuerName;
-      var dateSpan = document.createElement("span");
-      dateSpan.innerHTML = ", le " + issueDate;
-      //badge Issuer building
-      badgeIssuer.appendChild(issuerLink);
-      badgeIssuer.appendChild(dateSpan);
-      //badge description
-      var badgeDescription = document.createElement("p");
-      badgeDescription.className = "badgeDescription";
-      badgeDescription.innerHTML = description;
-      var badgeLink = document.createElement("a");
-      badgeLink.href = hostedUrl;
-      badgeLink.className = "badgeLink";
-      badgeLink.innerHTML = "Voir sur le site d'origine >";
-      //badge details building
-      badgeDetails.appendChild(badgeIssuer);
-      badgeDetails.appendChild(badgeDescription);
-      badgeDetails.appendChild(badgeLink);
-      //badge content building
-      content.appendChild(image);
-      content.appendChild(badgeDetails);
-      //add to badgeBlock
-      badgeBlock.appendChild(content);
-      //add to container
-      container.appendChild(badgeBlock);
+  //funciton to build badge on page
+  function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, index){
+    var badgeId = "badge"+index;
+    var container = 
+      '<div class="docsContainer">' +
+        '<div class="badgeBlock col-md-6">' +
+          '<div class="badgeContent col-md-12">' +
+            '<img class="badgeImage" src="' + imageUrl + '"/>'+
+            '<div class="badgeDetails">' +
+              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox badgeVisibility" type="checkbox" name="' + badgeId + '" />' +
+              '<label for="' + badgeId + '"></label>' +
+              '<p class="badgeIssuer"> <span class="badgeName">' + badgeName + '</span>' +
+                ', délivré par <a href="' + issuerUrl + '">' + issuerName + '</a>, le ' + issueDate + '' +
+              '</p>' +
+              '<p class="badgeDescription">' + description + '</p>' +
+              '<a class="badgeLink" href="' + hostedUrl + '">Voir sur le site d\'origine ></a>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
       
       //add to badges tab
-      document.getElementById("badgesTab").appendChild(container);
+      document.getElementById("badgesTab").innerHTML += container;
+  }
+  
+  
+  function submitChanges(){
+    
+    
+    //submit badges visibilities
+    var badgesInputs = document.getElementsByClassName("badgeVisibility");
+    var badgeElement = {};
+    var badgesToSubmit = [];
+    for(var i=0; i<badgesInputs.length; i++){
+      badgeElement = {"name":badgesInputs[i].getAttribute("badge"), "visibility":badgesInputs[i].checked};
+      badgesToSubmit.push(badgeElement);
+    }
+    console.log(badgesToSubmit);
   }

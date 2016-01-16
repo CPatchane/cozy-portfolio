@@ -217,9 +217,13 @@ p{
   border:1px solid #555;
   margin:0 10px;
   position: relative;
-  border-radius: 15px 15px 0px 0px;
+  border-radius: 15px 15px 15px 15px;
   padding-bottom: 10px;
-  background-color: #eee;
+  background-color: #2c3e50;
+}
+
+.choicesContainer #submitPart{
+  margin-top:15px;
 }
 
 .choicesContainer .tabTitle{
@@ -237,24 +241,28 @@ p{
 }
 
 .choicesContainer .badgeBlock .badgeContent{
-  box-shadow: 0px 0px 5px #999;
+  box-shadow: 0px 0px 8px #999;
   padding:2px;
-  background-color: rgba(255,255,255,0.3);
-  border:2px solid rgba(255,255,255,0.3);
-  opacity:0.5;
-  transition: all 0.2s ease;
-  cursor: pointer;
+  background-color: rgba(255,255,255,0.8);
+  min-height:124px;
 }
 
 .choicesContainer img.badgeImage{
   width:100px;
-  height:100px;
+  display: inline-block;
   float:left;
+  height:100px;
   margin:10px;
   padding:8px;
   border-radius: 5px;
   box-shadow: 0px 0px 5px #333 inset;
   border:2px solid #bbb;
+  -webkit-filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.5));
+}
+
+.choicesContainer .badgeBlock .badgeDetails{
+  display: table;
 }
 
 .choicesContainer .badgeDetails span.badgeName{
@@ -262,15 +270,15 @@ p{
 }
 
 .choicesContainer .badgeDetails p.badgeIssuer{
-  margin-bottom:0px;
-  margin-top: 7px;
-  font-size: 17px;
+  margin-bottom:8px;
+  margin-top: 12px;
+  margin-right: 30px;
 }
 .choicesContainer .badgeDetails p.badgeDescription{
   margin-top:0px;
   margin-bottom:0px;
   font-size: 14px;
-  margin-left:5px;
+  margin-left:8px;
   margin-right:5px;
 }
 
@@ -285,44 +293,16 @@ p{
   text-decoration: underline;
 }
 
-.choicesContainer .badgeBlock .badgeContent.choice{
-  border:2px solid #27ae60;
-  opacity:1;
-  transition: all 0.2s ease;
-}
-
-.choicesContainer .badgeBlock .badgeContent:hover{
-  opacity:1;
-  transition: all 0.2s ease;
-}
-.choicesContainer .badgeBlock .badgeContent:hover::after, .choicesContainer .badgeBlock .badgeContent.choice:hover::after{ 
-  display: block;
+.choicesContainer input.visibilityCheckBox[type="checkbox"], .choicesContainer input.visibilityCheckBox[type="checkbox"] + label{
   position: absolute;
-  padding: .5em;
-  min-width: 120px;
-  text-align: center;
-  width: auto;
-  height: auto;
-  white-space: nowrap;
+  top :0px;
+  right:0px;
+}
+
+.choicesContainer input.visibilityCheckBox[type="checkbox"] + label:hover::after, .choicesContainer input.visibilityCheckBox[type="checkbox"]:checked + label:hover::after{
   top: -35px;
-  left:10px;
-  background: rgba(0,0,0,.7);
-  -moz-border-radius:5px;
-  -webkit-border-radius:5px;
-  border-radius:5px;
-  color: #fff;
-  font-size: .86em;
+  left:-130px; 
 }
-
-
-.choicesContainer .badgeBlock .badgeContent:hover::after{
-  content: "Afficher sur mon portfolio";
-}
-
-.choicesContainer .badgeBlock .badgeContent.choice:hover::after{
-  content: "Enlever de mon portfolio";
-}
-
 
 /***********************/
 /**    COMPONENTS     **/
@@ -341,4 +321,53 @@ p{
 @keyframes rotate {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
+}
+
+/* Button to set visibility */
+/*
+  HTML Structure (Jade)
+    input#exemple.visibilityCheckBox(type="checkbox", name="#exemple")
+    label(for="#exemple")
+*/
+input.visibilityCheckBox[type="checkbox"]{
+  display:none;
+}
+
+input.visibilityCheckBox[type="checkbox"] + label{
+  content:"";
+  width:27px;
+  height:27px;
+  border:3px solid #bbb;
+  background-color: #777;
+  cursor: pointer;
+  box-shadow: 0px 0px 2px #333 inset;
+  transition: all 0.3s ease-out;
+}
+
+input.visibilityCheckBox[type="checkbox"]:checked + label{
+  background-color: #27ae60;
+  box-shadow: 0px 0px 5px #333 inset;
+  transition: all 0.3s ease-out;
+}
+
+input.visibilityCheckBox[type="checkbox"] + label:hover::after, input.visibilityCheckBox[type="checkbox"]:checked + label:hover::after{
+  display: block;
+  position: absolute;
+  text-align: center;
+  white-space: nowrap;
+  background: rgba(0,0,0,.7);
+  -moz-border-radius:5px;
+  -webkit-border-radius:5px;
+  border-radius:5px;
+  color: #fff;
+  font-size: .86em;
+  padding:0.3em;
+}
+
+input.visibilityCheckBox[type="checkbox"] + label:hover::after{
+  content: "Afficher sur mon portfolio";
+}
+
+input.visibilityCheckBox[type="checkbox"]:checked + label:hover::after{
+  content: "Enlever de mon portfolio";
 }
