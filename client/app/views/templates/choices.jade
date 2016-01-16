@@ -41,7 +41,8 @@ div.container
       a.tabTitle.col-md-12 Documents
     div.row.tab#badgesTab
       a.tabTitle.col-md-12 Mes badges
-      //- badges will be built here   
+      div.docsContainer
+        //- badges will be built here   
     div.row.tab
       a.tabTitle.col-md-12 Projets
     div.row#submitPart
@@ -93,7 +94,6 @@ script(type="text/javascript").
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, index){
     var badgeId = "badge"+index;
     var container = 
-      '<div class="docsContainer">' +
         '<div class="badgeBlock col-md-6">' +
           '<div class="badgeContent col-md-12">' +
             '<img class="badgeImage" src="' + imageUrl + '"/>'+
@@ -107,11 +107,10 @@ script(type="text/javascript").
               '<a class="badgeLink" href="' + hostedUrl + '">Voir sur le site d\'origine ></a>' +
             '</div>' +
           '</div>' +
-        '</div>' +
-      '</div>';
+        '</div>';
       
       //add to badges tab
-      document.getElementById("badgesTab").innerHTML += container;
+      document.getElementById("badgesTab").childNodes[1].innerHTML += container;
   }
   
   
