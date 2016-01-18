@@ -42,7 +42,8 @@ div.container
     div.row.tab#badgesTab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Mes badges
       div.docsContainer.col-md.12
-        //- badges will be built here   
+        //- badges will be built here 
+      button.btn.btn-primary#syncOBbutton(onclick="syncObenBadgesBackPack()") Récupérer de mon OpenBadges  
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
     div.row#submitPart
@@ -122,20 +123,24 @@ script(type="text/javascript").
   
   
   function syncObenBadgesBackPack(){
-    var xmlHttpDestroy = new XMLHttpRequest();
-    xmlHttpDestroy.open( "GET", "deleteBadgesGroups", true ); // true for asynchronous request
-    xmlHttpDestroy.onreadystatechange = function(){
-        if (xmlHttpDestroy.readyState == 4 && xmlHttpDestroy.status == 200) {
-          var xmlHttpSync = new XMLHttpRequest();
-          xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
-          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
-             document.getElementById("badgesTab").childNodes[1].innerHTML = "";
-             init();
+    if(confirm("Attention : les paramètres de visibilité de vos badges seront désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
+      var xmlHttpDestroy = new XMLHttpRequest();
+      xmlHttpDestroy.open( "GET", "deleteBadgesGroups", true ); // true for asynchronous request
+      xmlHttpDestroy.onreadystatechange = function(){
+          if (xmlHttpDestroy.readyState == 4 && xmlHttpDestroy.status == 200) {
+            var xmlHttpSync = new XMLHttpRequest();
+            xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
+            xmlHttpSync.onreadystatechange = function(){
+              if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
+                document.getElementById("badgesTab").childNodes[1].innerHTML = "";
+                init();
+              }
+            }
+            xmlHttpSync.send();
           }
-          xmlHttpSync.send();
-        }
+      }
+      xmlHttpDestroy.send();
     }
-    xmlHttpDestroy.send();
   }
   
   

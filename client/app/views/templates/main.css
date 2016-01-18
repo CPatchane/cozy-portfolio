@@ -262,6 +262,7 @@ body{
 
 .choicesContainer .badgeBlock{
   padding:5px;
+  margin-bottom:5px;
 }
 
 .choicesContainer .badgeBlock .badgeContent{
@@ -327,6 +328,17 @@ body{
   top: -35px;
   left:-130px; 
 }
+
+
+#syncOBbutton{
+  width:238px;
+  clear:both;
+  display: block;
+  margin: 0px auto;
+  margin-bottom:15px;
+  background-color:rgba(126, 206, 234, 0.5);
+}
+
 
 
 
