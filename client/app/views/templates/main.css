@@ -58,6 +58,10 @@ p{
   margin-top:15px;
 }
 
+body{
+  background-color: #ecf0f1;
+}
+
 /*****************/
 /* Settings View */
 /*****************/
@@ -243,7 +247,7 @@ p{
 .choicesContainer .badgeBlock .badgeContent{
   box-shadow: 0px 0px 8px #999;
   padding:2px;
-  background-color: rgba(255,255,255,0.8);
+  background-color: rgba(255,255,255,0.9);
   min-height:124px;
 }
 
