@@ -140,6 +140,10 @@ script(type="text/javascript").
   
   
   function chooseCategory(element){
+    if(element.parentNode.className == "tab choiceCategory"){
+      element.parentNode.className = "tab";
+      return;
+    }
     var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
     for(var i in categoriesDIV){
       categoriesDIV[i].className = "tab";

@@ -217,19 +217,29 @@ body{
 /**    CHOICES VIEW     **/
 /*************************/
 
+.choicesContainer h1{
+  margin-bottom:30px;
+}
+
 .choicesContainer .tab{
   border:1px solid #555;
   margin:0 10px;
   position: relative;
-  border-radius: 8px;
   padding-bottom: 10px;
+  border-radius: 8px 8px 3px 3px;
   background-color: #2c3e50;
-  height: 55px;
+  height: 65px;
+  margin-top:-8px;
   overflow: hidden;
 }
 
 .choicesContainer .tab.choiceCategory{
   height:auto;
+  box-shadow: 0px 0px 15px black;
+}
+
+.choicesContainer .tab:hover{
+  box-shadow: 0px 0px 15px black;
 }
 
 .choicesContainer #submitPart{
@@ -237,7 +247,7 @@ body{
 }
 
 .choicesContainer .tabTitle{
-  padding:15px;
+  padding:20px;
   border-radius: 15px 15px 0px 0px;
   font-size: 18px;
   color: #fbfcfc;
