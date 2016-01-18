@@ -59,37 +59,26 @@ script(type="text/javascript").
   function init(){
     
     //get all badges from database and build them on page
-    var xmlHttpInfos = new XMLHttpRequest();
-    xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
-    xmlHttpInfos.send( null );
-    groups = JSON.parse(xmlHttpInfos.responseText);
+    var xmlHttpGroups = new XMLHttpRequest();
+    xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
+    xmlHttpGroups.send( null );
+    groups = JSON.parse(xmlHttpGroups.responseText);
     console.log(groups);
     
     if(groups.length == 0) return;
     var badges = {};
-    groups.forEach(function(group, index, array){
+    groups.forEach(function(group, group_index, array){
       badges = group.badges;
-      badges.forEach(function(badge, index, array){
-        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, index); 
+      badges.forEach(function(badge, badge_index, array){
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, group_index+"_"+badge_index); 
       });
     });
   }
-  
-  /*var xmlHttpDestroy = new XMLHttpRequest();
-  xmlHttpDestroy.open( "GET", "deleteBadgesGroups", false ); // false for synchronous request
-  xmlHttpDestroy.send( null );
-  console.log(xmlHttpDestroy.responseText);
-  
-  var xmlHttpSync = new XMLHttpRequest();
-  xmlHttpSync.open( "GET", "syncBadgesGroup", false ); // false for synchronous request
-  xmlHttpSync.send( null );
-  
-  init()*/
     
   //function to build badge on page
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
     //id for the badge visibility input
-    var badgeId = "badge"+index;
+    var badgeId = "badge_"+index;
     //get visibility parameter
     var checked = visibility ? "checked" : "";
     //badge html building
@@ -104,7 +93,7 @@ script(type="text/javascript").
                 ', délivré par <a href="' + issuerUrl + '">' + issuerName + '</a>, le ' + issueDate + '' +
               '</p>' +
               '<p class="badgeDescription">' + description + '</p>' +
-              '<a class="badgeLink" href="' + hostedUrl + '">Voir sur le site d\'origine ></a>' +
+              '<a class="badgeLink" target="_blank" href="' + hostedUrl + '">Voir sur le site d\'origine ></a>' +
             '</div>' +
           '</div>' +
         '</div>';
@@ -128,6 +117,23 @@ script(type="text/javascript").
     xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
-    console.log(xmlHttpUpdate.responseText);
-    
+  }
+  
+  
+  
+  function syncObenBadgesBackPack(){
+    var xmlHttpDestroy = new XMLHttpRequest();
+    xmlHttpDestroy.open( "GET", "deleteBadgesGroups", true ); // true for asynchronous request
+    xmlHttpDestroy.onreadystatechange = function(){
+        if (xmlHttpDestroy.readyState == 4 && xmlHttpDestroy.status == 200) {
+          var xmlHttpSync = new XMLHttpRequest();
+          xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
+          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
+             document.getElementById("badgesTab").childNodes[1].innerHTML = "";
+             init();
+          }
+          xmlHttpSync.send();
+        }
+    }
+    xmlHttpDestroy.send();
   }
