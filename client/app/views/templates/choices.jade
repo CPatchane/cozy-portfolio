@@ -26,25 +26,25 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
-  div.col-md-10.choicesContainer
+  div.col-md-10.choicesContainer#choicesContainer
     div.row.text-center
       h1.col-md-12 Mes choix
     div.row.tab
-      a.tabTitle.col-md-12 Aperçu
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
     div.row.tab
-      a.tabTitle.col-md-12 Images
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Images
     div.row.tab
-      a.tabTitle.col-md-12 Vidéos
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Vidéos
     div.row.tab
-      a.tabTitle.col-md-12 Audios
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Audios
     div.row.tab
-      a.tabTitle.col-md-12 Documents
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Documents
     div.row.tab#badgesTab
-      a.tabTitle.col-md-12 Mes badges
-      div.docsContainer
+      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Mes badges
+      div.docsContainer.col-md.12
         //- badges will be built here   
     div.row.tab
-      a.tabTitle.col-md-12 Projets
+      a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
     div.row#submitPart
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(type="button", onclick="submitChanges()") Valider les changements
@@ -136,4 +136,13 @@ script(type="text/javascript").
         }
     }
     xmlHttpDestroy.send();
+  }
+  
+  
+  function chooseCategory(element){
+    var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
+    for(var i in categoriesDIV){
+      categoriesDIV[i].className = "tab";
+    }
+    element.parentNode.className = "tab choiceCategory";
   }

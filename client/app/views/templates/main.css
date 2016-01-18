@@ -221,9 +221,15 @@ body{
   border:1px solid #555;
   margin:0 10px;
   position: relative;
-  border-radius: 15px 15px 15px 15px;
+  border-radius: 8px;
   padding-bottom: 10px;
   background-color: #2c3e50;
+  height: 55px;
+  overflow: hidden;
+}
+
+.choicesContainer .tab.choiceCategory{
+  height:auto;
 }
 
 .choicesContainer #submitPart{
@@ -234,6 +240,10 @@ body{
   padding:15px;
   border-radius: 15px 15px 0px 0px;
   font-size: 18px;
+  color: #fbfcfc;
+  display:block;
+  clear: both;
+  cursor: pointer;
 }
 
 .choicesContainer .docsContainer{
@@ -307,6 +317,9 @@ body{
   top: -35px;
   left:-130px; 
 }
+
+
+
 
 /***********************/
 /**    COMPONENTS     **/
