@@ -33,8 +33,11 @@ module.exports = {
   'deleteBadgesGroups': {
     get: badgesGroups.destroy
   },
+  'syncBadgesGroup': {
+    get: badgesGroups.syncWithOB
+  },
   'updateBadgesGroup': {
-    get: badgesGroups.update
+    put: badgesGroups.updateBadges
   },
   'getPortfolioDocument': {
     get: portfolioDocuments.list

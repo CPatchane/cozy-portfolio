@@ -49,8 +49,8 @@ module.exports.destroy = function(req, res, next){
 };
 
 
-// We define another route that will handle badges group update
-module.exports.update = function(req, res, next) {
+// We define another route that will handle badges group syncing with openbadge backpack
+module.exports.syncWithOB = function(req, res, next) {
   //get all badges from OpenBadges thanks to the userId
   var userId = 0;
   var groups = [];
@@ -135,3 +135,38 @@ module.exports.update = function(req, res, next) {
   }
   
 };
+
+
+//function to update badges visibilities
+module.exports.updateBadges = function(req, res, next) {
+  //get data from the application
+  var badgesSent = req.body;
+
+  //get all badges groups from database
+  badgesGroup.all(function(err, badgesGroups) {
+    if(err !== null) {
+      res.status(500).send("Error badges group to update");
+    }
+    else {
+      var badges = [];
+      if(badgesGroups.length == 0) res.status(200).send("No badges in the database");
+      //we create an updated array of badges for each group
+      badgesGroups.forEach(function(group, index, array){
+        badges = group.badges;
+        badges.forEach(function(badge, index, array){
+           badge.visible = badgesSent[badge.name];
+        });
+        //and we update it each time, if no error we continue
+        group.updateAttributes({'badges':badges}, function(err) {
+          if(err !== null) {
+            res.status(500).send("ERROR");
+          }else{
+            if(index == (badgesGroups.length-1)){
+              res.status(200).send("All badges updated");
+            }
+          }
+        });
+      });
+    }
+  });
+}

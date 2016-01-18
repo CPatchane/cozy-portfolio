@@ -70,7 +70,7 @@ script(type="text/javascript").
     groups.forEach(function(group, index, array){
       badges = group.badges;
       badges.forEach(function(badge, index, array){
-        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, index); 
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, index); 
       });
     });
   }
@@ -80,25 +80,25 @@ script(type="text/javascript").
   xmlHttpDestroy.send( null );
   console.log(xmlHttpDestroy.responseText);
   
-  var xmlHttpUpdate = new XMLHttpRequest();
-  xmlHttpUpdate.open( "GET", "updateBadgesGroup", false ); // false for synchronous request
-  xmlHttpUpdate.send( null );
+  var xmlHttpSync = new XMLHttpRequest();
+  xmlHttpSync.open( "GET", "syncBadgesGroup", false ); // false for synchronous request
+  xmlHttpSync.send( null );
   
-  var xmlHttpInfos = new XMLHttpRequest();
-  xmlHttpInfos.open( "GET", "getBadgesGroup", false ); // false for synchronous request
-  xmlHttpInfos.send( null );
-  data = JSON.parse(xmlHttpInfos.responseText);
-  console.log(data);*/
+  init()*/
     
-  //funciton to build badge on page
-  function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, index){
+  //function to build badge on page
+  function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
+    //id for the badge visibility input
     var badgeId = "badge"+index;
+    //get visibility parameter
+    var checked = visibility ? "checked" : "";
+    //badge html building
     var container = 
         '<div class="badgeBlock col-md-6">' +
           '<div class="badgeContent col-md-12">' +
             '<img class="badgeImage" src="' + imageUrl + '"/>'+
             '<div class="badgeDetails">' +
-              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox badgeVisibility" type="checkbox" name="' + badgeId + '" />' +
+              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox badgeVisibility" type="checkbox" name="' + badgeId + '" '+ checked +' />' +
               '<label for="' + badgeId + '"></label>' +
               '<p class="badgeIssuer"> <span class="badgeName">' + badgeName + '</span>' +
                 ', délivré par <a href="' + issuerUrl + '">' + issuerName + '</a>, le ' + issueDate + '' +
@@ -117,13 +117,17 @@ script(type="text/javascript").
   function submitChanges(){
     
     
+    
     //submit badges visibilities
     var badgesInputs = document.getElementsByClassName("badgeVisibility");
-    var badgeElement = {};
-    var badgesToSubmit = [];
+    var badgesToSubmit = {};
     for(var i=0; i<badgesInputs.length; i++){
-      badgeElement = {"name":badgesInputs[i].getAttribute("badge"), "visibility":badgesInputs[i].checked};
-      badgesToSubmit.push(badgeElement);
+      badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
     }
-    console.log(badgesToSubmit);
+    var xmlHttpUpdate = new XMLHttpRequest();
+    xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
+    xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
+    xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
+    console.log(xmlHttpUpdate.responseText);
+    
   }
