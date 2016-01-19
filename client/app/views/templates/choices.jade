@@ -31,14 +31,19 @@ div.container
       h1.col-md-12 Mes choix
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
+      div.docsContainer.col-md.12
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Images
+      div.docsContainer.col-md.12
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Vidéos
+      div.docsContainer.col-md.12
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Audios
+      div.docsContainer.col-md.12
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Documents
+      div.docsContainer.col-md.12
     div.row.tab#badgesTab
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Mes badges
       div.docsContainer.col-md.12
@@ -46,6 +51,7 @@ div.container
       button.btn.btn-primary#syncOBbutton(onclick="syncObenBadgesBackPack()") Récupérer de mon OpenBadges  
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
+      div.docsContainer.col-md.12
     div.row#submitPart
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(type="button", onclick="submitChanges()") Valider les changements

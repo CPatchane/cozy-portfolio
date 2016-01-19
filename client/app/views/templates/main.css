@@ -228,18 +228,24 @@ body{
   padding-bottom: 10px;
   border-radius: 8px 8px 3px 3px;
   background-color: #2c3e50;
-  height: 65px;
+  max-height: 65px;
   margin-top:-8px;
   overflow: hidden;
+  transition:all 0.3s ease;
 }
 
 .choicesContainer .tab.choiceCategory{
-  height:auto;
+  max-height:500px!important;
+  margin-top:-8px!important;
+  overflow: scroll;
   box-shadow: 0px 0px 15px black;
 }
 
 .choicesContainer .tab:hover{
   box-shadow: 0px 0px 15px black;
+  max-height:100px;
+  margin-top:-43px;
+  transition:all 0.3s ease;
 }
 
 .choicesContainer #submitPart{
@@ -258,6 +264,7 @@ body{
 
 .choicesContainer .docsContainer{
   padding:5px;
+  min-height: 100px;
 }
 
 .choicesContainer .badgeBlock{
