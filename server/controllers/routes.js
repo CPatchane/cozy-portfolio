@@ -30,9 +30,9 @@ module.exports = {
   'getBadgesGroup': {
     get: badgesGroups.list
   },
-  'deleteBadgesGroups': {
+  /*'deleteBadgesGroups': {
     get: badgesGroups.destroy
-  },
+  },*/
   'syncBadgesGroup': {
     get: badgesGroups.syncWithOB
   },

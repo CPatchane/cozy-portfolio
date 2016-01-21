@@ -48,7 +48,7 @@ div.container
       a.tabTitle.col-md-12(onclick="chooseCategory(this);") Mes badges
       div.docsContainer.col-md.12
         //- badges will be built here 
-      button.btn.btn-primary#syncOBbutton(onclick="syncObenBadgesBackPack()") Récupérer de mon OpenBadges  
+      button.btn.btn-primary#syncOBbutton(onclick="syncObenBadgesBackPack()") Récupérer de mon BackPack (OpenBadges)
     div.row.tab
       a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
       div.docsContainer.col-md.12
@@ -130,22 +130,15 @@ script(type="text/javascript").
   
   function syncObenBadgesBackPack(){
     if(confirm("Attention : les paramètres de visibilité de vos badges seront désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
-      var xmlHttpDestroy = new XMLHttpRequest();
-      xmlHttpDestroy.open( "GET", "deleteBadgesGroups", true ); // true for asynchronous request
-      xmlHttpDestroy.onreadystatechange = function(){
-          if (xmlHttpDestroy.readyState == 4 && xmlHttpDestroy.status == 200) {
-            var xmlHttpSync = new XMLHttpRequest();
-            xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
-            xmlHttpSync.onreadystatechange = function(){
-              if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
-                document.getElementById("badgesTab").childNodes[1].innerHTML = "";
-                init();
-              }
-            }
-            xmlHttpSync.send();
+        var xmlHttpSync = new XMLHttpRequest();
+        xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
+        xmlHttpSync.onreadystatechange = function(){
+          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
+            document.getElementById("badgesTab").childNodes[1].innerHTML = "";
+            init();
           }
-      }
-      xmlHttpDestroy.send();
+        }
+        xmlHttpSync.send();
     }
   }
   
