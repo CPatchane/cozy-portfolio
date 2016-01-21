@@ -10,7 +10,7 @@ var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
 	"description" : String,
 	"creationDate" : String,
 	"source" : String,
-	"idSource" : Number,
+	"idSource" : Number, //id in source database, DoYouBuzz item id for example
 	"type" : String
 });
 

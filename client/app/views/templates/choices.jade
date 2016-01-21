@@ -21,7 +21,7 @@ div.container
             li
               a(href='#') Mon profil
             li
-              a(href='#portfolio') Mon Portfolio
+              a(href='#portfolio') Vue de mon Portfolio
             li.active
               a(href='#choices') Mes choix
             li
@@ -55,6 +55,7 @@ div.container
     div.row#submitPart
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(type="button", onclick="submitChanges()") Valider les changements
+        button.btn.btn-warning#syncDYBDocumentsButton(type="button", onclick="syncDYBDocuments()") Synchroniser mes documents DoYouBuzz
         div.alert.alert-success#savedMessage(hidden="true")
         div.alert.alert-danger#ErrorMessage(hidden="true")
       
@@ -82,7 +83,7 @@ script(type="text/javascript").
     });
   }
     
-  //function to build badge on page
+  //function to build each badge on page
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
     //id for the badge visibility input
     var badgeId = "badge_"+index;
@@ -111,9 +112,6 @@ script(type="text/javascript").
   
   
   function submitChanges(){
-    
-    
-    
     //submit badges visibilities
     var badgesInputs = document.getElementsByClassName("badgeVisibility");
     var badgesToSubmit = {};
@@ -153,4 +151,12 @@ script(type="text/javascript").
       categoriesDIV[i].className = "tab";
     }
     element.parentNode.className = "tab choiceCategory";
+  }
+  
+  function syncDYBDocuments(){
+    var xmlHttpSyncDYB = new XMLHttpRequest();
+    xmlHttpSyncDYB.open( "GET", "syncDYBDocuments", false ); // false for synchronous request
+    xmlHttpSyncDYB.send();
+    var data = JSON.parse(xmlHttpSyncDYB.responseText);
+    console.log(data);
   }

@@ -50,7 +50,9 @@ module.exports = {
   },
   'updatePortfolioDocument/:id': {
     put: portfolioDocuments.update
+  },
+  'syncDYBDocuments': {
+    get : portfolioDocuments.syncDYB
   }
-  
 };
 
