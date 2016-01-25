@@ -21,14 +21,14 @@ module.exports.add = function(req, res, next) {
       res.status(500).status("Erreur serveur pour l'ajout du document");
     }
     else {
-      res.status(200).send("Document correctement ajouté.")
+      res.status(200).send("Document ajouté avec succès.")
     }
   });
 };
 
 // We define another route that will handle document deletion
 module.exports.delete = function(req, res, next) {
-  portfolioDocument.find(req.body.id, function(err, portfolioDocument) {
+  portfolioDocument.find(req.params.id, function(err, portfolioDocument) {
     if(err !== null) {
       next(err);
     }

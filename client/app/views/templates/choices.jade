@@ -34,24 +34,9 @@ div.container
       div.row.tab
         a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
         div.docsContainer.col-md-12
-      div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Images
-        div.docsContainer.col-md-12
-      div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Vidéos
-        div.docsContainer.col-md-12
-      div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Audios
-        div.docsContainer.col-md-12
-      div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
-        div.docsContainer.col-md-12
-      div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Autres
-        div.docsContainer.col-md-12
     div.row#submitPart
       div.col-md-12.submitButton.text-center
-        button.btn.btn-primary#submitChanges(onclick="submitChanges()") Valider les changements
+        button.btn.btn-primary#submitChanges(onclick="submitChanges()") Valider mes choix
         button.btn.btn-warning#syncDYBDocumentsButton(type="button", onclick="syncDYBDocuments()") Synchroniser mes documents DoYouBuzz
         div.alert.alert-success#savedMessage(hidden="true")
         div.alert.alert-danger#errorMessage(hidden="true")
@@ -88,8 +73,14 @@ div.container
         
       
 script(type="text/javascript").
+  /** Global variables **/
   var groups = {};
   var documents = [];
+  //we store in this next object all categories already built (or reserved) to avoid duplicates
+  var categoriesAlreadyBuilt = {"Aperçu" : true, "Badges" : true}; //ex categoriesAlreadyBuilt["Vidéos"] = true;
+  var documentsAlreadyBuilt = {};
+  
+  //initialisation
   init(true,false,false); //first running so this is not an update
   
   
@@ -153,10 +144,10 @@ script(type="text/javascript").
       document.getElementById("badgesTabContent").innerHTML = "";
     }else{
       var badgesTabHTML = '<div class="row tab" id="badgesTab">' +
-                          '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">Badges</a>' +
-                          '<div class="docsContainer col-md-12" id="badgesTabContent"></div>' +
-                          '<button class="btn btn-primary" id="syncOBbutton" onclick="syncObenBadgesBackPack()">Récupérer de mon BackPack (OpenBadges)</button>' +
-                      '</div>';
+                            '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">Badges</a>' +
+                            '<div class="docsContainer col-md-12" id="badgesTabContent"></div>' +
+                            '<button class="btn btn-primary" id="syncOBbutton" onclick="syncObenBadgesBackPack()">Récupérer de mon BackPack (OpenBadges)</button>' +
+                        '</div>';
       document.getElementById("TabsContainer").innerHTML += badgesTabHTML;
     }
     var badges = {};
@@ -181,7 +172,7 @@ script(type="text/javascript").
           '<div class="badgeContent col-md-12">' +
             '<img class="badgeImage" src="' + imageUrl + '"/>'+
             '<div class="badgeDetails">' +
-              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox badgeVisibility" type="checkbox" name="' + badgeId + '" '+ checked +' />' +
+              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox" type="checkbox" name="' + badgeId + '" '+ checked +' />' +
               '<label for="' + badgeId + '"></label>' +
               '<p class="badgeIssuer"> <span class="badgeName">' + badgeName + '</span>' +
                 ', délivré par <a href="' + issuerUrl + '">' + issuerName + '</a>, le ' + issueDate + '' +
@@ -226,18 +217,19 @@ script(type="text/javascript").
     var creationDate = document.getElementById("creationDate");
     var description = document.getElementById("description");
     var errorMessage = document.getElementById("errorMessageAddDocument");
-    var dateReg = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/
+    var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/;
+    var cssIDRegex = /^[A-Za-z]+[A-Za-zÀ-ÿ0-9_\-\:\. ]*$/; //we will use the category as css id after, so we valid it now (we will replace spaces after)
     //check all mandatory inputs
     if(title.value == ""){
       errorMessage.innerHTML = "Veuillez ajouter un titre.";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(category.value == ""){
-      errorMessage.innerHTML = "Veuillez assigner une catégorie.";
+    }else if(category.value == "" || !category.value.match(cssIDRegex)){
+      errorMessage.innerHTML = 'Veuillez assigner une catégorie correcte. (Doit commencé par une lettre et peut contenir uniquement : des lettres, des chiffres, des espaces, "-", "_", ":" et ".")';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(creationDate.value == "" || !creationDate.value.match(dateReg)){
-      errorMessage.innerHTML = "La date est manquante ou incorrecte (format : JJ/MM/AAAA).";
+    }else if(creationDate.value == "" || !creationDate.value.match(dateRegex)){
+      errorMessage.innerHTML = "Veuillez ajouter une date correcte (format : JJ/MM/AAAA).";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }else if(description.value == ""){
@@ -302,6 +294,52 @@ script(type="text/javascript").
     console.log(documents);
     
     if(documents.length == 0) return;
+    var documentID = "";
+    documents.forEach(function(myDocument, index, array){
+      if(!categoriesAlreadyBuilt[myDocument.category]){ //new category
+        categoriesAlreadyBuilt[myDocument.category] = true;
+        var HTMLToBuild = '<div class="row tab">' +
+                            '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">' + myDocument.category + '</a>' +
+                            '<div class="docsContainer col-md-12" id="'+ myDocument.category.replace(" ", "_") +'"></div>' +
+                          '</div>';
+        document.getElementById("TabsContainer").innerHTML += HTMLToBuild;
+      }
+      if(!documentsAlreadyBuilt[myDocument.id]){ //new document
+        documentsAlreadyBuilt[myDocument.id] = true;
+        buildDocument(myDocument);
+      }
+    });
+  }
+  
+  //function to build a document inside its correct container
+  function buildDocument(myDocument){
+    var htmlContent = '<div class="documentBlock col-md-12">' +
+                        '<div class="documentContent col-md-12">' +
+                          '<input id="Visibility'+ myDocument.id +'" class="visibilityCheckBox" type="checkbox"/>' +
+                          '<label for="Visibility' + myDocument.id + '"></label>' +
+                          '<div class="removeButton" documentID="'+ myDocument.id +'" onclick="removeDocument(this)"></div>' +
+                          '<p class="documentTitle">'+ myDocument.title +'</p>' + 
+                          '<p class="documentDescription">' + myDocument.description + '</p>' +
+                          '<a href="'+ myDocument.url +'"> Voir plus (lien externe)</a>' +
+                          '<a href="'+ myDocument.relatedWebsite +'"> Site web associée</a>' +
+                          '<p class="documentDate">Réalisé le : '+ myDocument.creationDate +'</p>' +
+                        '</div>' +
+                      '</div>';
+    document.getElementById(myDocument.category.replace(" ", "_")).innerHTML += htmlContent;
+  }
+  
+  function removeDocument(element){
+    var documentIDtoRemove = element.getAttribute("documentID");
+    
+    var xmlHttpRemoveDocument = new XMLHttpRequest();
+    xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
+    xmlHttpRemoveDocument.send( null );
+    
+    var childToRemove = element.parentNode.parentNode;
+    childToRemove.parentNode.removeChild(childToRemove);
+    documentsAlreadyBuilt[documentIDtoRemove] = false;
+    
+    init(false, true, false);
   }
   
   
