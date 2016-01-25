@@ -3,15 +3,14 @@
 var cozydb = require('cozydb');
 
 var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
-	"id_document" : Number,
- 	"title" : String,
-	"url" : String,
-	"relatedWebsite" : String,
-	"description" : String,
-	"creationDate" : String,
-	"source" : String,
-	"idSource" : Number, //id in source database, DoYouBuzz item id for example
-	"category" : String
+ 	"title" : {type: String, "default": ""},
+	"url" : {type: String, "default": ""},
+	"relatedWebsite" : {type: String, "default": ""},
+	"description" : {type: String, "default": ""},
+	"creationDate" : {type: String, "default": ""},
+	"source" : {type: String, "default": ""},
+	"idSource" : {type: Number, "default": 0}, //id in source database, DoYouBuzz item id for example
+	"category" : {type: String, "default": ""},
 });
 
 portfolioDocumentModel.all = function(callback) {

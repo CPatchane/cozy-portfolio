@@ -68,7 +68,7 @@ div.container
             input#url(type="text", placeholder="Url de votre document" name="url")
           div.row
             label Site web associé :
-            input#relatedWebste(type="text", placeholder="www.mywebsite.fr" name="relatedWebste")
+            input#relatedWebsite(type="text", placeholder="www.mywebsite.fr" name="relatedWebsite")
           div.row
             label Catégorie<span class="mandatoryStar">*</span> :
             input#category(type="text", placeholder="Sa catégorie" name="category")
@@ -79,8 +79,9 @@ div.container
             label Description<span class="mandatoryStar">*</span> :
             textarea#description(style="resize:none;width:60%;height:100px;", placeholder="Description du document..." name="description")
           div.row.text-center
-            button.btn.btn-primary#addDocumentButton Ajouter ce document
+            button.btn.btn-primary#addDocumentButton(onclick="addDocument()") Ajouter ce document
             button.btn.btn-secondary#cancelButton(onclick="showAddDocumentForm(false)") Cacher
+          div.row.alert.alert-danger#ErrorMessageAddDocument(style="margin-top:5px;", hidden="true")
       div.documentBlock.col-md-3#placeHolderAddDocumentBlock(onclick="showAddDocumentForm(true)")
         div.documentContent.col-md-12#placeHolderAddDocumentContent
           button#addButton +
@@ -89,19 +90,19 @@ div.container
 script(type="text/javascript").
   var groups = {};
   var documents = [];
-  init(false,false); //first running so this is not an update
+  init(true,false,false); //first running so this is not an update
   
   /***********************/
   /** General functions **/
   /***********************/
   
   //functon run on page loading
-  function init(isDocumentsUpdate, isBadgeUpdate){
+  function init(isFirstRunning, isDocumentsUpdate, isBadgeUpdate){
     //get all documents from database and build them on the page
-    getAndBuildDocuments(isDocumentsUpdate);
+    if(isFirstRunning || isDocumentsUpdate)getAndBuildDocuments(isDocumentsUpdate);
     
     //get all badges from database and build them on page
-    getAndBuildBadges(isBadgeUpdate);
+    if(isFirstRunning || isBadgeUpdate)getAndBuildBadges(isBadgeUpdate);
   }
   
   //functon for choising category behavior
@@ -130,18 +131,6 @@ script(type="text/javascript").
     xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
-  }
-  
-  function showAddDocumentForm(showFormAction){
-    if(showFormAction){
-      document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
-      document.getElementById("addDocumentBlock").removeAttribute("style");
-      window.scrollTo(0,document.body.scrollHeight);
-    }else{
-      document.getElementById("addDocumentBlock").setAttribute("style", "display:none");
-      document.getElementById("placeHolderAddDocumentBlock").removeAttribute("style");
-      window.scrollTo(0);
-    }
   }
   
   /**********************/
@@ -213,7 +202,7 @@ script(type="text/javascript").
         xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
         xmlHttpSync.onreadystatechange = function(){
           if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
-            init(false, true); //badges updates but not document update
+            init(false, false, true); //badges updates but not document update
           }
         }
         xmlHttpSync.send();
@@ -227,7 +216,72 @@ script(type="text/javascript").
   
   //add a new document from the form
   function addDocument(){
+    document.getElementById("ErrorMessageAddDocument").setAttribute("hidden", true);
+    var title = document.getElementById("title");
+    var url = document.getElementById("url");
+    var relatedWebsite = document.getElementById("relatedWebsite");
+    var category = document.getElementById("category");
+    var creationDate = document.getElementById("creationDate");
+    var description = document.getElementById("description");
+    var errorMessage = document.getElementById("ErrorMessageAddDocument");
+    var dateReg = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/
+    //check all mandatory inputs
+    if(title.value == ""){
+      errorMessage.innerHTML = "Veuillez ajouter un titre.";
+      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      return;
+    }else if(category.value == ""){
+      errorMessage.innerHTML = "Veuillez assigner une catégorie.";
+      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      return;
+    }else if(creationDate.value == "" || !creationDate.value.match(dateReg)){
+      errorMessage.innerHTML = "La date est manquante ou incorrecte (format : JJ/MM/AAAA).";
+      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      return;
+    }else if(description.value == ""){
+      errorMessage.innerHTML = "Veuillez ajouter une description.";
+      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      return;
+    }
+    var dataToUpdate = {
+      "title" : title.value,
+      "url" : url.value,
+      "relatedWebsite" : relatedWebsite.value,
+      "category" : category.value,
+      "creationDate" : creationDate.value,
+      "description" : description.value
+    };
+    //sent to server to be added
+    var xmlHttpAddDocument = new XMLHttpRequest();
+    xmlHttpAddDocument.open( "POST", "addPortfolioDocument", true );
+    xmlHttpAddDocument.setRequestHeader("Content-type", "application/json");
+    xmlHttpAddDocument.onreadystatechange = function(){
+          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 200) {
+            //reset the form
+            title.value = "";
+            url.value = "";
+            relatedWebsite.value = "";
+            category.value = "";
+            creationDate.value = "";
+            description.value = "";
+            showAddDocumentForm(false);
+            init(false, true, false);//documents update
+          }
+        }
+    xmlHttpAddDocument.send(JSON.stringify(dataToUpdate));
+  }
+  
     
+  function showAddDocumentForm(showFormAction){
+    if(showFormAction){
+      document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
+      document.getElementById("addDocumentBlock").removeAttribute("style");
+      window.scrollTo(0,document.body.scrollHeight);
+    }else{
+      document.getElementById("addDocumentBlock").setAttribute("style", "display:none");
+      document.getElementById("placeHolderAddDocumentBlock").removeAttribute("style");
+      window.scrollTo(0);
+    }
   }
   
   //get all documents from database and build them on the page

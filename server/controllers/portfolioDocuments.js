@@ -16,14 +16,16 @@ module.exports.list = function(req, res, next) {
 
 // We define a new route that will handle document creation
 module.exports.add = function(req, res, next) {
-  portfolioDocument.create(req.body, function(err, portfolioDocument) {
+  console.log(req.body);
+  res.status(200).send()
+  /*portfolioDocument.create(req.body, function(err, portfolioDocument) {
     if(err !== null) {
       next(err);
     }
     else {
-      res.redirect('back');
+      res.status(200).send("Document correctement ajouté.")
     }
-  });
+  });*/
 };
 
 // We define another route that will handle document deletion
