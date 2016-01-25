@@ -27,53 +27,111 @@ div.container
             li
               a(href='#accountSettings') Paramètres
   div.col-md-10.choicesContainer#choicesContainer
-    div.row.text-center
-      h1.col-md-12 Mes choix
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
-      div.docsContainer.col-md.12
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Images
-      div.docsContainer.col-md.12
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Vidéos
-      div.docsContainer.col-md.12
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Audios
-      div.docsContainer.col-md.12
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Documents
-      div.docsContainer.col-md.12
-    div.row.tab#badgesTab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this);") Mes badges
-      div.docsContainer.col-md.12
-        //- badges will be built here 
-      button.btn.btn-primary#syncOBbutton(onclick="syncObenBadgesBackPack()") Récupérer de mon BackPack (OpenBadges)
-    div.row.tab
-      a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
-      div.docsContainer.col-md.12
+    div.row#TabsContainer
+      //- This div will contain all category tabs dynamically
+      div.row.text-center
+        h1.col-md-12 Mes choix
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
+        div.docsContainer.col-md-12
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Images
+        div.docsContainer.col-md-12
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Vidéos
+        div.docsContainer.col-md-12
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Audios
+        div.docsContainer.col-md-12
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this)") Projets
+        div.docsContainer.col-md-12
+      div.row.tab
+        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Autres
+        div.docsContainer.col-md-12
     div.row#submitPart
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(type="button", onclick="submitChanges()") Valider les changements
         button.btn.btn-warning#syncDYBDocumentsButton(type="button", onclick="syncDYBDocuments()") Synchroniser mes documents DoYouBuzz
         div.alert.alert-success#savedMessage(hidden="true")
         div.alert.alert-danger#ErrorMessage(hidden="true")
-      
+    div.row#addDocumentPart
+      div.row.text-left
+        h3.col-md-12 Ajouter un document
+      div.documentBlock.col-md-6#addDocumentBlock
+        div.documentContent.col-md-12#addDocumentContent
+        
       
 script(type="text/javascript").
   var groups = {};
-  init();
+  var documents = [];
+  init(false,false); //first running so this is not an update
   
-  function init(){
+  /***********************/
+  /** General functions **/
+  /***********************/
+  
+  //functon run on page loading
+  function init(isDocumentsUpdate, isBadgeUpdate){
+    //get all documents from database and build them on the page
+    getAndBuildDocuments(isDocumentsUpdate);
     
+    //get all badges from database and build them on page
+    getAndBuildBadges(isBadgeUpdate);
+  }
+  
+  //functon for choising category behavior
+  function chooseCategory(element){
+    if(element.parentNode.className == "tab choiceCategory"){
+      element.parentNode.className = "tab";
+      return;
+    }
+    var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
+    for(var i in categoriesDIV){
+      categoriesDIV[i].className = "tab";
+    }
+    element.parentNode.className = "tab choiceCategory";
+  }
+  
+  //function to submit user changes
+  function submitChanges(){
+    
+    //submit badges visibilities
+    var badgesInputs = document.getElementsByClassName("badgeVisibility");
+    var badgesToSubmit = {};
+    for(var i=0; i<badgesInputs.length; i++){
+      badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
+    }
+    var xmlHttpUpdate = new XMLHttpRequest();
+    xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
+    xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
+    xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
+  }
+  
+  /**********************/
+  /** Badges functions **/
+  /**********************/
+  
+  //function to get all badges from database and build them on the html page
+  function getAndBuildBadges(isUpdate){
     //get all badges from database and build them on page
     var xmlHttpGroups = new XMLHttpRequest();
     xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpGroups.send( null );
     groups = JSON.parse(xmlHttpGroups.responseText);
-    console.log(groups);
+    //console.log(groups);
     
-    if(groups.length == 0) return;
+    if(groups.length == 0) return; //if no badges returned, we stop here
+    if(isUpdate){
+      document.getElementById("badgesTabContent").innerHTML = "";
+    }else{
+      var badgesTabHTML = '<div class="row tab" id="badgesTab">' +
+                          '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">Badges</a>' +
+                          '<div class="docsContainer col-md-12" id="badgesTabContent"></div>' +
+                          '<button class="btn btn-primary" id="syncOBbutton" onclick="syncObenBadgesBackPack()">Récupérer de mon BackPack (OpenBadges)</button>' +
+                      '</div>';
+      document.getElementById("TabsContainer").innerHTML += badgesTabHTML;
+    }
     var badges = {};
     groups.forEach(function(group, group_index, array){
       badges = group.badges;
@@ -82,6 +140,7 @@ script(type="text/javascript").
       });
     });
   }
+  
     
   //function to build each badge on page
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
@@ -107,33 +166,18 @@ script(type="text/javascript").
         '</div>';
       
       //add to badges tab
-      document.getElementById("badgesTab").childNodes[1].innerHTML += container;
+      document.getElementById("badgesTabContent").innerHTML += container;
   }
   
   
-  function submitChanges(){
-    //submit badges visibilities
-    var badgesInputs = document.getElementsByClassName("badgeVisibility");
-    var badgesToSubmit = {};
-    for(var i=0; i<badgesInputs.length; i++){
-      badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
-    }
-    var xmlHttpUpdate = new XMLHttpRequest();
-    xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
-    xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
-    xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
-  }
-  
-  
-  
+  //function to sync badges with OpenBadges BackPack
   function syncObenBadgesBackPack(){
     if(confirm("Attention : les paramètres de visibilité de vos badges seront désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
         var xmlHttpSync = new XMLHttpRequest();
         xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
         xmlHttpSync.onreadystatechange = function(){
           if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
-            document.getElementById("badgesTab").childNodes[1].innerHTML = "";
-            init();
+            init(false, true); //badges updates but not document update
           }
         }
         xmlHttpSync.send();
@@ -141,18 +185,32 @@ script(type="text/javascript").
   }
   
   
-  function chooseCategory(element){
-    if(element.parentNode.className == "tab choiceCategory"){
-      element.parentNode.className = "tab";
-      return;
-    }
-    var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
-    for(var i in categoriesDIV){
-      categoriesDIV[i].className = "tab";
-    }
-    element.parentNode.className = "tab choiceCategory";
+  /*************************/
+  /** Documents functions **/
+  /*************************/
+  
+  //add a new document from the form
+  function addDocument(){
+    
   }
   
+  //get all documents from database and build them on the page
+  function getAndBuildDocuments(isUpdate){
+    var xmlHttpDocuments = new XMLHttpRequest();
+    xmlHttpDocuments.open( "GET", "getPortfolioDocuments", false ); // false for synchronous request
+    xmlHttpDocuments.send( null );
+    documents = JSON.parse(xmlHttpDocuments.responseText);
+    console.log(documents);
+    
+    if(documents.length == 0) return;
+  }
+  
+  
+  /*************************/
+  /** DoYouBuzz functions **/
+  /*************************/
+  
+  //function to sync documents with DoYouBuzz
   function syncDYBDocuments(){
     var xmlHttpSyncDYB = new XMLHttpRequest();
     xmlHttpSyncDYB.open( "GET", "syncDYBDocuments", false ); // false for synchronous request

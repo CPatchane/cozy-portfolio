@@ -11,7 +11,7 @@ var portfolioDocumentModel = cozydb.getModel('portfolioDocument', {
 	"creationDate" : String,
 	"source" : String,
 	"idSource" : Number, //id in source database, DoYouBuzz item id for example
-	"type" : String
+	"category" : String
 });
 
 portfolioDocumentModel.all = function(callback) {

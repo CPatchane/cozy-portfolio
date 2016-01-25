@@ -39,7 +39,7 @@ module.exports = {
   'updateBadgesGroup': {
     put: badgesGroups.updateBadges
   },
-  'getPortfolioDocument': {
+  'getPortfolioDocuments': {
     get: portfolioDocuments.list
   },
   'addPortfolioDocument': {

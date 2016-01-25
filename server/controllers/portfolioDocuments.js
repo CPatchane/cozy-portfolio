@@ -51,7 +51,7 @@ module.exports.delete = function(req, res, next) {
 
 // We define another route that will handle document update
 module.exports.update = function(req, res, next) {
-  portfolioDocument.find(req.params.id, function(err, portfolioDocument) {
+  portfolioDocument.find(req.body.id, function(err, portfolioDocument) {
     if(err !== null) {
       next(err);
     }

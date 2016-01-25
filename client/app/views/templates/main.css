@@ -212,10 +212,14 @@ body{
 }
 
 
-
 /*************************/
 /**    CHOICES VIEW     **/
 /*************************/
+
+.choicesContainer .row{
+  margin-right: 0px;
+  margin-left: 0px;
+}
 
 .choicesContainer h1{
   margin-bottom:30px;
@@ -227,7 +231,7 @@ body{
   position: relative;
   padding-bottom: 10px;
   border-radius: 8px 8px 3px 3px;
-  background-color: #2c3e50;
+  background-color: rgb(44,62,80);
   max-height: 65px;
   margin-top:-8px;
   overflow: hidden;
@@ -239,6 +243,7 @@ body{
   margin-top:-8px!important;
   overflow: scroll;
   box-shadow: 0px 0px 15px black;
+  background-color: rgb(64,82,100);
 }
 
 .choicesContainer .tab:hover{
@@ -351,7 +356,32 @@ body{
 }
 
 
+.choicesContainer .documentBlock{
+  padding:5px;
+  margin-bottom:5px;
+}
 
+.choicesContainer .documentBlock .documentContent{
+  box-shadow: 0px 0px 8px #999;
+  padding:2px;
+  background-color: rgba(255,255,255,0.9);
+  min-height:124px;
+}
+
+
+/* Add document part */
+#addDocumentPart{
+  margin-bottom: 50px;
+}
+
+#addDocumentBlock{
+  border:2px #888 dashed;
+  border-radius:5px;
+}
+
+#addDocumentContent{
+  box-shadow: 0px 0px 5px #999;
+}
 
 /***********************/
 /**    COMPONENTS     **/
