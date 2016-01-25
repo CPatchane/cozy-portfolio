@@ -80,7 +80,7 @@ div.container
             textarea#description(style="resize:none;width:60%;height:100px;", placeholder="Description du document..." name="description")
           div.row.text-center
             button.btn.btn-primary#addDocumentButton Ajouter ce document
-            button.btn.btn-secondary#cancelButton(onclick="showAddDocumentForm(false)") Annuler
+            button.btn.btn-secondary#cancelButton(onclick="showAddDocumentForm(false)") Cacher
       div.documentBlock.col-md-3#placeHolderAddDocumentBlock(onclick="showAddDocumentForm(true)")
         div.documentContent.col-md-12#placeHolderAddDocumentContent
           button#addButton +
@@ -140,6 +140,7 @@ script(type="text/javascript").
     }else{
       document.getElementById("addDocumentBlock").setAttribute("style", "display:none");
       document.getElementById("placeHolderAddDocumentBlock").removeAttribute("style");
+      window.scrollTo(0);
     }
   }
   
