@@ -54,7 +54,7 @@ div.container
         button.btn.btn-primary#submitChanges(onclick="submitChanges()") Valider les changements
         button.btn.btn-warning#syncDYBDocumentsButton(type="button", onclick="syncDYBDocuments()") Synchroniser mes documents DoYouBuzz
         div.alert.alert-success#savedMessage(hidden="true")
-        div.alert.alert-danger#ErrorMessage(hidden="true")
+        div.alert.alert-danger#errorMessage(hidden="true")
     div.row#addDocumentPart
       div.row.text-left
         h3.col-md-12 Ajouter un document
@@ -81,7 +81,7 @@ div.container
           div.row.text-center
             button.btn.btn-primary#addDocumentButton(onclick="addDocument()") Ajouter ce document
             button.btn.btn-secondary#cancelButton(onclick="showAddDocumentForm(false)") Cacher
-          div.row.alert.alert-danger#ErrorMessageAddDocument(style="margin-top:5px;", hidden="true")
+          div.row.alert.alert-danger#errorMessageAddDocument(style="margin-top:5px;", hidden="true")
       div.documentBlock.col-md-3#placeHolderAddDocumentBlock(onclick="showAddDocumentForm(true)")
         div.documentContent.col-md-12#placeHolderAddDocumentContent
           button#addButton +
@@ -91,6 +91,7 @@ script(type="text/javascript").
   var groups = {};
   var documents = [];
   init(true,false,false); //first running so this is not an update
+  
   
   /***********************/
   /** General functions **/
@@ -132,6 +133,7 @@ script(type="text/javascript").
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
   }
+  
   
   /**********************/
   /** Badges functions **/
@@ -216,31 +218,31 @@ script(type="text/javascript").
   
   //add a new document from the form
   function addDocument(){
-    document.getElementById("ErrorMessageAddDocument").setAttribute("hidden", true);
+    document.getElementById("errorMessageAddDocument").setAttribute("hidden", true);
     var title = document.getElementById("title");
     var url = document.getElementById("url");
     var relatedWebsite = document.getElementById("relatedWebsite");
     var category = document.getElementById("category");
     var creationDate = document.getElementById("creationDate");
     var description = document.getElementById("description");
-    var errorMessage = document.getElementById("ErrorMessageAddDocument");
+    var errorMessage = document.getElementById("errorMessageAddDocument");
     var dateReg = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/
     //check all mandatory inputs
     if(title.value == ""){
       errorMessage.innerHTML = "Veuillez ajouter un titre.";
-      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }else if(category.value == ""){
       errorMessage.innerHTML = "Veuillez assigner une catégorie.";
-      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }else if(creationDate.value == "" || !creationDate.value.match(dateReg)){
       errorMessage.innerHTML = "La date est manquante ou incorrecte (format : JJ/MM/AAAA).";
-      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }else if(description.value == ""){
       errorMessage.innerHTML = "Veuillez ajouter une description.";
-      document.getElementById("ErrorMessageAddDocument").removeAttribute("hidden");
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }
     var dataToUpdate = {
@@ -252,6 +254,8 @@ script(type="text/javascript").
       "description" : description.value
     };
     //sent to server to be added
+    document.getElementById("savedMessage").setAttribute("hidden", true);
+    document.getElementById("errorMessage").setAttribute("hidden", true);
     var xmlHttpAddDocument = new XMLHttpRequest();
     xmlHttpAddDocument.open( "POST", "addPortfolioDocument", true );
     xmlHttpAddDocument.setRequestHeader("Content-type", "application/json");
@@ -266,12 +270,17 @@ script(type="text/javascript").
             description.value = "";
             showAddDocumentForm(false);
             init(false, true, false);//documents update
+            document.getElementById("savedMessage").innerHTML = xmlHttpAddDocument.responseText;
+            document.getElementById("savedMessage").removeAttribute("hidden");
+          }
+          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 500) {
+            document.getElementById("errorMessage").innerHTML = xmlHttpAddDocument.responseText;
+            document.getElementById("errorMessage").removeAttribute("hidden");
           }
         }
     xmlHttpAddDocument.send(JSON.stringify(dataToUpdate));
   }
   
-    
   function showAddDocumentForm(showFormAction){
     if(showFormAction){
       document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
