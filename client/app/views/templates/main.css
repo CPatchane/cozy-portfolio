@@ -534,11 +534,11 @@ div.removeButton:hover{
 div.removeButton::before, div.removeButton::after {
     content: '';
     position: absolute;
-    height: 2px;
+    height: 3px;
     width: 100%;
     top: 50%;
     left: 0;
-    margin-top:-1px;
+    margin-top:-2px;
     background: #bbb;;
   }
   
