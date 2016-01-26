@@ -59,7 +59,7 @@ div.container
             input#category(type="text", placeholder="Sa catégorie" name="category")
           div.row
             label Date de réalisation<span class="mandatoryStar">*</span> :
-            input#creationDate(type="text", placeholder="jj/mm/aaaa" name="creationDate")
+            input#creationDate(type="text", placeholder="jj/mm/aaaa" name="creationDate" maxlength="10")
           div.row
             label Description<span class="mandatoryStar">*</span> :
             textarea#description(style="resize:none;width:60%;height:100px;", placeholder="Description du document..." name="description")
@@ -79,8 +79,9 @@ script(type="text/javascript").
   //we store in this next object all categories already built (or reserved) to avoid duplicates
   var categoriesAlreadyBuilt = {"Aperçu" : true, "Badges" : true}; //ex categoriesAlreadyBuilt["Vidéos"] = true;
   var documentsAlreadyBuilt = {};
+  var isADocumentInEditingMode = false;
   
-  //initialisation
+  /** initialisation **/
   init(true,false,false); //first running so this is not an update
   
   
@@ -219,6 +220,7 @@ script(type="text/javascript").
     var errorMessage = document.getElementById("errorMessageAddDocument");
     var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/;
     var cssIDRegex = /^[A-Za-z]+[A-Za-zÀ-ÿ0-9_\-\:\. ]*$/; //we will use the category as css id after, so we valid it now (we will replace spaces after)
+    var urlRegex = /(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
     //check all mandatory inputs
     if(title.value == ""){
       errorMessage.innerHTML = "Veuillez ajouter un titre.";
@@ -240,8 +242,17 @@ script(type="text/javascript").
       errorMessage.innerHTML = "Veuillez ajouter une description.";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
+    }else if(url.value != "" && !url.value.match(urlRegex)){
+      errorMessage.innerHTML = 'L\'adresse URL du document est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
+      return;
+    }else if(relatedWebsite.value != "" && !relatedWebsite.value.match(urlRegex)){
+      errorMessage.innerHTML = 'L\'adresse URL du site web associé est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
+      return;
     }
-    var dataToUpdate = {
+      
+    var dataToAdd = {
       "title" : title.value,
       "url" : url.value,
       "relatedWebsite" : relatedWebsite.value,
@@ -274,7 +285,7 @@ script(type="text/javascript").
             document.getElementById("errorMessage").removeAttribute("hidden");
           }
         }
-    xmlHttpAddDocument.send(JSON.stringify(dataToUpdate));
+    xmlHttpAddDocument.send(JSON.stringify(dataToAdd));
   }
   
   function showAddDocumentForm(showFormAction){
@@ -313,29 +324,40 @@ script(type="text/javascript").
         buildDocument(myDocument);
       }
     });
+    //we put the badges category at the end of all categories
+    if(isUpdate)document.getElementById('TabsContainer').appendChild(document.getElementById('badgesTab'));
   }
   
   //function to build a document inside its correct container
   function buildDocument(myDocument){
+    var documentUrl = myDocument.url != "" ? myDocument.url : "javascript:;"; 
+    var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;";
+    var hiddenUrl = myDocument.url == "" ? 'hidden="true"' : "";
+    var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : "";
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
                           '<input id="Visibility'+ myDocument.id +'" class="visibilityCheckBox" type="checkbox"/>' +
                           '<label for="Visibility' + myDocument.id + '"></label>' +
                           '<div class="removeButton" documentID="'+ myDocument.id +'" onclick="removeDocument(this)"></div>' +
                           '<input id="Edition'+ myDocument.id +'" class="editionCheckBox" type="checkbox"/>' +
-                          '<label for="Edition' + myDocument.id + '"></label>' +
-                          '<p class="documentTitle">'+ myDocument.title +'</p>' + 
-                          '<p class="documentDescription">' + myDocument.description + '</p>' +
-                          '<a href="'+ myDocument.url +'"> Voir plus (lien externe)</a>' +
-                          '<a href="'+ myDocument.relatedWebsite +'"> Site web associé</a>' +
-                          '<p class="documentDate">Réalisé le : '+ myDocument.creationDate +'</p>' +
+                          '<label onclick="editDocument(this)" documentID="'+ myDocument.id +'"></label>' +
+                          '<p class="documentTitle" id="title'+ myDocument.id +'">'+ myDocument.title +'</p>' + 
+                          '<p class="documentDescription" id="description'+ myDocument.id +'">' + myDocument.description + '</p>' +
+                          '<a href="'+ documentUrl +'" id="url'+ myDocument.id +'" target="_blank" '+hiddenUrl+'> Lien du document</br></a>' +
+                          '<p id="editUrlLabel'+ myDocument.id +'" hidden="true" style="margin-bottom:5px;">Url du document :</p>' +
+                          '<p id="editUrl'+ myDocument.id +'" hidden="true" style="margin-top:5px;">'+ myDocument.url +'</p>' +
+                          '<a href="'+ documentRelatedWebsite +'" id="relatedWebsite'+ myDocument.id +'" target="_blank" '+hiddenRelatedWebsite+'> Site web associé</a>' +
+                          '<p id="editRelatedWebsiteLabel'+ myDocument.id +'" hidden="true" style="margin-bottom:5px;">Site web associé :</p>' +
+                          '<p id="editRelatedWebsite'+ myDocument.id +'" hidden="true" style="margin-top:5px;">'+ myDocument.relatedWebsite +'</p>' +
+                          '<p class="documentDate">Réalisé le : <span id="date'+ myDocument.id +'" onkeypress="return (this.innerHTML.length < 10)">'+ myDocument.creationDate +'</span></p>' +
+                          '<div class="alert alert-danger" hidden="true" id="alert'+myDocument.id+'"></div>' +
                         '</div>' +
                       '</div>';
     document.getElementById(myDocument.category.replace(" ", "_")).innerHTML += htmlContent;
   }
   
   function removeDocument(element){
-    if(confirm("Voulez-vouz vraiment supprimer ce document?")){
+    if(confirm("Voulez-vouz vraiment supprimer ce document? Cette action est irreversible.")){
       var documentIDtoRemove = element.getAttribute("documentID");
       
       var xmlHttpRemoveDocument = new XMLHttpRequest();
@@ -352,6 +374,118 @@ script(type="text/javascript").
       documentsAlreadyBuilt[documentIDtoRemove] = false;
       
       init(false, true, false);
+    }
+  }
+  
+  function editDocument(labelElement){
+    var documentID = labelElement.getAttribute("documentID");
+    var wasEditingMode = document.getElementById("Edition"+documentID).checked;
+    //if another document is still in editing mode, we can not edit this one until the other document edition is finished
+    if(!wasEditingMode && isADocumentInEditingMode) alert("Un autre document est déjà en cours d'édition. Veuillez le terminer avant d'en éditer un autre. Merci.");
+    //document elements
+    var titleElement = document.getElementById("title"+documentID);
+    var descriptionElement = document.getElementById("description"+documentID);
+    var dateElement = document.getElementById("date"+documentID);
+    var urlLink = document.getElementById("url"+documentID);
+    var relatedWebsiteLink = document.getElementById("relatedWebsite"+documentID);
+    var urlElement = document.getElementById("editUrl"+documentID);
+    var urlElementLabel = document.getElementById("editUrlLabel"+documentID);
+    var relatedWebsiteElement = document.getElementById("editRelatedWebsite"+documentID);
+    var relatedWebsiteElementLabel = document.getElementById("editRelatedWebsiteLabel"+documentID);
+    var alertElement = document.getElementById("alert"+documentID);
+    
+    if(!wasEditingMode && !isADocumentInEditingMode){//we enter in the editing mode only if no other elements are in the editing mode
+      isADocumentInEditingMode = true; // to avoid multiple element editings
+      // we hide link elements and display their equivalent <p>
+      urlLink.setAttribute("hidden", true);
+      relatedWebsiteLink.setAttribute("hidden", true);
+      urlElement.removeAttribute("hidden");
+      relatedWebsiteElement.removeAttribute("hidden");
+      urlElementLabel.removeAttribute("hidden");
+      relatedWebsiteElementLabel.removeAttribute("hidden");
+      
+      //we put all elements on editable mode
+      titleElement.setAttribute("contenteditable", true);
+      descriptionElement.setAttribute("contenteditable", true);
+      dateElement.setAttribute("contenteditable", true);
+      urlElement.setAttribute("contenteditable", true);
+      relatedWebsiteElement.setAttribute("contenteditable", true);
+      
+      document.getElementById("Edition"+documentID).checked = true;
+      
+    }else{ //we leave the editing mode   
+      //check data entered
+      alertElement.setAttribute("hidden", true);
+      var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/;
+      var urlRegex = /(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
+      //We need to replace <br> because that will be here by default in an empty p
+      if(urlElement.innerHTML == "</br>" || urlElement.innerHTML == "<br>")  urlElement.innerHTML = "";
+      if(relatedWebsiteElement.innerHTML == "</br>" || relatedWebsiteElement.innerHTML == "<br>")  relatedWebsiteElement.innerHTML = "";
+      if(titleElement.innerHTML == "</br>" || titleElement.innerHTML == "<br>")  titleElement.innerHTML = "";
+      if(descriptionElement.innerHTML == "</br>" || descriptionElement.innerHTML == "<br>")  descriptionElement.innerHTML = "";
+      if(dateElement.innerHTML == "</br>" || dateElement.innerHTML == "<br>")  dateElement.innerHTML = "";
+      //conditions checking
+      if(titleElement.innerHTML == ""){
+        alertElement.innerHTML = "Veuillez entrer un titre.";
+        alertElement.removeAttribute("hidden");
+        return;
+      }else if(descriptionElement.innerHTML == ""){
+        alertElement.innerHTML = "Veuillez entrer une description.";
+        alertElement.removeAttribute("hidden");
+        return;
+      }else if(dateElement.innerHTML == "" || !dateElement.innerHTML.match(dateRegex)){
+        alertElement.innerHTML = "Veuillez entrer une date correcte (format JJ/MM/AAAA).";
+        alertElement.removeAttribute("hidden");
+        return;
+      }else if(urlElement.innerHTML != "" && !urlElement.innerHTML.match(urlRegex)){
+        alertElement.innerHTML = 'L\'adresse URL du document est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
+        alertElement.removeAttribute("hidden");
+        return;
+      }else if(relatedWebsiteElement.innerHTML != "" && !relatedWebsiteElement.innerHTML.match(urlRegex)){
+        alertElement.innerHTML = 'L\'adresse URL du site web associé est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
+        alertElement.removeAttribute("hidden");
+        return;
+      }
+      
+      // we display link elements and hide their equivalent <p>
+      urlElement.setAttribute("hidden", true);
+      relatedWebsiteElement.setAttribute("hidden", true);
+      urlElementLabel.setAttribute("hidden", true);
+      relatedWebsiteElementLabel.setAttribute("hidden", true);
+      
+      //we remove all editable modes
+      titleElement.removeAttribute("contenteditable");
+      descriptionElement.removeAttribute("contenteditable");
+      dateElement.removeAttribute("contenteditable");
+      urlElement.removeAttribute("contenteditable");
+      relatedWebsiteElement.removeAttribute("contenteditable");
+      
+      //update links href
+      //<a> with href="" is not valid so we use href="javascript:;" to know if it's empty or not
+      urlLink.href = urlElement.innerHTML != "" ? urlElement.innerHTML : "javascript:;";
+      relatedWebsiteLink.href = relatedWebsiteElement.innerHTML != "" ? relatedWebsiteElement.innerHTML : "javascript:;";
+      if(urlLink.href == "javascript:;") urlLink.setAttribute("hidden", true);
+      if(relatedWebsiteLink.href == "javascript:;") relatedWebsiteLink.setAttribute("hidden", true);
+      if(urlLink.href != "javascript:;") urlLink.removeAttribute("hidden");
+      if(relatedWebsiteLink.href != "javascript:;") relatedWebsiteLink.removeAttribute("hidden");
+      
+      //element to send
+      var dataToUpdate = {
+        "title" : titleElement.innerHTML,
+        "url" : urlElement.innerHTML,
+        "relatedWebsite" : relatedWebsiteElement.innerHTML,
+        "creationDate" : dateElement.innerHTML,
+        "description" : descriptionElement.innerHTML
+      };
+      console.log(dataToUpdate)
+      var xmlHttpUpdateDocument = new XMLHttpRequest();
+      xmlHttpUpdateDocument.open( "PUT", "updatePortfolioDocument/"+documentID, false ); // false for synchronous request
+      xmlHttpUpdateDocument.setRequestHeader("Content-type", "application/json");
+      xmlHttpUpdateDocument.send( JSON.stringify(dataToUpdate) );
+      
+      document.getElementById("Edition"+documentID).checked = false;
+      isADocumentInEditingMode = false; //to allow an other element editing
+      
     }
   }
   
