@@ -228,6 +228,10 @@ script(type="text/javascript").
       errorMessage.innerHTML = 'Veuillez assigner une catégorie correcte. (Doit commencé par une lettre et peut contenir uniquement : des lettres, des chiffres, des espaces, "-", "_", ":" et ".")';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
+    }else if(category.value == "Badges" || category.value == "Aperçu"){
+      errorMessage.innerHTML = 'Les catégories "Badges" et "Aperçu" ne peuvent pas être utilisées. Veuillez modifier.';
+      document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
+      return;
     }else if(creationDate.value == "" || !creationDate.value.match(dateRegex)){
       errorMessage.innerHTML = "Veuillez ajouter une date correcte (format : JJ/MM/AAAA).";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
