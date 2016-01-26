@@ -63,6 +63,7 @@ div.container(onload="init()")
         div.alert.alert-success#savedMessage(hidden="true") Vos paramètres sont enregistrées
         div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier puis de réessayer.
         
+        
 script(type="text/javascript").
     function getDYBConnection(){
       document.getElementById("DYBloadingIcon").setAttribute("style", "");
@@ -80,7 +81,7 @@ script(type="text/javascript").
       xmlHttp.onreadystatechange = function(){
         if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                  var uri = "http://www.doyoubuzz.com/fr/oauth/authorize" + "?" + xmlHttp.responseText;
-                 window.location = uri;
+                 window.open(uri, '_blank'); //open the link in a new window to avoid bugs
             }
       }
       xmlHttp.send( parameters );
