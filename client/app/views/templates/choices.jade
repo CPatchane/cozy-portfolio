@@ -28,12 +28,12 @@ div.container
               a(href='#accountSettings') Paramètres
   div.col-md-10.choicesContainer#choicesContainer
     div.row#TabsContainer
-      //- This div will contain all category tabs dynamically
       div.row.text-center
         h1.col-md-12 Mes choix
       div.row.tab
         a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
         div.docsContainer.col-md-12
+      //- It will contain all categories tabs dynamically here
     div.row#submitPart
       div.col-md-12.submitButton.text-center
         button.btn.btn-primary#submitChanges(onclick="submitChanges()") Valider mes choix
@@ -322,10 +322,12 @@ script(type="text/javascript").
                           '<input id="Visibility'+ myDocument.id +'" class="visibilityCheckBox" type="checkbox"/>' +
                           '<label for="Visibility' + myDocument.id + '"></label>' +
                           '<div class="removeButton" documentID="'+ myDocument.id +'" onclick="removeDocument(this)"></div>' +
+                          '<input id="Edition'+ myDocument.id +'" class="editionCheckBox" type="checkbox"/>' +
+                          '<label for="Edition' + myDocument.id + '"></label>' +
                           '<p class="documentTitle">'+ myDocument.title +'</p>' + 
                           '<p class="documentDescription">' + myDocument.description + '</p>' +
                           '<a href="'+ myDocument.url +'"> Voir plus (lien externe)</a>' +
-                          '<a href="'+ myDocument.relatedWebsite +'"> Site web associée</a>' +
+                          '<a href="'+ myDocument.relatedWebsite +'"> Site web associé</a>' +
                           '<p class="documentDate">Réalisé le : '+ myDocument.creationDate +'</p>' +
                         '</div>' +
                       '</div>';
@@ -333,17 +335,24 @@ script(type="text/javascript").
   }
   
   function removeDocument(element){
-    var documentIDtoRemove = element.getAttribute("documentID");
-    
-    var xmlHttpRemoveDocument = new XMLHttpRequest();
-    xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
-    xmlHttpRemoveDocument.send( null );
-    
-    var childToRemove = element.parentNode.parentNode;
-    childToRemove.parentNode.removeChild(childToRemove);
-    documentsAlreadyBuilt[documentIDtoRemove] = false;
-    
-    init(false, true, false);
+    if(confirm("Voulez-vouz vraiment supprimer ce document?")){
+      var documentIDtoRemove = element.getAttribute("documentID");
+      
+      var xmlHttpRemoveDocument = new XMLHttpRequest();
+      xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
+      xmlHttpRemoveDocument.send( null );
+      
+      var childToRemove = element.parentNode.parentNode;
+      var parent = childToRemove.parentNode;
+      parent.removeChild(childToRemove);
+      if(!parent.hasChildNodes()){ //if this category is now empty, we remove it
+        var categoryToRemove = parent.parentNode;
+        categoryToRemove.parentNode.removeChild(categoryToRemove);
+      }
+      documentsAlreadyBuilt[documentIDtoRemove] = false;
+      
+      init(false, true, false);
+    }
   }
   
   

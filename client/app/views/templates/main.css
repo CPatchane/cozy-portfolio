@@ -367,6 +367,17 @@ body{
   min-height:124px;
 }
 
+.choicesContainer div.removeButton{
+  position: absolute;
+  top:0;
+  right:27px;
+}
+
+.choicesContainer input.editionCheckBox[type="checkbox"] + label{
+  position: absolute;
+  top:0;
+  right:54px;
+}
 
 /* Add document part */
 #addDocumentPart{
@@ -425,6 +436,7 @@ body{
   font-size: 30px;
   margin:auto;
   margin-top:19px;
+  transition:all 0.2s;
 }
 
 #cancelButton{
@@ -436,6 +448,16 @@ body{
   opacity: 1;
   transition:opacity 0.2s;
 }
+
+#placeHolderAddDocumentBlock:hover #addButton{
+  border-radius:64px;
+  width:64px;
+  height:64px;
+  margin-top:16px;
+  font-size: 34px;
+  transition:all 0.2s;
+}
+
 
 /***********************/
 /**    COMPONENTS     **/
@@ -519,9 +541,6 @@ div.removeButton{
   width:27px;
   height:27px;
   background-color: #c0392b;
-  position: absolute;
-  top:0;
-  right:27px;
   cursor: pointer;
   transition: box-shadow 0.3s;
 }
@@ -550,4 +569,39 @@ div.removeButton::before {
 div.removeButton::after {
   transform: rotate(-45deg);
   -webkit-transform: rotate(-45deg);
+}
+
+
+/** Button for edit mode **/
+input.editionCheckBox[type="checkbox"]{
+  display:none;
+}
+
+input.editionCheckBox[type="checkbox"] + label{
+  content:"";
+  color:black;
+  width:75px;
+  height:27px;
+  border:3px solid #bbb;
+  background-color: #bdc3c7;
+  cursor: pointer;
+  box-shadow: 0px 0px 2px #333 inset;
+  transition: all 0.3s ease-out;
+}
+
+input.editionCheckBox[type="checkbox"]:checked + label{
+  content:"";
+  background-color: #f39c12;
+  box-shadow: 0px 0px 5px #333 inset;
+  transition: all 0.3s ease-out;
+}
+
+input.editionCheckBox[type="checkbox"] + label::after{
+  content:"Modifier";
+  margin-left:5px;
+}
+
+input.editionCheckBox[type="checkbox"]:checked + label::after{
+  content:"Terminer";
+  margin-left:3px;
 }
