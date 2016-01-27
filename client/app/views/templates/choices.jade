@@ -100,15 +100,15 @@ script(type="text/javascript").
   
   //functon for choising category behavior
   function chooseCategory(element){
-    if(element.parentNode.className == "tab choiceCategory"){
-      element.parentNode.className = "tab";
+    if(element.parentNode.className == "row tab choiceCategory"){
+      element.parentNode.className = "row tab";
       return;
     }
     var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
     for(var i in categoriesDIV){
-      categoriesDIV[i].className = "tab";
+      categoriesDIV[i].className = "row tab";
     }
-    element.parentNode.className = "tab choiceCategory";
+    element.parentNode.className = "row tab choiceCategory";
   }
   
   //function to submit user changes
