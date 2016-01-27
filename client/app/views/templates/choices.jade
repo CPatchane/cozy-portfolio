@@ -30,7 +30,7 @@ div.container
     div.row#TabsContainer
       div.row.text-center
         h1.col-md-12 Mes choix
-      div.row.tab
+      //-div.row.tab
         a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
         div.docsContainer.col-md-12
       //- It will contain all categories tabs dynamically here
@@ -77,7 +77,7 @@ script(type="text/javascript").
   var groups = {};
   var documents = [];
   //we store in this next object all categories already built (or reserved) to avoid duplicates
-  var categoriesAlreadyBuilt = {"Aperçu" : true, "Badges" : true}; //ex categoriesAlreadyBuilt["Vidéos"] = true;
+  var categoriesAlreadyBuilt = {"Présentation" : true, "Badges" : true}; //ex categoriesAlreadyBuilt["Vidéos"] = true;
   var documentsAlreadyBuilt = {};
   var isADocumentInEditingMode = false;
   
@@ -230,7 +230,7 @@ script(type="text/javascript").
       errorMessage.innerHTML = 'Veuillez assigner une catégorie correcte. (Doit commencé par une lettre et peut contenir uniquement : des lettres, des chiffres, des espaces, "-", "_", ":" et ".")';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(category.value == "Badges" || category.value == "Aperçu"){
+    }else if(category.value == "Badges" || category.value == "Présentation"){
       errorMessage.innerHTML = 'Les catégories "Badges" et "Aperçu" ne peuvent pas être utilisées. Veuillez modifier.';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
