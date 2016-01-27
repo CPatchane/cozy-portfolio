@@ -4,7 +4,98 @@ html
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible",content="IE=edge, chrome=1")
     meta(name="viewport", content="width=device-width, initial-scale=1")
+    script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
+    script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
+    link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+    style
+      include public.css
+      
+    if user.name
+      title Portfolio Cozy Cloud de #{user.name}
+    else
+      title Cozy Cloud - Portfolio
+      
+  body      
+    div.col-md-12#portfolioView
+      //- User information part
+      if user
+        div.row.text-center
+          h1.col-md-12 Portfolio 
+            if user.name
+              span de #{user.name}
+              span gracieusement hébergé par son 
+                a(href="https://cozy.io/fr/" target="_blank") CozyCloud
+        if user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
+          div.row.col-md-12#UserInfos
+            if user.age
+              p Age : #{user.age} ans
+            if user.email
+              p Email : #{user.email.replace("@", "(at)")}
+            if user.status
+              p Situation profesionnelle : #{user.status}
+            if user.localisation
+              p Lieu : #{user.localisation}
+            if user.description
+              p Description : #{user.description}
+            if user.hobbies
+              p Hobbies : 
+                for hobby in user.hobbies
+                  span.hobby= hobby
+            if user.keywords
+              p Mots-clés : 
+                for keyword in user.keywords
+                  span.keyword= keyword
+      //- Documents part
+      if portfolios || badges
+        div.row.col-md-12#TabsContainer
+          div.row.tab
+            a.tabTitle.col-md-12(onclick="chooseCategory(this)") Aperçu
+            div.docsContainer.col-md-12
 
-    title Cozy - Portfolio
-    
-    p Voici mon porfolio
+          if portfolios
+            for category in portfolios
+              div.row.tab
+                a.tabTitle.col-md-12(onclick="chooseCategory(this)") #{category.title}
+                div.docsContainer.col-md-12(id="#{category.title.replace(' ','_')}")
+                  for document in category.documents
+                    div.documentBlock.col-md-12
+                      div.documentContent.col-md-12
+                        p.documentTitle #{document.title}
+                        p.documentDescription #{document.description}
+                        if document.url
+                          a(href="#{document.url}" target="_blank") Lien du document
+                            br
+                        if document.relatedWebsite
+                          a(href="#{document.relatedWebsite}" target="_blank") Site web associé
+                        p.documentDate Réalisé le #{document.creationDate}
+
+          if badges
+            div.row.tab#badgesTab
+              a.tabTitle.col-md-12(onclick="chooseCategory(this)") Badges
+              div.docsContainer.col-md-12#badgesTabContent
+                for badge in badges
+                  div.badgeBlock.col-md-6
+                    div.badgeContent.col-md-12
+                      img.badgeImage(src="#{badge.imageUrl}")
+                      div.badgeDetails
+                        p.badgeIssuer
+                          span.badgeName #{badge.name}
+                          , délivré par 
+                          a(href="#{badge.issuerUrl}") #{badge.issuerName}
+                        p.badgeDescription #{badge.description}
+                        a.badgeLink(target="_blank" href="#{badge.hostedUrl}") Voir sur le site d'origine
+
+
+    script(type="text/javascript").
+      //functon for choising category behavior
+      function chooseCategory(element){
+        if(element.parentNode.className == "tab choiceCategory"){
+          element.parentNode.className = "tab";
+          return;
+        }
+        var categoriesDIV = document.getElementById("portfolioView").getElementsByClassName("tab");
+        for(var i in categoriesDIV){
+          categoriesDIV[i].className = "tab";
+        }
+        element.parentNode.className = "tab choiceCategory";
+      }  
