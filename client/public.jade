@@ -15,17 +15,17 @@ html
     else
       title Cozy Cloud - Portfolio
       
-  body      
+  body(onload="init()")     
     div.col-md-12#portfolioView
       //- User information part
       if user
         div.row.text-center
           h1.col-md-12 Portfolio 
             if user.name
-              span de #{user.name}
-              span gracieusement hébergé par son 
-                a(href="https://cozy.io/fr/" target="_blank") CozyCloud
-        if user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
+              span de #{user.name} 
+          span.col-md-12.text-center.secondTitle gracieusement hébergé par son 
+            a(href="https://cozy.io/fr/" target="_blank") CozyCloud
+        //-if user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
           div.row.col-md-12#UserInfos
             if user.age
               p Age : #{user.age} ans
@@ -46,11 +46,33 @@ html
                 for keyword in user.keywords
                   span.keyword= keyword
       //- Documents part
-      if portfolios || badges
+      if portfolios || badges || user
         div.row.col-md-12#TabsContainer
-          div.row.tab
-            a.tabTitle.col-md-12(onclick="chooseCategory(this)") Aperçu
-            div.docsContainer.col-md-12
+          if user
+            div.row.tab#presentationTab
+              a.tabTitle.col-md-12(onclick="chooseCategory(this)") Présentation
+              div.docsContainer.col-md-12
+                div.documentBlock.col-md-12
+                  div.documentContent.col-md-12
+                    if user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
+                      if user.age
+                        p Age : #{user.age} ans
+                      if user.email
+                        p Email : #{user.email.replace("@", "(at)")}
+                      if user.status
+                        p Situation profesionnelle : #{user.status}
+                      if user.localisation
+                        p Lieu : #{user.localisation}
+                      if user.description
+                        p Description : #{user.description}
+                      if user.hobbies
+                        p Hobbies : 
+                          for hobby in user.hobbies
+                            span.hobby= hobby
+                      if user.keywords
+                        p Mots-clés : 
+                          for keyword in user.keywords
+                            span.keyword= keyword
 
           if portfolios
             for category in portfolios
@@ -80,22 +102,25 @@ html
                       div.badgeDetails
                         p.badgeIssuer
                           span.badgeName #{badge.name}
-                          , délivré par 
+                          span , délivré par 
                           a(href="#{badge.issuerUrl}") #{badge.issuerName}
                         p.badgeDescription #{badge.description}
                         a.badgeLink(target="_blank" href="#{badge.hostedUrl}") Voir sur le site d'origine
 
 
     script(type="text/javascript").
+      function init(){
+        document.getElementById("presentationTab").className = "row tab choiceCategory";
+      }
       //functon for choising category behavior
       function chooseCategory(element){
-        if(element.parentNode.className == "tab choiceCategory"){
-          element.parentNode.className = "tab";
+        if(element.parentNode.className == "row tab choiceCategory"){
+          element.parentNode.className = "row tab";
           return;
         }
         var categoriesDIV = document.getElementById("portfolioView").getElementsByClassName("tab");
         for(var i in categoriesDIV){
-          categoriesDIV[i].className = "tab";
+          categoriesDIV[i].className = "row tab";
         }
-        element.parentNode.className = "tab choiceCategory";
+        element.parentNode.className = "row tab choiceCategory";
       }  
