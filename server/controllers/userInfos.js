@@ -2,13 +2,6 @@ var user = require('../models/user');
 var accounts = require('../models/accounts');
 var request = require("request");
 
-//first entry of the client application
-module.exports.start = function(req, res, next){
-  res.render('index.jade', {}, function(err, html) {
-    res.send(html);
-  });
-}
-
 module.exports.list = function(req, res, next) {
   user.all(function(err, userInfos) {
     if(err !== null) {

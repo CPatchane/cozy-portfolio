@@ -4,10 +4,14 @@ var badgesGroups = require('./badgesGroups');
 var portfolioDocuments = require('./portfolioDocuments');
 var userInfos = require('./userInfos');
 var accountsInfos = require('./accountsInfos');
+var init = require('./init');
 
 module.exports = {
   '': {
-    get: userInfos.start
+    get: init.start
+  },
+  'public': {
+    get: init.public
   },
   'getUserInfos': {
     get: userInfos.list
