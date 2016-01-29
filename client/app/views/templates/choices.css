@@ -1,0 +1,278 @@
+/*************************/
+/**    CHOICES VIEW     **/
+/*************************/
+
+.choicesContainer .row{
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.choicesContainer h1{
+  margin-bottom:30px;
+}
+
+/*tab design for each category of documents and the badges category*/
+.choicesContainer .tab{
+  border:1px solid #555;
+  margin:0 10px;
+  position: relative;
+  padding-bottom: 10px;
+  border-radius: 8px 8px 3px 3px;
+  background-color: rgb(44,62,80);
+  max-height: 65px;
+  margin-top:-8px;
+  overflow: hidden;
+  transition:all 0.3s ease;
+}
+
+/*when a category is selected by the user*/
+.choicesContainer .tab.choiceCategory{
+  max-height:500px!important;
+  margin-top:-8px!important;
+  overflow: scroll;
+  box-shadow: 0px 0px 15px black;
+  background-color: rgb(64,82,100);
+}
+
+/*hover behavior of the category tab*/
+.choicesContainer .tab:hover{
+  box-shadow: 0px 0px 15px black;
+  max-height:100px;
+  margin-top:-43px;
+  transition:all 0.3s ease;
+}
+
+/*tabs title*/
+.choicesContainer .tabTitle{
+  padding:20px;
+  border-radius: 15px 15px 0px 0px;
+  font-size: 18px;
+  color: #fbfcfc;
+  display:block;
+  clear: both;
+  cursor: pointer;
+}
+
+/*documents container of each tab*/
+.choicesContainer .docsContainer{
+  padding:5px;
+  min-height: 100px;
+}
+
+/*changes to the visibility checkbox*/
+.choicesContainer input.visibilityCheckBox[type="checkbox"], .choicesContainer input.visibilityCheckBox[type="checkbox"] + label{
+  position: absolute;
+  top :0px;
+  right:0px;
+}
+
+.choicesContainer input.visibilityCheckBox[type="checkbox"] + label:hover::after, .choicesContainer input.visibilityCheckBox[type="checkbox"]:checked + label:hover::after{
+  top: -35px;
+  left:-130px; 
+}
+
+/*specific to document elements*/
+.choicesContainer .documentBlock{
+  padding:5px;
+  margin-bottom:5px;
+}
+
+.choicesContainer .documentBlock .documentContent{
+  box-shadow: 0px 0px 8px #999;
+  padding:5px;
+  padding-top:20px; /*Space for tools buttons*/
+  background-color: rgba(255,255,255,0.9);
+  min-height:124px;
+}
+
+.choicesContainer .documentBlock .documentContent a{
+  color:black;
+  text-decoration: underline;
+}
+
+.choicesContainer .documentBlock .documentContent .documentTitle{
+  padding-left:25px;
+}
+
+#syncDYBDocumentsButton{
+  margin:15px;
+}
+
+/*changes to the button to remove a document*/
+.choicesContainer div.removeButton{
+  position: absolute;
+  top:0;
+  right:27px;
+}
+
+/*specific to badge elements*/
+.choicesContainer .badgeBlock{
+  padding:5px;
+  margin-bottom:5px;
+}
+
+.choicesContainer .badgeBlock .badgeContent{
+  box-shadow: 0px 0px 8px #999;
+  padding:2px;
+  background-color: rgba(255,255,255,0.9);
+  min-height:124px;
+}
+
+/*Badge image*/
+.choicesContainer img.badgeImage{
+  width:100px;
+  display: inline-block;
+  float:left;
+  height:100px;
+  margin:10px;
+  padding:8px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px #333 inset;
+  border:2px solid #bbb;
+  -webkit-filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.5));
+  filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.5));
+}
+
+.choicesContainer .badgeBlock .badgeDetails{
+  display: table;
+}
+
+.choicesContainer .badgeDetails span.badgeName{
+  font-weight: 900;
+}
+
+.choicesContainer .badgeDetails p.badgeIssuer{
+  margin-bottom:8px;
+  margin-top: 12px;
+  margin-right: 30px;
+}
+.choicesContainer .badgeDetails p.badgeDescription{
+  margin-top:0px;
+  margin-bottom:0px;
+  font-size: 14px;
+  margin-left:8px;
+  margin-right:5px;
+}
+
+.choicesContainer .badgeDetails .badgeLink{
+  float:right;
+  margin-right:10px;
+  padding:10px;
+}
+
+.choicesContainer .badgeBlock a{
+  color:black;
+  text-decoration: underline;
+}
+
+/*button to sync openBadges backpack badges*/
+#syncOBbutton{
+  width:320px;
+  clear:both;
+  display: block;
+  margin: 0px auto;
+  margin-bottom:15px;
+  background-color:rgba(126, 206, 234, 0.5);
+}
+
+/*changes to the editing mode button*/
+.choicesContainer input.editionCheckBox[type="checkbox"] + label{
+  position: absolute;
+  top:0;
+  right:54px;
+}
+
+/* For editing mode */
+.choicesContainer p[contenteditable="true"], .choicesContainer span[contenteditable="true"]{
+  border:1px solid rgb(200, 200, 200);
+  padding:3px;
+}
+
+/*part which contains the submit button and other buttons*/
+.choicesContainer #submitPart{
+  margin-top:15px;
+}
+
+
+/* Adding document part */
+#addDocumentPart{
+  margin-bottom: 50px;
+}
+
+#addDocumentBlock{
+  border:2px #888 dashed;
+  border-radius:5px;
+}
+
+#addDocumentContent{
+  box-shadow: 0px 0px 5px #999;
+  padding:10px;
+}
+
+#addDocumentPart label{
+  vertical-align: top;
+  width: 40%;
+  margin:10px 0px;
+}
+
+#addDocumentPart input{
+  margin:10px 0px;
+  width:60%;
+}
+
+#addDocumentButton{
+ margin-top:10px; 
+}
+
+#addButton{
+  border-radius:58px;
+  width:58px;
+  height:58px;
+  display:block;
+  border:4px solid #888;
+  background-color: transparent;
+  color:#888;
+  font-size: 30px;
+  margin:auto;
+  margin-top:19px;
+  transition:all 0.2s;
+}
+
+#cancelButton{
+  margin-top:10px;
+  margin-left: 10px;
+}
+
+
+/*Placeholder for the document adding part*/
+#placeHolderAddDocumentContent{
+  box-shadow: none;
+  background: radial-gradient(rgba(230,230,230,1), rgba(255,255,255,0));
+  background: -webkit-radial-gradient(rgba(230,230,230,1), rgba(255,255,255,0));
+  min-height:100px;
+  height: 100px;
+  padding:2px;
+}
+
+#placeHolderAddDocumentBlock{
+  border:2px #888 dashed;
+  border-radius:10px;
+  cursor: pointer;
+  opacity: 0.65;
+  transition:opacity 0.2s;
+}
+
+#placeHolderAddDocumentBlock:hover{
+  opacity: 1;
+  transition:opacity 0.2s;
+}
+
+/* Plus button of the placeholder*/
+#placeHolderAddDocumentBlock:hover #addButton{
+  border-radius:64px;
+  width:64px;
+  height:64px;
+  margin-top:16px;
+  font-size: 34px;
+  transition:all 0.2s;
+}

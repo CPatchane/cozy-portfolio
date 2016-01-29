@@ -1,0 +1,35 @@
+/*****************/
+/* Settings View */
+/*****************/
+/*part which contains the submmit button*/
+.settingsContainer div.submitButton{
+  margin-top:30px;
+}
+
+/*Submmit button*/
+.settingsContainer div.submitButton button{
+  margin-bottom:20px;
+  margin-left:-200px;
+}
+
+/*textBoxes*/
+.settingsContainer input{
+  width: 250px;
+}
+
+/*Button to connect DoYouBuzz account, message to tell if the DoYouBuzz account is now connected*/
+.settingsContainer button#DYBconnection, button#DYBconnected{
+  margin : 20px 0px;
+}
+
+/*Button to connect DoYouBuzz account*/
+.settingsContainer #DYBconnection{
+  display:block;
+}
+
+/*Loading icon to wait while the DoYouBuzz account connection page opening*/
+.settingsContainer #DYBloadingIcon{
+  position:absolute;
+  margin-top:-35px;
+  margin-left:320px;
+}

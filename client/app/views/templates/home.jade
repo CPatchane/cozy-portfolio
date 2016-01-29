@@ -4,6 +4,7 @@ script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
 link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
 style
   include main.css
+  include home.css
   
 div.container
   div.col-md-2.leftMenu
@@ -33,40 +34,40 @@ div.container
       div.col-md-6
         p Prénom
         input#firstName(type="text", placeholder="Votre prénom" name="firstName")
-        input#firstNameCB(type="checkbox" name="firstNameCB")
+        input.visibilityCheckBox#firstNameCB(type="checkbox" name="firstNameCB")
         label(for="firstNameCB")
         p Nom
         input#lastName(type="text", placeholder="Votre nom", name="lastName")
-        input#lastNameCB(type="checkbox", name="lastNameCB")
+        input.visibilityCheckBox#lastNameCB(type="checkbox", name="lastNameCB")
         label(for="lastNameCB")
         p Date de naissance (pour votre âge uniquement)
         input#birthdayDate(type="text", placeholder="jj/mm/aaaa", name="birthdayDate")
-        input#birthdayDateCB(type="checkbox", name="birthdayDateCB")
+        input.visibilityCheckBox#birthdayDateCB(type="checkbox", name="birthdayDateCB")
         label(for="birthdayDateCB")
         p Email
         input#email(type="text", placeholder="example@domain.xyz", name="email")
-        input#emailCB(type="checkbox", name="emailCB")
+        input.visibilityCheckBox#emailCB(type="checkbox", name="emailCB")
         label(for="emailCB")
         p Description
         textarea#description(style="resize:none;width:300px;height:100px;", placeholder="Une petite description de vous", name="description")
-        input#descriptionCB(type="checkbox", name="descriptionCB")
+        input.visibilityCheckBox#descriptionCB(type="checkbox", name="descriptionCB")
         label(for="descriptionCB")
       div.col-md-6
         p Situation professionnelle
         input#status(type="text", placeholder="Etudiant, expert chez ...", name="status")
-        input#statusCB(type="checkbox", name="statusCB")
+        input.visibilityCheckBox#statusCB(type="checkbox", name="statusCB")
         label(for="statusCB")
         p Situation géographique
         input#localisation(type="text", placeholder="Votre position géographique actuelle", name="localisation")
-        input#localisationCB(type="checkbox", name="localisationCB")
+        input.visibilityCheckBox#localisationCB(type="checkbox", name="localisationCB")
         label(for="localisationCB")
         p Loisirs (séparés par des  " , ")
         input#hobbies(type="text", placeholder="Vos loisirs", name="hobbies")
-        input#hobbiesCB(type="checkbox", name="hobbiesCB")
+        input.visibilityCheckBox#hobbiesCB(type="checkbox", name="hobbiesCB")
         label(for="hobbiesCB")
         p Mots-clés (séparés par des  " , ")
         input#keywords(type="text", placeholder="Des mots-clés décrivant votre profil", name="keywords")
-        input#keywordsCB(type="checkbox", name="keywordsCB")
+        input.visibilityCheckBox#keywordsCB(type="checkbox", name="keywordsCB")
         label(for="keywordsCB")
     div.row#resumesPart(hidden="true")
       div.col-md-12
