@@ -56,7 +56,14 @@ module.exports.public = function(req, res, next){
         portfolio.user.localisation = userInfos.localisation.value;
       }
       //hobbies
+      if(userInfos.hobbies.display){
+        console.log(userInfos.hobbies.value);
+      }
       //keywords
+      if(userInfos.keywords.display){
+        console.log(userInfos.keywords.value);
+      }
+      //after we request badges
       getBadges();
     }
   });
