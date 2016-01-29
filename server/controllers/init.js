@@ -57,11 +57,25 @@ module.exports.public = function(req, res, next){
       }
       //hobbies
       if(userInfos.hobbies.display){
-        console.log(userInfos.hobbies.value);
+        var hobbies = userInfos.hobbies.value.split(",");
+        hobbies.forEach(function(hobby, index, array){
+          hobby = hobby.replace( /\s\s+/g, ' ' ); //replace all duplicated spaces by only one space
+          hobby = hobby.trim(); //remove whitespaces from both sides of the string
+          hobby = hobby.charAt(0).toUpperCase() + hobby.slice(1); //we transform the first letter to upper case
+          hobbies[index] = hobby;
+        });
+        portfolio.user.hobbies = hobbies;
       }
       //keywords
       if(userInfos.keywords.display){
-        console.log(userInfos.keywords.value);
+        var keywords = userInfos.keywords.value.split(",");
+        keywords.forEach(function(keyword, index, array){
+          keyword = keyword.replace( /\s\s+/g, ' ' ); //replace all duplicated spaces by only one space
+          keyword = keyword.trim(); //remove whitespaces from both sides of the string
+          keyword = keyword.charAt(0).toUpperCase() + keyword.slice(1); //we transform the first letter to upper case
+          keywords[index] = keyword;
+        });
+        portfolio.user.keywords = keywords;
       }
       //after we request badges
       getBadges();
