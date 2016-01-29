@@ -102,6 +102,13 @@ script(type="text/javascript").
         xhttpInfos.open("PUT", "updateAccountsInfos", false);
         xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttpInfos.send(parameters);
+        
+        //if we have an openBadge backpack email, we request all openbadges
+        if(OBemail){
+          var xhttpBadges = new XMLHttpRequest();
+          xhttpBadges.open("GET", "syncBadgesGroup", false);
+          xhttpBadges.send();
+        }
         document.getElementById("savedMessage").removeAttribute("hidden");
     }
     
