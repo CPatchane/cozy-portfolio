@@ -1,4 +1,7 @@
-/*Global*/
+/*************************/
+/**       GLOBAL        **/
+/*************************/
+
 p{
   margin-top:15px;
 }
@@ -6,7 +9,6 @@ p{
 body{
   background-color: #ecf0f1;
 }
-
 
 /*************************/
 /**     PUBLIC VIEW     **/
@@ -21,10 +23,12 @@ body{
   margin-left: 0px;
 }
 
+/*Headline*/
 h1{
   margin-bottom:5px;
 }
 
+/*subHeadline*/
 .secondTitle{
   font-family: Courier New, Courier, monospace;
   font-weight: 500;
@@ -40,10 +44,12 @@ h1{
   
 }
 
+/*specific to the user presentation tab*/
 .presentationTab p{
   margin-bottom: 0px;
 }
 
+/*Design for each hobby and keyword*/
 .hobby, .keyword{
   display:inline-block;
   padding: 2px 5px;
@@ -54,6 +60,7 @@ h1{
   margin: 2px;
 }
 
+/*Design for each tab of category*/
 .tab{
   border:1px solid #555;
   margin:0 10px;
@@ -67,6 +74,7 @@ h1{
   transition:all 0.3s ease;
 }
 
+/*if the user chooses on these tabs*/
 .tab.choiceCategory{
   max-height:500px!important;
   margin-top:-8px!important;
@@ -75,15 +83,12 @@ h1{
   background-color: rgb(64,82,100);
 }
 
+/*if the user hovers on these tabs*/
 .tab:hover{
   box-shadow: 0px 0px 15px black;
   max-height:100px;
   margin-top:-43px;
   transition:all 0.3s ease;
-}
-
-#submitPart{
-  margin-top:15px;
 }
 
 .tabTitle{
@@ -96,16 +101,19 @@ h1{
   cursor: pointer;
 }
 
+/*container for one category on documents*/
 .docsContainer{
   padding:5px;
   min-height: 100px;
 }
 
+/*Block for one badge*/
 .badgeBlock{
   padding:5px;
   margin-bottom:5px;
 }
 
+/*container of a badge*/
 .badgeBlock .badgeContent{
   box-shadow: 0px 0px 8px #999;
   padding:2px;
@@ -113,6 +121,7 @@ h1{
   min-height:124px;
 }
 
+/*Badge image*/
 img.badgeImage{
   width:100px;
   display: inline-block;
@@ -127,6 +136,7 @@ img.badgeImage{
   filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.5));
 }
 
+/*badge details part*/
 .badgeBlock .badgeDetails{
   display: block;
 }
@@ -159,36 +169,13 @@ img.badgeImage{
   text-decoration: underline;
 }
 
-input.visibilityCheckBox[type="checkbox"], input.visibilityCheckBox[type="checkbox"] + label{
-  position: absolute;
-  top :0px;
-  right:0px;
-}
-
-input.visibilityCheckBox[type="checkbox"] + label:hover::after, input.visibilityCheckBox[type="checkbox"]:checked + label:hover::after{
-  top: -35px;
-  left:-130px; 
-}
-
-#syncOBbutton{
-  width:320px;
-  clear:both;
-  display: block;
-  margin: 0px auto;
-  margin-bottom:15px;
-  background-color:rgba(126, 206, 234, 0.5);
-}
-
-#syncDYBDocumentsButton{
-  margin:15px;
-}
-
-
+/*Block for one document*/
 .documentBlock{
   padding:5px;
   margin-bottom:5px;
 }
 
+/*Container for one document*/
 .documentBlock .documentContent{
   box-shadow: 0px 0px 8px #999;
   padding:5px;
@@ -203,16 +190,4 @@ input.visibilityCheckBox[type="checkbox"] + label:hover::after, input.visibility
 
 .documentBlock .documentContent .documentTitle{
   padding-left:25px;
-}
-
-div.removeButton{
-  position: absolute;
-  top:0;
-  right:27px;
-}
-
-input.editionCheckBox[type="checkbox"] + label{
-  position: absolute;
-  top:0;
-  right:54px;
 }
