@@ -99,7 +99,7 @@ module.exports.syncWithOB = function(req, res, next) {
         if(userId !== undefined && userId != 0){
           getBadgeGroups(userId);
         }else{
-          res.status(404).send("Not userId found");
+          res.status(404).send("No userId found");
         }
       }
     });
