@@ -40,8 +40,8 @@ module.exports = {
   'syncBadgesGroup': {
     get: badgesGroups.syncWithOB
   },
-  'updateBadgesGroup': {
-    put: badgesGroups.updateBadges
+  'updateBadgesVisibilities': {
+    put: badgesGroups.updateBadgesVisibilities
   },
   'getPortfolioDocuments': {
     get: portfolioDocuments.list
@@ -54,6 +54,9 @@ module.exports = {
   },
   'updatePortfolioDocument/:id': {
     put: portfolioDocuments.update
+  },
+  'updateDocumentsVisibilities': {
+    put: portfolioDocuments.updateVisibilities
   },
   'syncDYBDocuments': {
     get : portfolioDocuments.syncDYB

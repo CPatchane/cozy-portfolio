@@ -113,15 +113,25 @@ script(type="text/javascript").
   
   //function to submit user changes
   function submitChanges(){
+    /**submit document visibilities**/
+    var documentInputs = document.getElementsByClassName("documentVisibility");
+    var documentsToSubmit = {};
+    for(var i=0; i<documentInputs.length; i++){
+      documentsToSubmit[documentInputs[i].getAttribute("documentID")] = documentInputs[i].checked;
+    }
+    var xmlHttpUpdateDocuments = new XMLHttpRequest();
+    xmlHttpUpdateDocuments.open( "PUT", "updateDocumentsVisibilities", false ); // false for synchronous request
+    xmlHttpUpdateDocuments.setRequestHeader("Content-type", "application/json");
+    xmlHttpUpdateDocuments.send( JSON.stringify(documentsToSubmit) );
     
-    //submit badges visibilities
+    /**submit badges visibilities**/
     var badgesInputs = document.getElementsByClassName("badgeVisibility");
     var badgesToSubmit = {};
     for(var i=0; i<badgesInputs.length; i++){
       badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
     }
     var xmlHttpUpdate = new XMLHttpRequest();
-    xmlHttpUpdate.open( "PUT", "updateBadgesGroup", false ); // false for synchronous request
+    xmlHttpUpdate.open( "PUT", "updateBadgesVisibilities", false ); // false for synchronous request
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
   }
@@ -173,7 +183,7 @@ script(type="text/javascript").
           '<div class="badgeContent col-md-12">' +
             '<img class="badgeImage" src="' + imageUrl + '"/>'+
             '<div class="badgeDetails">' +
-              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox" type="checkbox" name="' + badgeId + '" '+ checked +' />' +
+              '<input id="'+ badgeId +'" badge="' + badgeName + '" class="visibilityCheckBox badgeVisibility" type="checkbox" name="' + badgeId + '" '+ checked +' />' +
               '<label for="' + badgeId + '"></label>' +
               '<p class="badgeIssuer"> <span class="badgeName">' + badgeName + '</span>' +
                 ', délivré par <a href="' + issuerUrl + '">' + issuerName + '</a>, le ' + issueDate + '' +
@@ -336,7 +346,7 @@ script(type="text/javascript").
     var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : "";
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
-                          '<input id="Visibility'+ myDocument.id +'" class="visibilityCheckBox" type="checkbox"/>' +
+                          '<input id="Visibility'+ myDocument.id +'" documentID="'+ myDocument.id +'" class="visibilityCheckBox documentVisibility" type="checkbox"/>' +
                           '<label for="Visibility' + myDocument.id + '"></label>' +
                           '<div class="removeButton" documentID="'+ myDocument.id +'" onclick="removeDocument(this)"></div>' +
                           '<input id="Edition'+ myDocument.id +'" class="editionCheckBox" type="checkbox"/>' +

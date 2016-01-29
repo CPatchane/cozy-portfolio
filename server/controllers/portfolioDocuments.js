@@ -72,6 +72,26 @@ module.exports.update = function(req, res, next) {
 };
 
 
+//function to update badges visibilities
+module.exports.updateVisibilities = function(req, res, next) {
+  portfolioDocument.all(function(err, portfolioDocuments) {
+    if(err !== null) {
+      res.status(500).send("ERROR server for documents updates");
+    }
+    else {
+      portfolioDocuments.forEach(function(document, index, array){
+        document.updateAttributes({"visible": req.body[document.id]}, function(err) {
+          if(err !== null) {
+            res.status(500).send("ERROR server to update a document visibility");
+          }
+        });
+      });
+      res.status(200).send("Documents mis à jour avec succès");
+    }
+  });
+}
+
+
 //function to sync DYB documents
 module.exports.syncDYB = function(req, res, next) {
   portfolioDocument.all(function(err, portfolioDocuments) {

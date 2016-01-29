@@ -171,7 +171,7 @@ module.exports.syncWithOB = function(req, res, next) {
 
 
 //function to update badges visibilities
-module.exports.updateBadges = function(req, res, next) {
+module.exports.updateBadgesVisibilities = function(req, res, next) {
   //get data from the application
   var badgesSent = req.body;
 
