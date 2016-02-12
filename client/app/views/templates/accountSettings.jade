@@ -34,12 +34,12 @@ div.container(onload="init()")
       div.col-md-6
         h2 DoYouBuzz
         p Entrer votre clé API obtenu de DoYouBuzz (#[a(href='#') Aide]) :
-        input#apiKey(type='text', name='DYBapiKey', placeholder='API Key', onchange="checkDYBchange()")
+        input#apiKey(type='text', name='DYBapiKey', placeholder='API Key')
         p Entrer votre clé API secrète obtenu de DoYouBuzz (#[a(href='#') Aide]) :
-        input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret', onchange="checkDYBchange()")
+        input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret')
         button.btn.btn-warning#DYBconnection(type="button", style="display: none;", onclick="getDYBConnection()") (Re)Connecter mon compte DoYouBuzz.
         div.spinner#DYBloadingIcon(style="display:none;")
-        button.btn.btn-success#DYBconnected(type="button", style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
+        div.btn.btn-success#DYBconnected(type="button", style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
       div.col-md-6
         h2 OpenBadges
         p Entrer l'adresse email associée à votre compte OpenBadges :
@@ -111,19 +111,4 @@ script(type="text/javascript").
           xhttpBadges.send();
         }
         document.getElementById("savedMessage").removeAttribute("hidden");
-    }
-    
-    function checkDYBchange(){
-      var DYBapiKey = document.getElementById("apiKey").value;
-      var DYBapiSecret = document.getElementById("apiSecret").value;
-      var changes = DYBapiKey == data.doYouBuzzAPIKey || DYBapiSecret == data.doYouBuzzAPISecret;
-      if(data.doYouBuzzOauthVerifierTokenSecret == "" && !data.DYBresponse || changes){
-        console.log("need connection");
-        //document.getElementById("DYBconnection").setAttribute("style", "");
-        //document.getElementById("DYBconnected").setAttribute("style", "display: none;");
-      }else if(data.doYouBuzzOauthVerifierTokenSecret != "" || !data.DYBresponse && !changes){
-        console.log("connected");
-        //document.getElementById("DYBconnection").setAttribute("style", "display: none;");
-        //document.getElementById("DYBconnected").setAttribute("style", "");
-      }
     }
