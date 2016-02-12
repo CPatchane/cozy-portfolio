@@ -3,7 +3,6 @@
 var cozydb = require('cozydb');
 
 var accountsModel = cozydb.getModel('accounts', {
-    "id" : String,
     "openBadgesEmail" : {type: String, "default": ""},
     "openBadgesUserId" : {type: Number, "default": 0},
     "doYouBuzzAPIKey" : {type: String, "default": ""},

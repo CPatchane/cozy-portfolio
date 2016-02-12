@@ -16,7 +16,6 @@ var badgeModel = cozydb.getModel('badge', {
 });
 
 var badgeGroupModel = cozydb.getModel('badgeGroup', {
-	"id" : Number,
 	"groupId" : {type: Number, "default": 0},
 	"name" : {type: String, "default": ""},
 	"totalBadges" : {type: Number, "default": 0},
