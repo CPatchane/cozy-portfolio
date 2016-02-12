@@ -3,24 +3,24 @@
 var cozydb = require('cozydb');
 
 var badgeModel = cozydb.getModel('badge', {
-  "lastValidated": String,
-  "hostedUrl": String,
-  "name": String,
-  "description": String,
-  "imageUrl": String,
-  "criteria": String,
-  "issuerName": String,
-  "issuerUrl": String,
-  "issuedOn": String,
-  "visible":Boolean
+  "lastValidated": {type: String, "default": ""},
+  "hostedUrl": {type: String, "default": ""},
+  "name": {type: String, "default": ""},
+  "description": {type: String, "default": ""},
+  "imageUrl": {type: String, "default": ""},
+  "criteria": {type: String, "default": ""},
+  "issuerName": {type: String, "default": ""},
+  "issuerUrl": {type: String, "default": ""},
+  "issuedOn": {type: String, "default": ""},
+  "visible": {type: Boolean, "default": false}
 });
 
 var badgeGroupModel = cozydb.getModel('badgeGroup', {
 	"id" : Number,
-	"groupId" : Number,
-	"name" : String,
-	"totalBadges" : Number,
-	"badges" : [badgeModel]
+	"groupId" : {type: Number, "default": 0},
+	"name" : {type: String, "default": ""},
+	"totalBadges" : {type: Number, "default": 0},
+	"badges" : {type: [badgeModel], "default": []}
 });
 
 badgeGroupModel.all = function(callback) {

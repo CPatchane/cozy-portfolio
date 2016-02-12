@@ -72,7 +72,7 @@ module.exports.update = function(req, res, next) {
 };
 
 
-//function to update badges visibilities
+//function to update documents visibilities
 module.exports.updateVisibilities = function(req, res, next) {
   portfolioDocument.all(function(err, portfolioDocuments) {
     if(err !== null) {

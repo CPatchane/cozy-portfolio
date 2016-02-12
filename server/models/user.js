@@ -2,7 +2,10 @@
 
 var cozydb = require('cozydb');
 
-var stringBoolObject = cozydb.getModel('stringBoolObject', {"value": String, "display": Boolean});
+var stringBoolObject = cozydb.getModel('stringBoolObject', {
+  "value": {type: String, "default": ""},
+   "display": {type: Boolean, "default": false}
+});
 
 var userModel = cozydb.getModel('user', {
   "firstName" : stringBoolObject,
@@ -13,7 +16,7 @@ var userModel = cozydb.getModel('user', {
   "status" : stringBoolObject,
   "localisation" : stringBoolObject,
   "resumes" : cozydb.NoSchema, //[{id, title}]
-  "activeResumeId" : String,
+  "activeResumeId" : {type: String, "default": ""},
 	"hobbies" : stringBoolObject,
 	"keywords" : stringBoolObject
 });

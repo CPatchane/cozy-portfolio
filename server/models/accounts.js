@@ -4,13 +4,13 @@ var cozydb = require('cozydb');
 
 var accountsModel = cozydb.getModel('accounts', {
     "id" : String,
-    "openBadgesEmail" : String,
-    "openBadgesUserId" : Number,
-    "doYouBuzzAPIKey" : String,
-    "doYouBuzzAPISecret" : String,
-    "doYouBuzzOauthVerifierToken" : String,
-    "doYouBuzzOauthVerifierTokenSecret" : String,
-    "doYouBuzzOldTokenSecret" : String
+    "openBadgesEmail" : {type: String, "default": ""},
+    "openBadgesUserId" : {type: Number, "default": 0},
+    "doYouBuzzAPIKey" : {type: String, "default": ""},
+    "doYouBuzzAPISecret" : {type: String, "default": ""},
+    "doYouBuzzOauthVerifierToken" : {type: String, "default": ""},
+    "doYouBuzzOauthVerifierTokenSecret" : {type: String, "default": ""},
+    "doYouBuzzOldTokenSecret" : {type: String, "default": ""}
 });
 
 accountsModel.all = function(callback) {
