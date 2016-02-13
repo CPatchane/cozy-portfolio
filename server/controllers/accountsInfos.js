@@ -200,6 +200,7 @@ function getFinalTokenFromDYB(urlArguments, accountsInfos, res){
               res.status(500).send(accountsInfos);
             }
             else {
+              //we update the document
               accounts.updateAttributes(data, function(err) {
                 if(err !== null) {
                   accountsInfos[0].DYBResponse = "ERROR Database";

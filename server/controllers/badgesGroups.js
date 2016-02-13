@@ -2,6 +2,7 @@ var badgesGroup = require('../models/badgesGroup');
 var accounts = require('../models/accounts');
 var request = require("request");
 
+//function to get all badges groups from database
 module.exports.list = function(req, res, next) {
   badgesGroup.all(function(err, badgesGroups) {
     if(err !== null) {
@@ -14,50 +15,15 @@ module.exports.list = function(req, res, next) {
 };
 
 
-/*module.exports.destroy = function(req, res, next){
-   //we destroy all badges already present - that needs to be optimised
-  badgesGroup.all(function(err, badgesGroups) {
-    if(err !== null) {
-      res.status(500).send("Error badges group to remove");
-    }
-    else {
-      badgesGroups.forEach(function(element, index, array){
-        badgesGroup.find(element.id, function(err, badgesGroup) {
-          if(err !== null) {
-            next(err);
-          }
-          else if(badgesGroup === null) {
-            res.status(404).send("Badges group to remove not found");
-          }
-          else {
-            badgesGroup.destroy(function(err) {
-              if(err !== null) {
-                next(err);
-              }
-              else {
-                if(index == badgesGroups.length-1){
-                  res.status(200).send("All groups removed");
-                }
-              }
-            });
-          }
-        });
-      });
-      if(badgesGroups.length == 0) res.status(200).send("No groups to removed");
-    }
-  });
-};*/
-
-
-// We define another route that will handle badges group syncing with openbadge backpack
+// function to handle badges group syncing with openbadge backpack
 module.exports.syncWithOB = function(req, res, next) {
-  //first, we destroy all badges to be sure to get all correct badges without duplicates and errors
+  //firstly, we destroy all badges to be sure to get all correct badges without duplicates and errors
   badgesGroup.all(function(err, badgesGroups) {
     if(err !== null) {
       res.status(500).send("Error badges group to remove");
     }
     else {
-      badgesGroups.forEach(function(element, index, array){
+      badgesGroups.forEach(function(element, index, array){ // for each badges group
         badgesGroup.find(element.id, function(err, badgesGroup) {
           if(err !== null) {
             next(err);
@@ -66,12 +32,14 @@ module.exports.syncWithOB = function(req, res, next) {
             res.status(404).send("Badges group to remove not found");
           }
           else {
+            // we destroy this group
             badgesGroup.destroy(function(err) {
               if(err !== null) {
                 next(err);
               }
               else {
                 if(index == badgesGroups.length-1){
+                  //when all badges group are destroy, we request all badges from OpenBadges backpack
                   getBadges();
                 }
               }
@@ -79,16 +47,16 @@ module.exports.syncWithOB = function(req, res, next) {
           }
         });
       });
-      if(badgesGroups.length == 0) getBadges();
+      if(badgesGroups.length == 0) getBadges(); // if there are no badges in the database, we request directly from OpenBadges
     }
   });
   
-  //get all badges from OpenBadges thanks to the userId
+  //function to request all badges from OpenBadges thanks to the userId
   function getBadges(){
-    var userId = 0;
-    var groups = [];
-    var groupBadges = [];
-    var dataToUpdate = {};
+    var userId = 0;//openBadges user id
+    var groups = []; //to store all badges groups
+    var groupBadges = []; //to store all badges of a group
+    var dataToUpdate = {}; //data that will be save into the database
     
     accounts.all(function(err, accountsInfos) {
       if(err !== null) {
@@ -96,51 +64,54 @@ module.exports.syncWithOB = function(req, res, next) {
       }
       else {
         userId = accountsInfos[0].openBadgesUserId;
-        if(userId !== undefined && userId != 0){
-          getBadgeGroups(userId);
+        if(userId !== undefined && userId != 0){//if we have a userId we continue
+          getBadgeGroups(userId);//we request badges groups from OpenBadges
         }else{
-          res.status(404).send("No userId found");
+          res.status(404).send("No userId found");//the user didn't register a OpenBadges email or the email doesn't match to an OpenBadges profile
         }
       }
     });
     
-    
+    //function to request badges groups from OpenBadges
     function getBadgeGroups(userId){
       request({
       uri: "https://backpack.openbadges.org/displayer/"+userId+"/groups",
       method: "GET",
       }, function(error, response, body) {
-        groups = JSON.parse(body).groups;
-        if(groups.length == 0) res.status(404).send("No badges groups found");
-        groups.forEach(function(element, index, array){
-          dataToUpdate = {};
-          dataToUpdate.groupId = element.groupId;
-          dataToUpdate.name = element.name;
-          dataToUpdate.totalBadges = element.badges;
-          dataToUpdate.badges = [];
-          if(index == groups.length-1){//last group to update
-            if(dataToUpdate.totalBadges > 0){//we don't want empty groups
-                getBadgesFromGroup(dataToUpdate, true); //get all badges for each group
+        groups = JSON.parse(body).groups; //we put all groups in the groups array
+        if(groups.length == 0) res.status(404).send("No badges groups found"); //if there is not any groups
+        groups.forEach(function(element, index, array){//for each group
+          dataToUpdate = {}; //we reset this object
+          dataToUpdate.groupId = element.groupId; //id of this group of badges (id from the OpenBadges backpack)
+          dataToUpdate.name = element.name; // name of the group
+          dataToUpdate.totalBadges = element.badges; //total number of badges
+          dataToUpdate.badges = []; //all badges of this group we will be in this array
+          if(index == groups.length-1){//if this is the last group to be updated
+            if(dataToUpdate.totalBadges > 0){//if there is at least one badge in this group
+                getBadgesFromGroup(dataToUpdate, true); //we are now getting all badges for this group and save in the database
+                // the second parameter is used to say that is the last badges group, it's true here so the next function will 
+                //send a successful message to the client app
             }else{
-              res.status(200).send("All badges updated");
+              res.status(200).send("All badges updated");//successful response message
             }
           }else{
-            if(dataToUpdate.totalBadges > 0){//we don't want empty groups
-              getBadgesFromGroup(dataToUpdate, false); //get all badges for each group
+            if(dataToUpdate.totalBadges > 0){//if there is at least one badge in this group
+              getBadgesFromGroup(dataToUpdate, false); //we are now getting all badges for this group and save in the database
             }
           }
         });
       });
     }
-    
-    function getBadgesFromGroup(data, lastUpdate){
+    //final step, we request all badges of the group and save the group into the database
+    function getBadgesFromGroup(dataToUpdate, lastUpdate){
       request({
-        uri: "https://backpack.openbadges.org/displayer/"+userId+"/group/"+data.groupId,
+        uri: "https://backpack.openbadges.org/displayer/"+userId+"/group/"+dataToUpdate.groupId,
         method: "GET",
         }, function(error, response, body) {
-          groupBadges = JSON.parse(body).badges;
-          groupBadges.forEach(function(element, index, array){
-            data.badges[index] = {
+          groupBadges = JSON.parse(body).badges;//all badges
+          groupBadges.forEach(function(element, index, array){ 
+            //for each badge we got all its data and store it in the object to save in the database
+            dataToUpdate.badges[index] = {
               "lastValidated": element.lastValidated,
               "hostedUrl": element.hostedUrl,
               "name": element.assertion.badge.name,
@@ -153,9 +124,8 @@ module.exports.syncWithOB = function(req, res, next) {
               "visible":false
             }
           });
-          //console.log(data);
-          //here we store data in the database about badges
-          badgesGroup.create(data, function(err, badgesGroup) {
+          //here we store data in the database, we create a new document with the badgesGroup model
+          badgesGroup.create(dataToUpdate, function(err, badgesGroup) {
             if(err !== null) {
               res.status(500).send("ERROR badges group creation")
             }else{
@@ -189,7 +159,8 @@ module.exports.updateBadgesVisibilities = function(req, res, next) {
         badges.forEach(function(badge, index, array){
            badge.visible = badgesSent[badge.name];
         });
-        //and we update it each time, if no error we continue
+        //and we update it each time
+        //if no error we continue, and when we reach the last element we send a success response to the client app
         group.updateAttributes({'badges':badges}, function(err) {
           if(err !== null) {
             res.status(500).send("ERROR");
