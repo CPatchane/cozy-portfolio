@@ -2,21 +2,25 @@
 script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
 script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
 link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+//- Stylesheets
 style
   include main.css
   include choices.css
   
 div.container
+  //- Left side menu elements
   div.col-md-2.leftMenu
     div.sidebar-nav
       div.navbar.navbar-default(role='navigation')
         div.navbar-header
+          //- Mobile button
           button.navbar-toggle(type='button', data-toggle='collapse', data-target = '.sidebar-navbar-collapse')
             span.sr-only Toggle navigation
             span.icon-bar
             span.icon-bar
             span.icon-bar
           span.visible-xs.navbar-brand Menu
+        //- Menu elements
         div.navbar-collapse.collapse.sidebar-navbar-collapse
           ul.nav.navbar-nav
             li
@@ -27,47 +31,64 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
+  //- Main container
   div.col-md-10.choicesContainer#choicesContainer
+    //- Container for all tabs (document categories)
     div.row#TabsContainer
       div.row.text-center
         h1.col-md-12 Mes choix
-      //-div.row.tab
-        a.tabTitle.col-md-12(onclick="chooseCategory(this);") Aperçu
-        div.docsContainer.col-md-12
       //- It will contain all categories tabs dynamically here
+    //- Submiting buttons and UI messages
     div.row#submitPart
       div.col-md-12.submitButton.text-center
+        //- button to submit information
         button.btn.btn-primary#submitChanges(onclick="submitChanges()") Valider mes choix
+        //- button to get documents from DoYouBuzz
         button.btn.btn-warning#syncDYBDocumentsButton(type="button", onclick="syncDYBDocuments()") Synchroniser mes documents DoYouBuzz
+        //- UI messages
         div.alert.alert-success#savedMessage(hidden="true")
         div.alert.alert-danger#errorMessage(hidden="true")
+    //- part used to add a new document
     div.row#addDocumentPart
+      //- title
       div.row.text-left
         h3.col-md-12 Ajouter un document
+      //- form container
       div.documentBlock.col-md-9#addDocumentBlock(style="display:none")
         div.documentContent.col-md-12#addDocumentContent
+          //- document title
           div.row
             label Titre<span class="mandatoryStar">*</span> :
             input#title(type="text", placeholder="Titre du document" name="title")
+          //- document url
           div.row
             label URL :
             input#url(type="text", placeholder="Url de votre document" name="url")
+          //- related website
           div.row
             label Site web associé :
             input#relatedWebsite(type="text", placeholder="www.mywebsite.fr" name="relatedWebsite")
+          //- category
           div.row
             label Catégorie<span class="mandatoryStar">*</span> :
             input#category(type="text", placeholder="Sa catégorie" name="category")
+          //- creation date
           div.row
             label Date de réalisation<span class="mandatoryStar">*</span> :
             input#creationDate(type="text", placeholder="jj/mm/aaaa" name="creationDate" maxlength="10")
+          //- document description
           div.row
             label Description<span class="mandatoryStar">*</span> :
             textarea#description(style="resize:none;width:60%;height:100px;", placeholder="Description du document..." name="description")
+          //- buttons part
           div.row.text-center
+            //- to submit
             button.btn.btn-primary#addDocumentButton(onclick="addDocument()") Ajouter ce document
+            //- to hide the form
             button.btn.btn-secondary#cancelButton(onclick="showAddDocumentForm(false)") Cacher
+          //- UI error message
           div.row.alert.alert-danger#errorMessageAddDocument(style="margin-top:5px;", hidden="true")
+      //- add document form placeholder
       div.documentBlock.col-md-3#placeHolderAddDocumentBlock(onclick="showAddDocumentForm(true)")
         div.documentContent.col-md-12#placeHolderAddDocumentContent
           button#addButton +
@@ -77,10 +98,10 @@ script(type="text/javascript").
   /** Global variables **/
   var groups = {};
   var documents = [];
-  //we store in this next object all categories already built (or reserved) to avoid duplicates
-  var categoriesAlreadyBuilt = {"Présentation" : true, "Badges" : true}; //ex categoriesAlreadyBuilt["Vidéos"] = true;
-  var documentsAlreadyBuilt = {};
-  var isADocumentInEditingMode = false;
+  //we store in this next object all categories already built (or reserved) to avoid duplicated categories
+  var categoriesAlreadyBuilt = {"Présentation" : true, "Badges" : true}; //exemple: categoriesAlreadyBuilt["Vidéos"] = true;
+  var documentsAlreadyBuilt = {}; // all documents built will be here with as value true and as key the matching document id
+  var isADocumentInEditingMode = false; //boolean used to know if one document is already in the editing mode (avoid two documents in the editing mode in the same time)
   
   /** initialisation **/
   init(true,false,false); //first running so this is not an update
@@ -90,7 +111,10 @@ script(type="text/javascript").
   /** General functions **/
   /***********************/
   
-  //functon run on page loading
+  //function run on page loading
+  // @isFirstRunning : true if this this is the very fist running of the function (here this is the page loading) -> build all documents and badges
+  // @isDocumentsUpdate : true if we want to update the documents HTML Structure on the page (build a new one or remove one)
+  // @isBadgeUpdate : true if we want to update the badges HTML strucutre (when we sync with the OpenBadges backpack)
   function init(isFirstRunning, isDocumentsUpdate, isBadgeUpdate){
     //get all documents from database and build them on the page
     if(isFirstRunning || isDocumentsUpdate)getAndBuildDocuments(isDocumentsUpdate);
@@ -99,12 +123,15 @@ script(type="text/javascript").
     if(isFirstRunning || isBadgeUpdate)getAndBuildBadges(isBadgeUpdate);
   }
   
-  //functon for choising category behavior
+  
+  //function for selection category behavior, it takes the clicked tab as parameter
   function chooseCategory(element){
+    //if this tab was already selected, we unselect it
     if(element.parentNode.className == "row tab choiceCategory"){
       element.parentNode.className = "row tab";
       return;
     }
+    //if this is tab was not selected, we unselect all other tab and select this one
     var categoriesDIV = document.getElementById("choicesContainer").getElementsByClassName("tab");
     for(var i in categoriesDIV){
       categoriesDIV[i].className = "row tab";
@@ -112,25 +139,30 @@ script(type="text/javascript").
     element.parentNode.className = "row tab choiceCategory";
   }
   
-  //function to submit user changes
+  
+  //function to submit all document and badges visibilities
   function submitChanges(){
     /**submit document visibilities**/
-    var documentInputs = document.getElementsByClassName("documentVisibility");
-    var documentsToSubmit = {};
+    var documentInputs = document.getElementsByClassName("documentVisibility"); //all document visibility checkboxes
+    var documentsToSubmit = {}; // will be sent to the database for the update
+    //we get all visibility checkboxes value and update the object that will be sent to the database
     for(var i=0; i<documentInputs.length; i++){
       documentsToSubmit[documentInputs[i].getAttribute("documentID")] = documentInputs[i].checked;
     }
+    //request
     var xmlHttpUpdateDocuments = new XMLHttpRequest();
     xmlHttpUpdateDocuments.open( "PUT", "updateDocumentsVisibilities", false ); // false for synchronous request
     xmlHttpUpdateDocuments.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdateDocuments.send( JSON.stringify(documentsToSubmit) );
     
     /**submit badges visibilities**/
-    var badgesInputs = document.getElementsByClassName("badgeVisibility");
-    var badgesToSubmit = {};
+    var badgesInputs = document.getElementsByClassName("badgeVisibility"); //all badge visibility checkboxes
+    var badgesToSubmit = {}; // will be sent to the database for the update
+    //we get all visibility checkboxes value and update the object that will be sent to the database
     for(var i=0; i<badgesInputs.length; i++){
       badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
     }
+    //request
     var xmlHttpUpdate = new XMLHttpRequest();
     xmlHttpUpdate.open( "PUT", "updateBadgesVisibilities", false ); // false for synchronous request
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
@@ -143,18 +175,19 @@ script(type="text/javascript").
   /**********************/
   
   //function to get all badges from database and build them on the html page
+  // @isUpdate : true if this is an update and not the first building of the badges tab
   function getAndBuildBadges(isUpdate){
     //get all badges from database and build them on page
+    //request
     var xmlHttpGroups = new XMLHttpRequest();
     xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpGroups.send( null );
     groups = JSON.parse(xmlHttpGroups.responseText);
-    //console.log(groups);
     
-    if(groups.length == 0) return; //if no badges returned, we stop here
-    if(isUpdate){
+    if(groups.length == 0) return; //if there is no badge returned, we stop it here
+    if(isUpdate){ // if this an update, we empty the badges tab
       document.getElementById("badgesTabContent").innerHTML = "";
-    }else{
+    }else{ //if this is the first running, we build the badges tab
       var badgesTabHTML = '<div class="row tab" id="badgesTab">' +
                             '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">Badges</a>' +
                             '<div class="docsContainer col-md-12" id="badgesTabContent"></div>' +
@@ -163,23 +196,26 @@ script(type="text/javascript").
       document.getElementById("TabsContainer").innerHTML += badgesTabHTML;
     }
     var badges = {};
+    //and we build each badge of each group
     groups.forEach(function(group, group_index, array){
       badges = group.badges;
       badges.forEach(function(badge, badge_index, array){
-        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, group_index+"_"+badge_index); 
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, group_index+"_"+badge_index);
+        //we user group_index and badge_index here in order to get a unique id 
       });
     });
   }
   
     
-  //function to build each badge on page
+  //function to build a badge on the page
+  //all parameters here is badges properties
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
-    //id for the badge visibility input
+    //id for the badge visibility input we need a unique id
     var badgeId = "badge_"+index;
-    //get visibility parameter
+    //get the visibility value
     var checked = visibility ? "checked" : "";
     //badge html building
-    var container = 
+    var badgeHTML = 
         '<div class="badgeBlock col-md-6">' +
           '<div class="badgeContent col-md-12">' +
             '<img class="badgeImage" src="' + imageUrl + '"/>'+
@@ -196,18 +232,21 @@ script(type="text/javascript").
         '</div>';
       
       //add to badges tab
-      document.getElementById("badgesTabContent").innerHTML += container;
+      document.getElementById("badgesTabContent").innerHTML += badgeHTML;
   }
   
   
   //function to sync badges with OpenBadges BackPack
   function syncObenBadgesBackPack(){
-    if(confirm("Attention : les paramètres de visibilité de vos badges seront désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
+    //we warn the user about the changes
+    if(confirm("Attention : les paramètres de visibilité de vos badges seront par défaut désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
+        //request to update badges in database
         var xmlHttpSync = new XMLHttpRequest();
         xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
         xmlHttpSync.onreadystatechange = function(){
-          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) {
-            init(false, false, true); //badges updates but not document update
+          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) { //success
+            //we rebuild all the badges tab content
+            init(false, false, true); //badges update but not document update
           }
         }
         xmlHttpSync.send();
@@ -505,8 +544,9 @@ script(type="text/javascript").
   /** DoYouBuzz functions **/
   /*************************/
   
-  //function to sync documents with DoYouBuzz
+  //function to get documents from DoYouBuzz
   function syncDYBDocuments(){
+    //request
     var xmlHttpSyncDYB = new XMLHttpRequest();
     xmlHttpSyncDYB.open( "GET", "syncDYBDocuments", false ); // false for synchronous request
     xmlHttpSyncDYB.send();
