@@ -1,22 +1,26 @@
-//-Bootstrap links and main style
+//- Bootstrap links and main style
 script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
 script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
 link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+//- Stylesheets
 style
   include main.css
   include home.css
   
 div.container
+  //- Side left menu elements
   div.col-md-2.leftMenu
     div.sidebar-nav
       div.navbar.navbar-default(role='navigation')
         div.navbar-header
+          //- Mobile button
           button.navbar-toggle(type='button', data-toggle='collapse', data-target = '.sidebar-navbar-collapse')
             span.sr-only Toggle navigation
             span.icon-bar
             span.icon-bar
             span.icon-bar
           span.visible-xs.navbar-brand Menu
+        //- Menu elements
         div.navbar-collapse.collapse.sidebar-navbar-collapse
           ul.nav.navbar-nav
             li.active
@@ -27,123 +31,167 @@ div.container
               a(href='#choices') Mes choix
             li
               a(href='#accountSettings') Paramètres
+  //- Main container
   div.col-md-10.profilContainer#profilElements
+    //- Title
     div.row.text-center
       h1.col-md-12(style="margin-left:-100px;") Mon profil
+    //- part for all user information inputs
     div.row
       div.col-md-6
+        //- Firstname
         p Prénom
         input#firstName(type="text", placeholder="Votre prénom" name="firstName")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#firstNameCB(type="checkbox" name="firstNameCB")
         label(for="firstNameCB")
+        //- Lastname
         p Nom
         input#lastName(type="text", placeholder="Votre nom", name="lastName")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#lastNameCB(type="checkbox", name="lastNameCB")
         label(for="lastNameCB")
+        //- Birthday date
         p Date de naissance (pour votre âge uniquement)
         input#birthdayDate(type="text", placeholder="jj/mm/aaaa", name="birthdayDate")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#birthdayDateCB(type="checkbox", name="birthdayDateCB")
         label(for="birthdayDateCB")
+        //- Email
         p Email
         input#email(type="text", placeholder="example@domain.xyz", name="email")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#emailCB(type="checkbox", name="emailCB")
         label(for="emailCB")
+        //- Description
         p Description
         textarea#description(style="resize:none;width:300px;height:100px;", placeholder="Une petite description de vous", name="description")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#descriptionCB(type="checkbox", name="descriptionCB")
         label(for="descriptionCB")
       div.col-md-6
+        //- Status
         p Situation professionnelle
         input#status(type="text", placeholder="Etudiant, expert chez ...", name="status")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#statusCB(type="checkbox", name="statusCB")
         label(for="statusCB")
+        //- Localisation
         p Situation géographique
         input#localisation(type="text", placeholder="Votre position géographique actuelle", name="localisation")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#localisationCB(type="checkbox", name="localisationCB")
         label(for="localisationCB")
+        //- Hobbies
         p Loisirs (séparés par des  " , ")
         input#hobbies(type="text", placeholder="Vos loisirs", name="hobbies")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#hobbiesCB(type="checkbox", name="hobbiesCB")
         label(for="hobbiesCB")
+        //- Keywords
         p Mots-clés (séparés par des  " , ")
         input#keywords(type="text", placeholder="Des mots-clés décrivant votre profil", name="keywords")
+        //- input + label for the visibility preference of this information
         input.visibilityCheckBox#keywordsCB(type="checkbox", name="keywordsCB")
         label(for="keywordsCB")
+    //- part for the DoYouBuzz resume choice
     div.row#resumesPart(hidden="true")
       div.col-md-12
         p Vos CVs DoYouBuzz pour récupérer les informations du portfolio (un seul choix possible)
         div#resumesContainer
+    //- Part for submiting buttons and UI messages
     div.row
       div.col-md-12.submitButton.text-center
+        //- submiting button
         button.btn.btn-primary#submitChanges(type="button", onclick="submitInfos()") Valider les changements
+        //- button to get data from DoYouBuzz
         button.btn.btn-warning#DYBSyncing(type="button" onclick="getDataFromDYBResume()") Récupérer les données depuis mon CV DoYouBuzz
+        //- loading animation
         div.spinner#DYBloadingIcon(style="display:none;")
+        //- UI messages
         div.alert.alert-success#savedMessage(hidden="true")
         div.alert.alert-danger#ErrorMessage(hidden="true")
         
         
 script(type="text/javascript").
-  var data = {};
+  var data = {}; //to store user infos from the database in the global scope
+  //get all data from the database
   getInfos();
+  
   function getInfos(){
+    //requestion to the user information from the database
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", "getUserInfos", false ); // false for synchronous request
-    xmlHttp.send( null );
-    data = JSON.parse(xmlHttp.responseText)[0];
-    console.log(data);
-    for(var propertyName in data){
-      if(propertyName == "resumes"){//for resumes
-        if(data[propertyName].length)document.getElementById("resumesPart").removeAttribute("hidden");
-        for(var resume in data[propertyName]){
-          if(document.getElementById("resumeId"+data[propertyName][resume].id) !== null) continue;
-          var resumeElement = document.createElement("div");
-          resumeElement.className = "resume";
-          resumeElement.addEventListener("click", function(){chooseResume(this);}, false);
-          var titleElement = document.createElement("p");
-          titleElement.innerHTML = data[propertyName][resume].title;
-          titleElement.className = "resumeTitle";
-          titleElement.id = "resumeId" + data[propertyName][resume].id;
-          titleElement.setAttribute("resumeId", data[propertyName][resume].id);
-          resumeElement.appendChild(titleElement);
-          document.getElementById("resumesContainer").appendChild(resumeElement);
+    xmlHttp.send();
+    data = JSON.parse(xmlHttp.responseText)[0]; // there is only one document for userInfos, so this is the first element of the returned array
+    for(var propertyName in data){ // for each information
+      if(propertyName == "resumes"){//for resumes (array of resumes)
+        //if there is at least one resume on DoYouBuzz, we display this part
+        if(data[propertyName].length){
+          document.getElementById("resumesPart").removeAttribute("hidden");
+          for(var resume in data[propertyName]){
+            if(document.getElementById("resumeId"+data[propertyName][resume].id) !== null) continue; //if this resume was already registered
+            //we create the HTML structure of the resume to be displayed
+            var resumeElement = document.createElement("div");
+            resumeElement.className = "resume";
+            resumeElement.addEventListener("click", function(){chooseResume(this);}, false); //user interface picking behavior
+            //title part
+            var titleElement = document.createElement("p");
+            titleElement.innerHTML = data[propertyName][resume].title;
+            titleElement.className = "resumeTitle";
+            titleElement.id = "resumeId" + data[propertyName][resume].id;
+            titleElement.setAttribute("resumeId", data[propertyName][resume].id);
+            resumeElement.appendChild(titleElement); //we append the title element to the resume element
+            document.getElementById("resumesContainer").appendChild(resumeElement); //we append the resume element to the page
+          }
         }
         continue;
       }
-      if(propertyName == "activeResumeId"){
+      if(propertyName == "activeResumeId"){ //if a resume is already picked by the user
         if(document.getElementById("resumeId"+data[propertyName]) !== null)document.getElementById("resumeId"+data[propertyName]).parentNode.className = "resume choice";
       }
-      if(document.getElementById(propertyName) === null) continue;
+      if(document.getElementById(propertyName) === null) continue; //if for some reason the html structure for this property doesn't exist
+      //we put the information into the correct input
       document.getElementById(propertyName).value = data[propertyName].value;
+      //and set the visibility preference
       document.getElementById(propertyName+"CB").checked = data[propertyName].display;
     }
   }
 
+  //function to submit information and save them into the database
   function submitInfos(){
     var formElements = document.getElementById("profilElements").getElementsByTagName("input");
-    var description = document.getElementsByTagName("textarea")[0]; //for description
-    var dataToSend = {};
+    var description = document.getElementsByTagName("textarea")[0]; //for the description
+    var dataToSend = {}; //object that will be sent to the database
+    //propertie names of the user database model is the same than the name of all inputs(include textarea) here
+    //for the description
     dataToSend[description.getAttribute("name")] = description.value;
+    //for the resume choice
     var choice = document.getElementsByClassName("choice")[0];
     if(choice !== undefined) dataToSend.activeResumeId = choice.childNodes[0].getAttribute("resumeId");
+    //for all other information
     for(var i=0; i<formElements.length; i++){
-      if(formElements[i].getAttribute("name") === null) continue;
-      if(formElements[i].getAttribute('type') == 'checkbox'){
+      if(formElements[i].getAttribute("name") === null) continue; //in case
+      if(formElements[i].getAttribute('type') == 'checkbox'){ //for the visibility
+        //we get the property name
         var name = formElements[i].getAttribute("name");
-        dataToSend[name] = formElements[i].checked;
-      }else{
-        var name = [formElements[i].getAttribute("name")];
-        dataToSend[name] = formElements[i].value;
+        dataToSend[name] = formElements[i].checked; //and the value
+      }else{ // for all input values
+        var name = [formElements[i].getAttribute("name")]; //we get the property
+        dataToSend[name] = formElements[i].value; //and the value
       }
     }
+    //parameters for the request, we need here the data object and the document id of the user document(gotten from the database in the global data object)
     var parameters = "data="+JSON.stringify(dataToSend)+"&id="+data.id;
+    //request
     var xhttpInfos = new XMLHttpRequest();
     xhttpInfos.open("PUT", "updateUserInfos", true);
     xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttpInfos.onreadystatechange = function(){
-        if (xhttpInfos.readyState == 4 && xhttpInfos.status == 200) {
+        if (xhttpInfos.readyState == 4 && xhttpInfos.status == 200) { //if success, we display a successful message
           document.getElementById("savedMessage").removeAttribute("hidden");
           document.getElementById("savedMessage").innerHTML = xhttpInfos.responseText;
-        }else if(xhttpInfos.readyState == 4 && xhttpInfos.status != 200){
+        }else if(xhttpInfos.readyState == 4 && xhttpInfos.status != 200){ //if error, we display an error message
           document.getElementById("ErrorMessage").removeAttribute("hidden");
           document.getElementById("ErrorMessage").innerHTML = xhttpInfos.responseText;
         }
@@ -151,27 +199,32 @@ script(type="text/javascript").
     xhttpInfos.send(parameters);
   }
   
+  //function to hande the UI resume selection, it takes the selected resume HTML element as parameter
   function chooseResume(element){
+    //we get all resumes HTML elements
     var resumesDIVs = document.getElementById("resumesContainer").getElementsByClassName("resume");
-    for(var i in resumesDIVs){
+    for(var i in resumesDIVs){ //put the default class name (to remove a potential previous selection)
       resumesDIVs[i].className = "resume";
     }
-    element.className = "resume choice";
+    element.className = "resume choice"; //and add the "choice" class name to the selected resume
   }
   
+  
   function getDataFromDYBResume(){
-    if(confirm("Cette action mettre à jour les valeurs nom, prénom, email ainsi que la liste de vos CV DoYouBuzz. Continuer?")){
-      document.getElementById("DYBloadingIcon").setAttribute("style", "");
+    //we warn about the user about this update
+    if(confirm("Cette action mettre à jour les champs nom, prénom, email ainsi que la liste de vos CV DoYouBuzz. Continuer?")){
+      document.getElementById("DYBloadingIcon").setAttribute("style", ""); //we display the loading icon
+      //the request
       var xmlHttp = new XMLHttpRequest();
       xmlHttp.open( "POST", "getDYBUserInfos", true ); // true for asynchronous request
       xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xmlHttp.onreadystatechange = function(){
-          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {//if success, we display a succesful message
             document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             document.getElementById("savedMessage").removeAttribute("hidden");
             document.getElementById("savedMessage").innerHTML = xmlHttp.responseText;
             getInfos();
-          }else if(xmlHttp.readyState == 4 && xmlHttp.status != 200){
+          }else if(xmlHttp.readyState == 4 && xmlHttp.status != 200){ // if error, we display an error message
             document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             document.getElementById("ErrorMessage").removeAttribute("hidden");
             document.getElementById("ErrorMessage").innerHTML = xmlHttp.responseText;

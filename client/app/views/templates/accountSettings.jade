@@ -74,7 +74,9 @@ div.container
     //- row for submiting button and UI messages
     div.row
       div.col-md-12.submitButton.text-center
+        //- submiting button
         button.btn.btn-primary#submitChanges(onclick="submitAccountInfos()") Valider les changements
+        //- UI messages
         div.alert.alert-success#savedMessage(hidden="true") Vos paramètres sont enregistrées
         div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier puis de réessayer.
         
