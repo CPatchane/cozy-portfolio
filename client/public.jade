@@ -1,15 +1,19 @@
 doctype
 html
+  //- In this public page, all information will be provided by the server according to the visibility preferences of the CozyCloud user
+  //- and this page will display information resulted from the server
   head
     meta(charset="utf-8")
     meta(http-equiv="X-UA-Compatible",content="IE=edge, chrome=1")
     meta(name="viewport", content="width=device-width, initial-scale=1")
+    //- Bootstrap links
     script( src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js' )
     script( src='//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js' )
     link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css", rel="stylesheet")
+    //- Stylesheets
     style
       include public.css
-      
+    //- Web page title
     if user.name
       title Portfolio Cozy Cloud de #{user.name}
     else
@@ -28,6 +32,7 @@ html
       //- Documents part
       if portfolios || badges || user
         div.row.col-md-12#TabsContainer
+          //-user tab part
           if user
             div.row.tab#presentationTab
               a.tabTitle.col-md-12(onclick="chooseCategory(this)") Présentation
@@ -55,7 +60,7 @@ html
                         p Mots-clés : 
                           for keyword in user.keywords
                             span.keyword= keyword
-
+	        //-documents portfolio tab part 
           if portfolios
             for category in portfolios
               div.row.tab
@@ -72,7 +77,7 @@ html
                         if document.relatedWebsite
                           a(href="#{document.relatedWebsite}" target="_blank") Site web associé
                         p.documentDate Réalisé le #{document.creationDate}
-
+	        //- badges tab part 
           if badges
             div.row.tab#badgesTab
               a.tabTitle.col-md-12(onclick="chooseCategory(this)") Badges
@@ -88,18 +93,20 @@ html
                           a(href="#{badge.issuerUrl}") #{badge.issuerName}
                         p.badgeDescription #{badge.description}
                         a.badgeLink(target="_blank" href="#{badge.hostedUrl}") Voir sur le site d'origine
-
-
+	  //-JS client scripts
     script(type="text/javascript").
+      //by default the presentation tab will be opened
       function init(){
         document.getElementById("presentationTab").className = "row tab choiceCategory";
       }
-      //functon for choising category behavior
+      //functon for the category selection behavior
       function chooseCategory(element){
+        //if this category is selected, we unselect it
         if(element.parentNode.className == "row tab choiceCategory"){
           element.parentNode.className = "row tab";
           return;
         }
+        //if it's not we select it and unselect all others
         var categoriesDIV = document.getElementById("portfolioView").getElementsByClassName("tab");
         for(var i in categoriesDIV){
           categoriesDIV[i].className = "row tab";
