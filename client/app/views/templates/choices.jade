@@ -96,8 +96,8 @@ div.container
       
 script(type="text/javascript").
   /** Global variables **/
-  var groups = {};
-  var documents = [];
+  var groups = {}; //all groups of badges will be store in this object
+  var documents = []; //all documents will be store in this array
   //we store in this next object all categories already built (or reserved) to avoid duplicated categories
   var categoriesAlreadyBuilt = {"Présentation" : true, "Badges" : true}; //exemple: categoriesAlreadyBuilt["Vidéos"] = true;
   var documentsAlreadyBuilt = {}; // all documents built will be here with as value true and as key the matching document id
@@ -287,50 +287,61 @@ script(type="text/javascript").
   /** Documents functions **/
   /*************************/
   
-  //add a new document from the form
+  //function to add a new document from the form into the database and on the page
   function addDocument(){
+    //we remove potential error messages
     document.getElementById("errorMessageAddDocument").setAttribute("hidden", true);
+    //document title input
     var title = document.getElementById("title");
+    //document url input
     var url = document.getElementById("url");
+    //related website input
     var relatedWebsite = document.getElementById("relatedWebsite");
+    //category input
     var category = document.getElementById("category");
+    //creation date input
     var creationDate = document.getElementById("creationDate");
+    //description textarea 
     var description = document.getElementById("description");
+    //div for error messages to display in case of error
     var errorMessage = document.getElementById("errorMessageAddDocument");
+    //regex to check the date format
     var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/;
-    var cssIDRegex = /^[A-Za-z]+[A-Za-zÀ-ÿ0-9_\-\:\. ]*$/; //we will use the category as css id after, so we valid it now (we will replace spaces after)
+    //regex to test the compatibility to be a html/css id
+    var cssIDRegex = /^[A-Za-z]+[A-Za-zÀ-ÿ0-9_\-\:\. ]*$/; //we will use the category as css id after, so we valid it now (we will replace spaces as well)
+    //regex to check the url format
     var urlRegex = /(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
     //check all mandatory inputs
-    if(title.value == ""){
+    if(title.value == ""){ //title
       errorMessage.innerHTML = "Veuillez ajouter un titre.";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(category.value == "" || !category.value.match(cssIDRegex)){
+    }else if(category.value == "" || !category.value.match(cssIDRegex)){ //category test 1
       errorMessage.innerHTML = 'Veuillez assigner une catégorie correcte. (Doit commencé par une lettre et peut contenir uniquement : des lettres, des chiffres, des espaces, "-", "_", ":" et ".")';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(category.value == "Badges" || category.value == "Présentation"){
+    }else if(category.value == "Badges" || category.value == "Présentation"){ //category test 2
       errorMessage.innerHTML = 'Les catégories "Badges" et "Aperçu" ne peuvent pas être utilisées. Veuillez modifier.';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(creationDate.value == "" || !creationDate.value.match(dateRegex)){
+    }else if(creationDate.value == "" || !creationDate.value.match(dateRegex)){ //creation date
       errorMessage.innerHTML = "Veuillez ajouter une date correcte (format : JJ/MM/AAAA).";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(description.value == ""){
+    }else if(description.value == ""){ //description
       errorMessage.innerHTML = "Veuillez ajouter une description.";
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(url.value != "" && !url.value.match(urlRegex)){
+    }else if(url.value != "" && !url.value.match(urlRegex)){ //url
       errorMessage.innerHTML = 'L\'adresse URL du document est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
-    }else if(relatedWebsite.value != "" && !relatedWebsite.value.match(urlRegex)){
+    }else if(relatedWebsite.value != "" && !relatedWebsite.value.match(urlRegex)){ //related website
       errorMessage.innerHTML = 'L\'adresse URL du site web associé est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
       document.getElementById("errorMessageAddDocument").removeAttribute("hidden");
       return;
     }
-      
+    //data object that will be sent to the database to be added
     var dataToAdd = {
       "title" : title.value,
       "url" : url.value,
@@ -339,27 +350,30 @@ script(type="text/javascript").
       "creationDate" : creationDate.value,
       "description" : description.value
     };
-    //sent to server to be added
+    //we remove potential UI messages
     document.getElementById("savedMessage").setAttribute("hidden", true);
     document.getElementById("errorMessage").setAttribute("hidden", true);
+    //request
     var xmlHttpAddDocument = new XMLHttpRequest();
-    xmlHttpAddDocument.open( "POST", "addPortfolioDocument", true );
+    xmlHttpAddDocument.open( "POST", "addPortfolioDocument", true ); //true for asynchronous request
     xmlHttpAddDocument.setRequestHeader("Content-type", "application/json");
     xmlHttpAddDocument.onreadystatechange = function(){
-          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 200) {
-            //reset the form
+          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 200) { //if success
+            //we reset the form
             title.value = "";
             url.value = "";
             relatedWebsite.value = "";
             category.value = "";
             creationDate.value = "";
             description.value = "";
-            showAddDocumentForm(false);
-            init(false, true, false);//documents update
+            showAddDocumentForm(false); //we hide the form to show the placeholder
+            init(false, true, false); //documents update
+            //we display a successful message
             document.getElementById("savedMessage").innerHTML = xmlHttpAddDocument.responseText;
             document.getElementById("savedMessage").removeAttribute("hidden");
           }
-          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 500) {
+          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 500) { //if error
+            //display error message
             document.getElementById("errorMessage").innerHTML = xmlHttpAddDocument.responseText;
             document.getElementById("errorMessage").removeAttribute("hidden");
           }
@@ -367,52 +381,58 @@ script(type="text/javascript").
     xmlHttpAddDocument.send(JSON.stringify(dataToAdd));
   }
   
+  //function to hide/display the document adding form and use instead the placeholder
+  //@showFormAction : false to hide the form and display the placehfolder, and true for the opposite action  
   function showAddDocumentForm(showFormAction){
     if(showFormAction){
       document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
       document.getElementById("addDocumentBlock").removeAttribute("style");
-      window.scrollTo(0,document.body.scrollHeight);
+      window.scrollTo(0,document.body.scrollHeight);//get the user to the top of the page
     }else{
       document.getElementById("addDocumentBlock").setAttribute("style", "display:none");
       document.getElementById("placeHolderAddDocumentBlock").removeAttribute("style");
-      window.scrollTo(0);
+      window.scrollTo(0); //get the user to the bottom of the page to show all the adding form
     }
   }
   
   //get all documents from database and build them on the page
+  // @isUpdate : true if this is an update and not the first building of the documents tabs
   function getAndBuildDocuments(isUpdate){
     var xmlHttpDocuments = new XMLHttpRequest();
     xmlHttpDocuments.open( "GET", "getPortfolioDocuments", false ); // false for synchronous request
-    xmlHttpDocuments.send( null );
+    xmlHttpDocuments.send( );
+    //we get all documents
     documents = JSON.parse(xmlHttpDocuments.responseText);
-    console.log(documents);
     
-    if(documents.length == 0) return;
-    var documentID = "";
+    if(documents.length == 0) return; //if we have no documents we stop here
+    //for each document, we check if its category exists, if it doens't we create the category
     documents.forEach(function(myDocument, index, array){
       if(!categoriesAlreadyBuilt[myDocument.category]){ //new category
-        categoriesAlreadyBuilt[myDocument.category] = true;
+        categoriesAlreadyBuilt[myDocument.category] = true; //this category is going to be built
         var HTMLToBuild = '<div class="row tab">' +
                             '<a class="tabTitle col-md-12" onclick="chooseCategory(this);">' + myDocument.category + '</a>' +
                             '<div class="docsContainer col-md-12" id="'+ myDocument.category.replace(" ", "_") +'"></div>' +
                           '</div>';
         document.getElementById("TabsContainer").innerHTML += HTMLToBuild;
       }
+      //then we check if the document doesn't already exist, if it doesn't we create it
       if(!documentsAlreadyBuilt[myDocument.id]){ //new document
         documentsAlreadyBuilt[myDocument.id] = true;
-        buildDocument(myDocument);
+        buildDocument(myDocument); //we built the HTML structure of the document
       }
     });
-    //we put the badges category at the end of all categories
+    //we put the badges category at the end of all categories, so if it's an update we move the badges tab to the end of all tabs
+    //if it's not an update, the badges tab wouldn't exist and we would get an error
     if(isUpdate)document.getElementById('TabsContainer').appendChild(document.getElementById('badgesTab'));
   }
   
-  //function to build a document inside its correct container
+  //function to build a document inside its correct container/category/tab
   function buildDocument(myDocument){
-    var documentUrl = myDocument.url != "" ? myDocument.url : "javascript:;"; 
-    var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;";
-    var hiddenUrl = myDocument.url == "" ? 'hidden="true"' : "";
-    var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : "";
+    var documentUrl = myDocument.url != "" ? myDocument.url : "javascript:;"; //we can not have an HTML href attribute empty, we use javascript:; instead
+    var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;"; //same thing for the related website
+    var hiddenUrl = myDocument.url == "" ? 'hidden="true"' : ""; //if we have to hide the url because it's empty
+    var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : ""; //same thing for the related website
+    //HTML Structure building of the document
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
                           '<input id="Visibility'+ myDocument.id +'" documentID="'+ myDocument.id +'" class="visibilityCheckBox documentVisibility" type="checkbox"/>' +
@@ -432,17 +452,21 @@ script(type="text/javascript").
                           '<div class="alert alert-danger" hidden="true" id="alert'+myDocument.id+'"></div>' +
                         '</div>' +
                       '</div>';
-    document.getElementById(myDocument.category.replace(" ", "_")).innerHTML += htmlContent;
+    document.getElementById(myDocument.category.replace(" ", "_")).innerHTML += htmlContent; //we append this document to its matching tab
   }
   
+  //function to remove a document
+  //@element : html structure of the document to remove
   function removeDocument(element){
     if(confirm("Voulez-vouz vraiment supprimer ce document? Cette action est irreversible.")){
-      var documentIDtoRemove = element.getAttribute("documentID");
+      var documentIDtoRemove = element.getAttribute("documentID"); //we get the id of the document to send to the server
       
+      //request
       var xmlHttpRemoveDocument = new XMLHttpRequest();
       xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
-      xmlHttpRemoveDocument.send( null );
+      xmlHttpRemoveDocument.send();
       
+      //we remove now all HTML nodes not used anymore
       var childToRemove = element.parentNode.parentNode;
       var parent = childToRemove.parentNode;
       parent.removeChild(childToRemove);
@@ -450,17 +474,26 @@ script(type="text/javascript").
         var categoryToRemove = parent.parentNode;
         categoryToRemove.parentNode.removeChild(categoryToRemove);
       }
+      //this document is not build anymore because it's removed
       documentsAlreadyBuilt[documentIDtoRemove] = false;
       
+      //we now update documents on the page
       init(false, true, false);
     }
   }
   
+  //function to handle the editing mode of a document
+  //@labelElement : HTML label tag with is used to go into or out of the editing mode
   function editDocument(labelElement){
-    var documentID = labelElement.getAttribute("documentID");
-    var wasEditingMode = document.getElementById("Edition"+documentID).checked;
+    var documentID = labelElement.getAttribute("documentID"); //id of the document to edit
+    var wasEditingMode = document.getElementById("Edition"+documentID).checked;//if this document was editing mode before, that means we want to get out of it
+    
     //if another document is still in editing mode, we can not edit this one until the other document edition is finished
-    if(!wasEditingMode && isADocumentInEditingMode) alert("Un autre document est déjà en cours d'édition. Veuillez le terminer avant d'en éditer un autre. Merci.");
+    if(!wasEditingMode && isADocumentInEditingMode){
+      alert("Un autre document est déjà en cours d'édition. Veuillez le terminer avant d'en éditer un autre. Merci.");
+      return;
+    }
+    
     //document elements
     var titleElement = document.getElementById("title"+documentID);
     var descriptionElement = document.getElementById("description"+documentID);
@@ -473,9 +506,10 @@ script(type="text/javascript").
     var relatedWebsiteElementLabel = document.getElementById("editRelatedWebsiteLabel"+documentID);
     var alertElement = document.getElementById("alert"+documentID);
     
-    if(!wasEditingMode && !isADocumentInEditingMode){//we enter in the editing mode only if no other elements are in the editing mode
+    //we enter in the editing mode only if no other elements are in the editing mode
+    if(!wasEditingMode && !isADocumentInEditingMode){
       isADocumentInEditingMode = true; // to avoid multiple element editings
-      // we hide link elements and display their equivalent <p>
+      // we hide link elements and display their <p> equivalent
       urlLink.setAttribute("hidden", true);
       relatedWebsiteLink.setAttribute("hidden", true);
       urlElement.removeAttribute("hidden");
@@ -490,12 +524,15 @@ script(type="text/javascript").
       urlElement.setAttribute("contenteditable", true);
       relatedWebsiteElement.setAttribute("contenteditable", true);
       
+      //and check the checkbox which is the editing mode button
       document.getElementById("Edition"+documentID).checked = true;
       
     }else{ //we leave the editing mode   
       //check data entered
-      alertElement.setAttribute("hidden", true);
+      alertElement.setAttribute("hidden", true);//remove potential error messages
+      //to check the date
       var dateRegex = /^(0[1-9]|[12][0-9]|3[01])[/](0[1-9]|1[012])[/]\d{4}$/;
+      //to check urls
       var urlRegex = /(http(s)?:\/\/.)(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/;
       //We need to replace <br> because that will be here by default in an empty p
       if(urlElement.innerHTML == "</br>" || urlElement.innerHTML == "<br>")  urlElement.innerHTML = "";
@@ -503,30 +540,31 @@ script(type="text/javascript").
       if(titleElement.innerHTML == "</br>" || titleElement.innerHTML == "<br>")  titleElement.innerHTML = "";
       if(descriptionElement.innerHTML == "</br>" || descriptionElement.innerHTML == "<br>")  descriptionElement.innerHTML = "";
       if(dateElement.innerHTML == "</br>" || dateElement.innerHTML == "<br>")  dateElement.innerHTML = "";
+      
       //conditions checking
-      if(titleElement.innerHTML == ""){
+      if(titleElement.innerHTML == ""){ //title
         alertElement.innerHTML = "Veuillez entrer un titre.";
         alertElement.removeAttribute("hidden");
         return;
-      }else if(descriptionElement.innerHTML == ""){
+      }else if(descriptionElement.innerHTML == ""){ //description
         alertElement.innerHTML = "Veuillez entrer une description.";
         alertElement.removeAttribute("hidden");
         return;
-      }else if(dateElement.innerHTML == "" || !dateElement.innerHTML.match(dateRegex)){
+      }else if(dateElement.innerHTML == "" || !dateElement.innerHTML.match(dateRegex)){ //creation date
         alertElement.innerHTML = "Veuillez entrer une date correcte (format JJ/MM/AAAA).";
         alertElement.removeAttribute("hidden");
         return;
-      }else if(urlElement.innerHTML != "" && !urlElement.innerHTML.match(urlRegex)){
+      }else if(urlElement.innerHTML != "" && !urlElement.innerHTML.match(urlRegex)){ //url
         alertElement.innerHTML = 'L\'adresse URL du document est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
         alertElement.removeAttribute("hidden");
         return;
-      }else if(relatedWebsiteElement.innerHTML != "" && !relatedWebsiteElement.innerHTML.match(urlRegex)){
+      }else if(relatedWebsiteElement.innerHTML != "" && !relatedWebsiteElement.innerHTML.match(urlRegex)){ //related website
         alertElement.innerHTML = 'L\'adresse URL du site web associé est incorrecte (peut être avez-vous oublier "http://" ou "https://" ?)';
         alertElement.removeAttribute("hidden");
         return;
       }
       
-      // we display link elements and hide their equivalent <p>
+      // we display link elements and hide their <p> equivalent
       urlElement.setAttribute("hidden", true);
       relatedWebsiteElement.setAttribute("hidden", true);
       urlElementLabel.setAttribute("hidden", true);
@@ -543,12 +581,12 @@ script(type="text/javascript").
       //<a> with href="" is not valid so we use href="javascript:;" to know if it's empty or not
       urlLink.href = urlElement.innerHTML != "" ? urlElement.innerHTML : "javascript:;";
       relatedWebsiteLink.href = relatedWebsiteElement.innerHTML != "" ? relatedWebsiteElement.innerHTML : "javascript:;";
-      if(urlLink.href == "javascript:;") urlLink.setAttribute("hidden", true);
-      if(relatedWebsiteLink.href == "javascript:;") relatedWebsiteLink.setAttribute("hidden", true);
-      if(urlLink.href != "javascript:;") urlLink.removeAttribute("hidden");
-      if(relatedWebsiteLink.href != "javascript:;") relatedWebsiteLink.removeAttribute("hidden");
+      if(urlLink.href == "javascript:;") urlLink.setAttribute("hidden", true); //if it's empty, we hide it
+      if(relatedWebsiteLink.href == "javascript:;") relatedWebsiteLink.setAttribute("hidden", true); //if it's empty, we hide it
+      if(urlLink.href != "javascript:;") urlLink.removeAttribute("hidden"); //if it's not empty, we display it
+      if(relatedWebsiteLink.href != "javascript:;") relatedWebsiteLink.removeAttribute("hidden"); //if it's not empty, we display it
       
-      //element to send
+      //element to send to the database for the update
       var dataToUpdate = {
         "title" : titleElement.innerHTML,
         "url" : urlElement.innerHTML,
@@ -556,14 +594,25 @@ script(type="text/javascript").
         "creationDate" : dateElement.innerHTML,
         "description" : descriptionElement.innerHTML
       };
-      console.log(dataToUpdate)
+      //request
       var xmlHttpUpdateDocument = new XMLHttpRequest();
       xmlHttpUpdateDocument.open( "PUT", "updatePortfolioDocument/"+documentID, false ); // false for synchronous request
       xmlHttpUpdateDocument.setRequestHeader("Content-type", "application/json");
+      xmlHttpUpdateDocument.onreadystatechange = function(){
+          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 200) { //if success
+            document.getElementById("Edition"+documentID).checked = false;
+    	      isADocumentInEditingMode = false; //to allow an other element editing
+          }
+          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 404){
+            alertElement.innerHTML = 'Le document n\'a pas été trouvé dans la base de données. Veuillez recharger la page ou l\'application.';
+            alertElement.removeAttribute("hidden");
+          }
+          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 500){
+            alertElement.innerHTML = 'Erreur serveur. Veuillez recharger la page ou l\'application.';
+            alertElement.removeAttribute("hidden"); 
+          }
+      }
       xmlHttpUpdateDocument.send( JSON.stringify(dataToUpdate) );
-      
-      document.getElementById("Edition"+documentID).checked = false;
-      isADocumentInEditingMode = false; //to allow an other element editing
       
     }
   }
