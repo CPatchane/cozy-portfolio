@@ -60,7 +60,7 @@ html
                         p Mots-clés : 
                           for keyword in user.keywords
                             span.keyword= keyword
-	        //-documents portfolio tab part 
+                            
           if portfolios
             for category in portfolios
               div.row.tab
@@ -77,7 +77,7 @@ html
                         if document.relatedWebsite
                           a(href="#{document.relatedWebsite}" target="_blank") Site web associé
                         p.documentDate Réalisé le #{document.creationDate}
-	        //- badges tab part 
+                        
           if badges
             div.row.tab#badgesTab
               a.tabTitle.col-md-12(onclick="chooseCategory(this)") Badges
@@ -93,7 +93,7 @@ html
                           a(href="#{badge.issuerUrl}") #{badge.issuerName}
                         p.badgeDescription #{badge.description}
                         a.badgeLink(target="_blank" href="#{badge.hostedUrl}") Voir sur le site d'origine
-	  //-JS client scripts
+                        
     script(type="text/javascript").
       //by default the presentation tab will be opened
       function init(){
