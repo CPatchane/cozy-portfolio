@@ -116,6 +116,10 @@ script(type="text/javascript").
   // @isDocumentsUpdate : true if we want to update the documents HTML Structure on the page (build a new one or remove one)
   // @isBadgeUpdate : true if we want to update the badges HTML strucutre (when we sync with the OpenBadges backpack)
   function init(isFirstRunning, isDocumentsUpdate, isBadgeUpdate){
+    //first, we remove all UI messages
+    document.getElementById("savedMessage").setAttribute("hidden", true);
+    document.getElementById("errorMessage").setAttribute("hidden", true);
+    
     //get all documents from database and build them on the page
     if(isFirstRunning || isDocumentsUpdate)getAndBuildDocuments(isDocumentsUpdate);
     
@@ -123,7 +127,7 @@ script(type="text/javascript").
     if(isFirstRunning || isBadgeUpdate)getAndBuildBadges(isBadgeUpdate);
   }
   
-  
+ 
   //function for selection category behavior, it takes the clicked tab as parameter
   function chooseCategory(element){
     //if this tab was already selected, we unselect it
@@ -142,6 +146,10 @@ script(type="text/javascript").
   
   //function to submit all document and badges visibilities
   function submitChanges(){
+    //first, we remove all UI messages
+    document.getElementById("savedMessage").setAttribute("hidden", true);
+    document.getElementById("errorMessage").setAttribute("hidden", true);
+    
     /**submit document visibilities**/
     var documentInputs = document.getElementsByClassName("documentVisibility"); //all document visibility checkboxes
     var documentsToSubmit = {}; // will be sent to the database for the update
@@ -167,6 +175,10 @@ script(type="text/javascript").
     xmlHttpUpdate.open( "PUT", "updateBadgesVisibilities", false ); // false for synchronous request
     xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
     xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
+    
+    //UI message
+    document.getElementById("savedMessage").innerHTML = "Changements sauvegardés avec succès";
+    document.getElementById("savedMessage").removeAttribute("hidden");
   }
   
   
@@ -181,10 +193,9 @@ script(type="text/javascript").
     //request
     var xmlHttpGroups = new XMLHttpRequest();
     xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
-    xmlHttpGroups.send( null );
+    xmlHttpGroups.send();
     groups = JSON.parse(xmlHttpGroups.responseText);
     
-    if(groups.length == 0) return; //if there is no badge returned, we stop it here
     if(isUpdate){ // if this an update, we empty the badges tab
       document.getElementById("badgesTabContent").innerHTML = "";
     }else{ //if this is the first running, we build the badges tab
@@ -195,20 +206,28 @@ script(type="text/javascript").
                         '</div>';
       document.getElementById("TabsContainer").innerHTML += badgesTabHTML;
     }
+    if(groups.length == 0) return; //if there is no badges group returned by the request, we stop it here
+    
     var badges = {};
     //and we build each badge of each group
     groups.forEach(function(group, group_index, array){
       badges = group.badges;
       badges.forEach(function(badge, badge_index, array){
         buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, group_index+"_"+badge_index);
-        //we user group_index and badge_index here in order to get a unique id 
+        //we use group_index and badge_index here in order to get a unique id 
       });
     });
+    //successful message if this is an update
+    if(isUpdate){
+      var successMessage = document.getElementById("savedMessage");
+      successMessage.innerHTML = "Badges mis à jour avec succès";
+      successMessage.removeAttribute("hidden");
+    }
   }
   
     
   //function to build a badge on the page
-  //all parameters here is badges properties
+  //all parameters here is badges properties but index which allows here to get a unique id
   function buildBadge(badgeName, imageUrl, issuerName, issuerUrl, issueDate, description, hostedUrl, visibility, index){
     //id for the badge visibility input we need a unique id
     var badgeId = "badge_"+index;
@@ -235,18 +254,28 @@ script(type="text/javascript").
       document.getElementById("badgesTabContent").innerHTML += badgeHTML;
   }
   
-  
+
   //function to sync badges with OpenBadges BackPack
   function syncObenBadgesBackPack(){
     //we warn the user about the changes
     if(confirm("Attention : les paramètres de visibilité de vos badges seront par défaut désactivés, il vous faudra les rechoisir, voulez-vous continuez?")){
+        //we remove potential error messages
+        document.getElementById("errorMessage").setAttribute("hidden", true);
         //request to update badges in database
         var xmlHttpSync = new XMLHttpRequest();
         xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
         xmlHttpSync.onreadystatechange = function(){
-          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) { //success
+          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) { //if success
             //we rebuild all the badges tab content
             init(false, false, true); //badges update but not document update
+          } else if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 404){ //if error 404
+            var errorMessage = document.getElementById("errorMessage");
+            errorMessage.removeAttribute("hidden");
+            errorMessage.innerHTML = xmlHttpSync.responseText;
+          }else if(xmlHttpSync.readyState == 4 && xmlHttpSync.status == 500){ //if error 500
+            var errorMessage = document.getElementById("errorMessage");
+            errorMessage.removeAttribute("hidden");
+            errorMessage.innerHTML = "Erreur serveur : "+xmlHttpSync.responseText;
           }
         }
         xmlHttpSync.send();

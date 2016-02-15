@@ -67,7 +67,8 @@ module.exports.syncWithOB = function(req, res, next) {
         if(userId !== undefined && userId != 0){//if we have a userId we continue
           getBadgeGroups(userId);//we request badges groups from OpenBadges
         }else{
-          res.status(404).send("No userId found");//the user didn't register a OpenBadges email or the email doesn't match to an OpenBadges profile
+          res.status(404).send("Aucun profil OpenBadges trouvé, veuillez ajouter ou corriger votre e-mail OpenBadges dans la section paramètres avant de réessayer. Merci.");
+          //the user didn't register a OpenBadges email or the email doesn't match to an OpenBadges profile
         }
       }
     });
