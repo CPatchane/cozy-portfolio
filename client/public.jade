@@ -21,25 +21,22 @@ html
       
   body(onload="init()")     
     div.col-md-12#portfolioView
-      //- User information part
-      if user
+      if user.name || user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords || portfolios || badges
         div.row.text-center
           h1.col-md-12 Portfolio 
             if user.name
               span de #{user.name} 
-          span.col-md-12.text-center.secondTitle gracieusement hébergé par mon 
+          span.col-md-12.text-center.secondTitle gracieusement hébergé par son 
             a(href="https://cozy.io/fr/" target="_blank") Cozy Cloud
-      //- Documents part
-      if portfolios || badges || user
+        //- tabs
         div.row.col-md-12#TabsContainer
           //-user tab part
-          if user
+          if user.name || user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
             div.row.tab#presentationTab
               a.tabTitle.col-md-12(onclick="chooseCategory(this)") Présentation
               div.docsContainer.col-md-12
                 div.documentBlock.col-md-12
                   div.documentContent.col-md-12
-                    if user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
                       if user.name
                         p(style="font-weight:900") #{user.name}
                       if user.age
