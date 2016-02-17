@@ -649,6 +649,10 @@ script(type="text/javascript").
       var successMessage = document.getElementById("savedMessage");
       successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
       successMessage.removeAttribute("hidden");
+    }else if(xmlHttpSyncDYB.status == 404){
+      var erroMessage = document.getElementById("errorMessage");
+      erroMessage.innerHTML = "Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Vérifier également votre choix de CV dans votre profil de portfolio Cozy Cloud puis réessayer.";
+      erroMessage.removeAttribute("hidden");
     }else{
       var erroMessage = document.getElementById("errorMessage");
       erroMessage.innerHTML = "Une erreur est survenue lors de la synchronisation avec DoYouBuzz";

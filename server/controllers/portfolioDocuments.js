@@ -207,7 +207,7 @@ module.exports.syncDYB = function(req, res, next) {
             }
           });
         }else{ //if there is not any document
-          res.status(404).send("Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Revérifier votre CV et votre choix dans la partie profil puis réessayer.");
+          res.status(404).send("Error, no documents from DoYouBuzz");
         }
       });
     }
