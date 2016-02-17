@@ -628,6 +628,20 @@ script(type="text/javascript").
     var xmlHttpSyncDYB = new XMLHttpRequest();
     xmlHttpSyncDYB.open( "GET", "syncDYBDocuments", false ); // false for synchronous request
     xmlHttpSyncDYB.send();
-    var data = JSON.parse(xmlHttpSyncDYB.responseText);
-    console.log(data);
+    
+    //and display UI messages
+    if (xmlHttpSyncDYB.responseText == "OK"){
+      //we now update documents on the page
+      init(false, true, false);
+      var successMessage = document.getElementById("savedMessage");
+      successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
+      successMessage.removeAttribute("hidden");
+    }else{
+      //we now update documents on the page
+      init(false, true, false);
+      var erroMessage = document.getElementById("errorMessage");
+      erroMessage.innerHTML = "Une erreur est survenue lors de la synchronisation avec DoYouBuzz";
+      erroMessage.removeAttribute("hidden");
+    }
+    
   }

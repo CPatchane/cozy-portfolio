@@ -26,6 +26,7 @@ module.exports = {
   
   portfolioDocument: {
     all: cozydb.defaultRequests.all,
+    bySource: cozydb.defaultRequests.by('source')
   },
   
   badgesGroup: {

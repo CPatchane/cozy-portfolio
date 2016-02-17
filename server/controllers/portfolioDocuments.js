@@ -82,10 +82,11 @@ module.exports.updateVisibilities = function(req, res, next) {
     }
     else { //we update the visibilities of all documents thanks their ids
       portfolioDocuments.forEach(function(document, index, array){
+        if(!req.body[document.id]) return; //to avoid errors due to missing id
         document.updateAttributes({"visible": req.body[document.id]}, function(err) {
-          if(err !== null) {
+          if(err !== null) {//should not happen, the case where id is not found is handled just before
+            //warning here, could run here many res.send() callings
             res.status(500).send("ERROR server to update a document visibility");
-            return;
           }
         });
       });
@@ -97,17 +98,8 @@ module.exports.updateVisibilities = function(req, res, next) {
 
 
 //function to get DYB documents
+//Due to some functional limitations of the DoYouBuzz API, we here handle only documents which are images or documents (pdf, docx...)
 module.exports.syncDYB = function(req, res, next) {
-  portfolioDocument.all(function(err, portfolioDocuments) { //we need to get all documents
-    if(err !== null) {
-      next(err);
-    }
-    else { //if success, next step
-      getDYBpreparation(portfolioDocuments);
-    }
-  });
-  
-  function getDYBpreparation(portfolioDocuments){
     accounts.all(function(err, accountsInfos) { //we need the oauth tokens of DYB to do the request
       if(err !== null) {
         res.status(500).send("ERROR to get account informations");
@@ -121,15 +113,15 @@ module.exports.syncDYB = function(req, res, next) {
             }
             else { //if we have the resume that the user has selected
               userInfos = userInfos[0];
-              //we do the request to DYB
-              syncDYBDocuments(portfolioDocuments, userInfos, accountsInfos);
+              //we do the request to DYB thanks to the active resume id and user DYB tokens
+              getDYBDocuments(userInfos, accountsInfos);
             }
         });
       }
     });
-  }
   
-  function syncDYBDocuments(portfolioDocuments, userInfos, accountsInfos){
+  //function to get DYB documents and create/update them
+  function getDYBDocuments(userInfos, accountsInfos){
     //if we don't have any DYB tokens -> the DYB connection is needed in the settings view
     if(!accountsInfos.doYouBuzzOauthVerifierToken || !accountsInfos.doYouBuzzOauthVerifierTokenSecret){
       res.status(500).send("Erreur : Veuillez connecter votre compte DoYouBuzz dans les paramètres puis réssayer.");
@@ -144,15 +136,78 @@ module.exports.syncDYB = function(req, res, next) {
       var url = 'https://api.doyoubuzz.com/cv/' + userInfos.activeResumeId; //url for the request
       request.get({url:url, oauth:oauth, json:true}, function (e, r, data) {
         //we get the data object as response with all information
-        var portfolios = data.resume.portfolios.portfolio; //see the DoYouBuzz API documentation
-        if(portfolios != undefined){ //if we have portfolios
-          res.status(200).send(portfolios);
-        }else{ //if there is not any documents
+        if(data.resume.portfolios){//if there is at least one document
+          var portfolios = data.resume.portfolios.portfolio; //see the DoYouBuzz API documentation
+          
+          //we need to get all documents gotten from the external source in the database
+          //if the id matches that will be updated instead of create a new one
+          portfolioDocument.request("bySource", {"key": "DoYouBuzz"}, function(err, results) {
+            if(err !== null) {
+              next(err);
+            }
+            else { //if success
+              //we need all ids of documents from DoYouBuzz alredy created
+              var documentsToUpdate = {};
+              results.forEach(function(document, index, array){
+                documentsToUpdate[document.idSource] = document._id;
+              });
+              
+              var documentData = {};//document object sent to be created or updated
+              var currentDocument = {}; //current document for the loop
+              for(var index=0; index<portfolios.length; index++){
+                currentDocument = portfolios[index];
+                if(!currentDocument.path) continue; //if there is no path from DYB, we don't take this document
+                //we fill out the document object to be sent
+                documentData = {
+                  "title": currentDocument.title,
+                  "url": "http://www.doyoubuzz.com" + currentDocument.path,
+                  "relatedWebsite": currentDocument.url,
+                  "description": currentDocument.description,
+                  "creationDate": currentDocument.createDate,
+                  "idSource": currentDocument.id,
+                  "source": "DoYouBuzz",
+                  "visible": false
+              	}
+                //to get the category we will use the extension of the path
+                //so we can get only two kinds of document : images or documents
+                var regexImageExtension = /\.(jpe?g|png|gif|bmp|tiff)$/i; //extensions avalaible : jpeg, jpg, png, gif, bmp, tiff
+                if(regexImageExtension.test(currentDocument.path)){ //it's an image
+                  documentData.category = "Mes Images"
+                }else{ //it's a document
+                  documentData.category = "Mes documents"
+                }
+                if(!documentsToUpdate[currentDocument.id]){//this document doesn't exist, we create it
+                  portfolioDocument.create(documentData, function(err, portfolioDocumentCreated) {
+                    if(err !== null) { //if error
+                      res.status(500).status("Erreur serveur pour l'ajout d'un document");
+                      return;
+                    }
+                  });
+                }else{//we udpate the existing document
+                  portfolioDocument.find(documentsToUpdate[currentDocument.id], function(err, document) { //we find the document thanks to the id
+                    if(err !== null || document == null) { //if error
+                      res.status(500).status("Erreur serveur pour la mise à jour d'un document");
+                      return;
+                    }
+                    //here we are sure that the document exist
+                    //we update the document thanks the data object get from the client application
+                    document.updateAttributes(documentData, function(err) {
+                      if(err !== null) { //if error
+                        res.status(500).status("Erreur serveur pour la mise à jour d'un document");
+                        return;
+                      }
+                    });
+                  });
+                }
+              }
+            }
+            res.status(200).send("OK");//we send a successful message
+          });
+        }else{ //if there is not any document
           res.status(404).send("Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Revérifier votre CV et votre choix dans la partie profil puis réessayer.");
         }
       });
     }
   }
-  
   
 }
