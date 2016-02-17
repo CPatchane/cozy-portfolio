@@ -106,7 +106,7 @@ module.exports.syncDYB = function(req, res, next) {
       }
       else {
         accountsInfos = accountsInfos[0];
-        user.all(function(err, userInfos) {
+        user.all(function(err, userInfos) { //to get the active resume id
             if(err !== null || userInfos[0].activeResumeId == 0) { //if no resume was selected in the user profile
               res.status(500).send("Vous n'avez pas choisi de CV DoYouBuzz au niveau de votre profil. Merci d'en choisir un et de réessayer");
               return;
