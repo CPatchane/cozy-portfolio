@@ -432,6 +432,8 @@ script(type="text/javascript").
     var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;"; //same thing for the related website
     var hiddenUrl = myDocument.url == "" ? 'hidden="true"' : ""; //if we have to hide the url because it's empty
     var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : ""; //same thing for the related website
+    //if there is a source, we display it, the sourceID attribute will be used later to update the document
+    var sourceP = myDocument.source == "" ? "" : '<p class="documentSource" documentID="'+ myDocument.id+'">Source du document : '+myDocument.source+'</p>';
     //HTML Structure building of the document
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
@@ -449,6 +451,7 @@ script(type="text/javascript").
                           '<p id="editRelatedWebsiteLabel'+ myDocument.id +'" hidden="true" style="margin-bottom:5px;">Site web associé :</p>' +
                           '<p id="editRelatedWebsite'+ myDocument.id +'" hidden="true" style="margin-top:5px;">'+ myDocument.relatedWebsite +'</p>' +
                           '<p class="documentDate">Réalisé le : <span id="date'+ myDocument.id +'" onkeypress="return (this.innerHTML.length < 10)">'+ myDocument.creationDate +'</span></p>' +
+                          sourceP +
                           '<div class="alert alert-danger" hidden="true" id="alert'+myDocument.id+'"></div>' +
                         '</div>' +
                       '</div>';
@@ -630,15 +633,23 @@ script(type="text/javascript").
     xmlHttpSyncDYB.send();
     
     //and display UI messages
-    if (xmlHttpSyncDYB.responseText == "OK"){
-      //we now update documents on the page
-      init(false, true, false);
+    if (xmlHttpSyncDYB.status == 200){
+      var updates = JSON.parse(xmlHttpSyncDYB.responseText);
+      //we update the html element of each concerned document
+      updates.forEach(function(documentUpdate, index, array){
+        document.getElementById("title"+documentUpdate._id).innerHTML = documentUpdate.title;
+        document.getElementById("description"+documentUpdate._id).innerHTML = documentUpdate.description;
+        document.getElementById("date"+documentUpdate._id).innerHTML = documentUpdate.creationDate;
+        document.getElementById("url"+documentUpdate._id).href = documentUpdate.url != "" ? documentUpdate.url : "javascript:;";
+        document.getElementById("relatedWebsite"+documentUpdate._id).href = documentUpdate.relatedWebsite != "" ? documentUpdate.relatedWebsite : "javascript:;";
+        document.getElementById("editUrl"+documentUpdate._id).innerHTML = documentUpdate.url;
+        document.getElementById("editRelatedWebsite"+documentUpdate._id).innerHTML = documentUpdate.relatedWebsite;
+      });
+      //we need to update all new or updated documents
       var successMessage = document.getElementById("savedMessage");
       successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
       successMessage.removeAttribute("hidden");
     }else{
-      //we now update documents on the page
-      init(false, true, false);
       var erroMessage = document.getElementById("errorMessage");
       erroMessage.innerHTML = "Une erreur est survenue lors de la synchronisation avec DoYouBuzz";
       erroMessage.removeAttribute("hidden");

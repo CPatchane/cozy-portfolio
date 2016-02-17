@@ -144,8 +144,8 @@ module.exports.syncDYB = function(req, res, next) {
           portfolioDocument.request("bySource", {"key": "DoYouBuzz"}, function(err, results) {
             if(err !== null) {
               next(err);
-            }
-            else { //if success
+            } else { //if success
+              var documentsUpatesToSend = []; //final updated documents will be sent to the client app stored in this array
               //we need all ids of documents from DoYouBuzz alredy created
               var documentsToUpdate = {};
               results.forEach(function(document, index, array){
@@ -186,7 +186,7 @@ module.exports.syncDYB = function(req, res, next) {
                 }else{//we udpate the existing document
                   portfolioDocument.find(documentsToUpdate[currentDocument.id], function(err, document) { //we find the document thanks to the id
                     if(err !== null || document == null) { //if error
-                      res.status(500).status("Erreur serveur pour la mise à jour d'un document");
+                      res.status(500).status("Erreur serveur pour trouver le document à mettre à jour");
                       return;
                     }
                     //here we are sure that the document exist
@@ -199,9 +199,12 @@ module.exports.syncDYB = function(req, res, next) {
                     });
                   });
                 }
+                documentData._id = documentsToUpdate[currentDocument.id]; //we need the id for the client app
+                //stored to be sent to the client app
+                documentsUpatesToSend.push(documentData);
               }
+              res.status(200).send(documentsUpatesToSend);//we send a successful message
             }
-            res.status(200).send("OK");//we send a successful message
           });
         }else{ //if there is not any document
           res.status(404).send("Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Revérifier votre CV et votre choix dans la partie profil puis réessayer.");
