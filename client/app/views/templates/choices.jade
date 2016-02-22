@@ -437,10 +437,12 @@ script(type="text/javascript").
     var sourceP = myDocument.source == "" ? "" : '<p class="documentSource" documentID="'+ myDocument.id+'">Source du document : '+myDocument.source+'</p>';
     //for embeded element like video player, audio player, or an image (if the document is a video, an audio or an image)
     var embededElement = getCorrectEmbedCode(url);
+    //visibility preference
+    var visibilityValue = myDocument.visibility ? "checked" : "";
     //HTML Structure building of the document
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
-                          '<input id="Visibility'+ myDocument.id +'" documentID="'+ myDocument.id +'" class="visibilityCheckBox documentVisibility" type="checkbox"/>' +
+                          '<input id="Visibility'+ myDocument.id +'" documentID="'+ myDocument.id +'" class="visibilityCheckBox documentVisibility" type="checkbox" '+ visibilityValue +'/>' +
                           '<label for="Visibility' + myDocument.id + '"></label>' +
                           '<div class="removeButton" documentID="'+ myDocument.id +'" onclick="removeDocument(this)"></div>' +
                           '<input id="Edition'+ myDocument.id +'" class="editionCheckBox" type="checkbox"/>' +
