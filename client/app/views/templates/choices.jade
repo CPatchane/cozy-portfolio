@@ -434,6 +434,8 @@ script(type="text/javascript").
     var hiddenRelatedWebsite = myDocument.relatedWebsite == "" ? 'hidden="true"' : ""; //same thing for the related website
     //if there is a source, we display it, the sourceID attribute will be used later to update the document
     var sourceP = myDocument.source == "" ? "" : '<p class="documentSource" documentID="'+ myDocument.id+'">Source du document : '+myDocument.source+'</p>';
+    //for embeded element like video player, audio player, or an image (if the document is a video, an audio or an image)
+    var embededElement = getCorrectEmbedCode(url);
     //HTML Structure building of the document
     var htmlContent = '<div class="documentBlock col-md-12">' +
                         '<div class="documentContent col-md-12">' +
@@ -659,4 +661,48 @@ script(type="text/javascript").
       erroMessage.removeAttribute("hidden");
     }
     
+  }
+  
+  /********************************/
+  /** Function for embed element **/
+  /********************************/
+  
+  function getCorrectEmbedCode(url){
+    if(url == "") return "";
+    //all regular expressions needed to check the url and get the correct type of document
+    //image regex
+    var regexImage = /\.(jpe?g|png|gif|bmp|tiff)$/i; //only jpeg, jpg, png, gif, bmp, tiff
+    //audio regex -> not functional for now as we need a client id from soundcloud API
+    var regexSoundcloud = /^https?:\/\/(soundcloud.com|snd.sc)\/(.*)$/; //only soundcloud (snc.sc is also soundcloud)
+    //video regex
+    var regexYoutube = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    var regexVimeo = /^(?:https?:\/\/)?(?:www\.)?(vimeo.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
+    var regexDailymotion = /^(?:https?:\/\/)?(?:www\.)?dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
+    
+    //all test and matching embeded code returned
+    var match;
+    //if it's an image
+    if(regexImage.test(url)){
+      return "";
+      //return('<div class="text-center"><img src="'+url+'"/></div>');
+    }
+    //if it's a soundcloud audio
+    if(regexSoundcloud.test(url)){
+      return "";
+    }
+    //if it's a youtube video
+    match = url.match(regexYoutube); //thanks to the regex, we grab the video id -> match[1]
+    if(match != null) {
+      return "";
+      //return '<div class="text-center"><iframe width="700" height="315" src="//www.youtube.com/embed/'+match[1]+'" frameborder="0" allowfullscreen></iframe></div>';
+    }
+    //if it's a vimeo video
+    if(regexVimeo.test(url)){
+      return "";
+    }
+    //if it's a dailymotion video
+    if(regexDailymotion.test(url)){
+      return "";
+    }
+    return "";
   }
