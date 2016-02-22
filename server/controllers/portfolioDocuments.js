@@ -163,7 +163,7 @@ module.exports.syncDYB = function(req, res, next) {
                   "url": "http://www.doyoubuzz.com" + currentDocument.path,
                   "relatedWebsite": currentDocument.url,
                   "description": currentDocument.description.replace(/(\r\n|\n|\r)/gm, "</br>"),
-                  "creationDate": currentDocument.createDate,
+                  "creationDate": currentDocument.createDate.split("-").reverse().join("/"), //we want dd/mm/yyyy
                   "idSource": currentDocument.id,
                   "source": "DoYouBuzz",
                   "visibility": false
