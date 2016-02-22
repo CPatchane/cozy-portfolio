@@ -14,24 +14,25 @@ html
     style
       include public.css
     //- Web page title
-    if user.name
+    if user && user.name
       title Portfolio Cozy Cloud de #{user.name}
     else
       title Cozy Cloud - Portfolio
       
   body(onload="init()")     
     div.col-md-12#portfolioView
-      if user.name || user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords || portfolios || badges
+      if user || portfolios || badges
         div.row.text-center
           h1.col-md-12 Portfolio 
-            if user.name
+            if user && user.name
               span de #{user.name} 
-          span.col-md-12.text-center.secondTitle gracieusement hébergé par son 
-            a(href="https://cozy.io/fr/" target="_blank") Cozy Cloud
+          if user
+            span.col-md-12.text-center.secondTitle gracieusement hébergé par son 
+              a(href="https://cozy.io/fr/" target="_blank") Cozy Cloud
         //- tabs
         div.row.col-md-12#TabsContainer
           //-user tab part
-          if user.name || user.age || user.email || user.status || user.localisation || user.description || user.hobbies || user.keywords
+          if user
             div.row.tab#presentationTab
               a.tabTitle.col-md-12(onclick="chooseCategory(this)") Présentation
               div.docsContainer.col-md-12

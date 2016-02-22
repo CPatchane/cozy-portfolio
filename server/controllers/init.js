@@ -15,20 +15,21 @@ module.exports.start = function(req, res, next){
 module.exports.public = function(req, res, next){
   var portfolio = {}; //all information about the portfolio with the permission to be visible will be stored here before be sent to the public page
   user.all(function(err, userInfos) { //we get all user information
-    if(err !== null) {
+    if(err !== null || userInfos == null) {
       res.status(404).send("");
+      return;
     }
     else {
       userInfos = userInfos[0];
-      user = {};
+      var userData = {};
       //user name
       if(userInfos.firstName.visibility || userInfos.lastName.visibility){
-        user.name = "";
-        if(userInfos.firstName.visibility) user.name += userInfos.firstName.value;
+        userData.name = "";
+        if(userInfos.firstName.visibility) userData.name += userInfos.firstName.value;
         if(userInfos.lastName.visibility) 
         {
-          if(userInfos.firstName.visibility) user.name += " ";
-          user.name += userInfos.lastName.value;
+          if(userInfos.firstName.visibility) userData.name += " ";
+          userData.name += userInfos.lastName.value;
         }
       }
       //age
@@ -43,23 +44,23 @@ module.exports.public = function(req, res, next){
         if (months < 0 || (months === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-        user.age = age;
+        userData.age = age;
       }
       //description
       if(userInfos.email.visibility){
-        user.email = userInfos.email.value;
+        userData.email = userInfos.email.value;
       }
       //email
       if(userInfos.description.visibility){
-        user.description = userInfos.description.value;
+        userData.description = userInfos.description.value;
       }
       //statut
       if(userInfos.status.visibility){
-        user.status = userInfos.status.value;
+        userData.status = userInfos.status.value;
       }
       //localisation
       if(userInfos.localisation.visibility){
-        user.localisation = userInfos.localisation.value;
+        userData.localisation = userInfos.localisation.value;
       }
       //hobbies
       if(userInfos.hobbies.visibility){
@@ -71,7 +72,7 @@ module.exports.public = function(req, res, next){
           hobby = hobby.charAt(0).toUpperCase() + hobby.slice(1); //we transform the first letter to upper case
           hobbies[index] = hobby;
         });
-        user.hobbies = hobbies;
+        userData.hobbies = hobbies;
       }
       //keywords
       if(userInfos.keywords.visibility){
@@ -83,9 +84,9 @@ module.exports.public = function(req, res, next){
           keyword = keyword.charAt(0).toUpperCase() + keyword.slice(1); //we transform the first letter to upper case
           keywords[index] = keyword;
         });
-        user.keywords = keywords;
+        userData.keywords = keywords;
       }
-      if(Object.keys(user).length) portfolio.user = user;
+      if(Object.keys(userData).length) portfolio.user = userData;
       //after we request badges
       getBadges();
     }
@@ -96,6 +97,7 @@ module.exports.public = function(req, res, next){
     badgesGroup.all(function(err, badgesGroups) {
       if(err !== null) {
         res.status(404).send("");
+        return;
       }
       else {
         var badge = {}; //object to store all badges before adding them to the portfolio object 
@@ -127,6 +129,7 @@ module.exports.public = function(req, res, next){
     portfolioDocument.all(function(err, documents) {
       if(err !== null) {
         res.status(404).send("");
+        return;
       }
       else {
         var document = {}; //object to store all documents before adding them to the portfolio object 
@@ -151,9 +154,15 @@ module.exports.public = function(req, res, next){
             portfolio.portfolios[documentData.category].documents.push(document);
           }
         });
+        //if the object returned is empty, there is not portfolio to show, we send a 404 code page
+        if(!Object.keys(portfolio).length){
+          res.status(404).send("404 Not found");
+          return;
+        }
         //now we build the html structure of the public page
         res.render('public.jade', portfolio, function(err, html) {
-          res.send(html);
+          res.status(200).send(html);
+          return;
         });
       }
     });
