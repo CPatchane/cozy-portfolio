@@ -4,7 +4,7 @@ var cozydb = require('cozydb');
 
 var stringBoolObject = cozydb.getModel('stringBoolObject', {
   "value": {type: String, "default": ""},
-   "display": {type: Boolean, "default": false}
+   "visibility": {type: Boolean, "default": false}
 });
 
 var userModel = cozydb.getModel('user', {
@@ -15,7 +15,7 @@ var userModel = cozydb.getModel('user', {
   "description" : stringBoolObject,
   "status" : stringBoolObject,
   "localisation" : stringBoolObject,
-  "resumes" : cozydb.NoSchema, //[{id, title, others..}]
+  "resumes" : cozydb.NoSchema, //[{id, title, others..}], directly grabbed from DoYouBuzz API
   "activeResumeId" : {type: String, "default": ""},
 	"hobbies" : stringBoolObject,
 	"keywords" : stringBoolObject

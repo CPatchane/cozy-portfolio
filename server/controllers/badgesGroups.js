@@ -122,7 +122,7 @@ module.exports.syncWithOB = function(req, res, next) {
               "issuerName": element.assertion.badge.issuer.name,
               "issuerUrl": element.assertion.badge.issuer.origin,
               "issuedOn": element.assertion.issued_on,
-              "visible":false
+              "visibility":false
             }
           });
           //here we store data in the database, we create a new document with the badgesGroup model
@@ -158,7 +158,7 @@ module.exports.updateBadgesVisibilities = function(req, res, next) {
       badgesGroups.forEach(function(group, index, array){
         badges = group.badges;
         badges.forEach(function(badge, index, array){
-           badge.visible = badgesSent[badge.name];
+           badge.visibility = badgesSent[badge.name];
         });
         //and we update it each time
         //if no error we continue, and when we reach the last element we send a success response to the client app

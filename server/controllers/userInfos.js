@@ -20,16 +20,16 @@ module.exports.update = function(req, res, next) {
   var bodyArguments = JSON.parse(req.body.data);
   //we create the object that will be used to update user information into the database
   var data = {
-    "firstName" : {"value": bodyArguments.firstName, "display": bodyArguments.firstNameCB},
-    "lastName" : {"value": bodyArguments.lastName, "display": bodyArguments.lastNameCB},
-    "birthdayDate" : {"value": bodyArguments.birthdayDate, "display": bodyArguments.birthdayDateCB},
-    "email" : {"value": bodyArguments.email, "display": bodyArguments.emailCB},
-    "description" : {"value": bodyArguments.description, "display": bodyArguments.descriptionCB},
-    "status" : {"value": bodyArguments.status, "display": bodyArguments.statusCB},
-    "localisation" : {"value": bodyArguments.localisation, "display": bodyArguments.localisationCB},
+    "firstName" : {"value": bodyArguments.firstName, "visibility": bodyArguments.firstNameCB},
+    "lastName" : {"value": bodyArguments.lastName, "visibility": bodyArguments.lastNameCB},
+    "birthdayDate" : {"value": bodyArguments.birthdayDate, "visibility": bodyArguments.birthdayDateCB},
+    "email" : {"value": bodyArguments.email, "visibility": bodyArguments.emailCB},
+    "description" : {"value": bodyArguments.description, "visibility": bodyArguments.descriptionCB},
+    "status" : {"value": bodyArguments.status, "visibility": bodyArguments.statusCB},
+    "localisation" : {"value": bodyArguments.localisation, "visibility": bodyArguments.localisationCB},
     "activeResumeId" : bodyArguments.activeResumeId || "",
-    "hobbies" : {"value": bodyArguments.hobbies, "display": bodyArguments.hobbiesCB},
-    "keywords" : {"value": bodyArguments.keywords, "display": bodyArguments.keywordsCB}
+    "hobbies" : {"value": bodyArguments.hobbies, "visibility": bodyArguments.hobbiesCB},
+    "keywords" : {"value": bodyArguments.keywords, "visibility": bodyArguments.keywordsCB}
   }
   if(req.body.id == ""){ //first time execution -> so we create it
     user.create(data, function(err) {
@@ -92,9 +92,9 @@ module.exports.getFromDYB = function(req, res, next) {
               userInfos = userInfos[0]; //there is only one element/document for user information
               //object used to update the user information element/document
               var dataToUpdate = {
-                "firstName": {"value": data.user.firstname, "display": userInfos.firstName.display},
-                "lastName": {"value": data.user.lastname, "display": userInfos.lastName.display},
-                "email": {"value": data.user.email, "display": userInfos.email.display},
+                "firstName": {"value": data.user.firstname, "visibility": userInfos.firstName.visibility},
+                "lastName": {"value": data.user.lastname, "visibility": userInfos.lastName.visibility},
+                "email": {"value": data.user.email, "visibility": userInfos.email.visibility},
                 "resumes": data.user.resumes.resume,
               }
               if(userInfos.id == ""){ //first time execution -> so we create it

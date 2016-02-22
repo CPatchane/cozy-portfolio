@@ -22,17 +22,17 @@ module.exports.public = function(req, res, next){
       userInfos = userInfos[0];
       user = {};
       //user name
-      if(userInfos.firstName.display || userInfos.lastName.display){
+      if(userInfos.firstName.visibility || userInfos.lastName.visibility){
         user.name = "";
-        if(userInfos.firstName.display) user.name += userInfos.firstName.value;
-        if(userInfos.lastName.display) 
+        if(userInfos.firstName.visibility) user.name += userInfos.firstName.value;
+        if(userInfos.lastName.visibility) 
         {
-          if(userInfos.firstName.display) user.name += " ";
+          if(userInfos.firstName.visibility) user.name += " ";
           user.name += userInfos.lastName.value;
         }
       }
       //age
-      if(userInfos.birthdayDate.display){
+      if(userInfos.birthdayDate.visibility){
         var today = new Date();
         //we need to transform the date format from JJ/MM/AAAA to AAAA-MM-JJ to compute the age
         var datePattern = /(\d{2})[/.-](\d{2})[/.-](\d{4})/;
@@ -46,23 +46,23 @@ module.exports.public = function(req, res, next){
         user.age = age;
       }
       //description
-      if(userInfos.email.display){
+      if(userInfos.email.visibility){
         user.email = userInfos.email.value;
       }
       //email
-      if(userInfos.description.display){
+      if(userInfos.description.visibility){
         user.description = userInfos.description.value;
       }
       //statut
-      if(userInfos.status.display){
+      if(userInfos.status.visibility){
         user.status = userInfos.status.value;
       }
       //localisation
-      if(userInfos.localisation.display){
+      if(userInfos.localisation.visibility){
         user.localisation = userInfos.localisation.value;
       }
       //hobbies
-      if(userInfos.hobbies.display){
+      if(userInfos.hobbies.visibility){
         //we have to get all separated words from the string
         var hobbies = userInfos.hobbies.value.split(",");
         hobbies.forEach(function(hobby, index, array){
@@ -74,7 +74,7 @@ module.exports.public = function(req, res, next){
         user.hobbies = hobbies;
       }
       //keywords
-      if(userInfos.keywords.display){
+      if(userInfos.keywords.visibility){
         //we have to get all separated words from the string
         var keywords = userInfos.keywords.value.split(",");
         keywords.forEach(function(keyword, index, array){
@@ -101,7 +101,7 @@ module.exports.public = function(req, res, next){
         var badge = {}; //object to store all badges before adding them to the portfolio object 
         badgesGroups.forEach(function(group, group_index, array){ //in all badges group
           group.badges.forEach(function(badgeData, badge_index, array){ //we check each badges
-            if(badgeData.visible){ //if it's marked as visible by the user
+            if(badgeData.visibility){ //if it's marked as visible by the user
               if(!portfolio.badges) portfolio.badges = []; //for the first badges, portfolio.badges is not created yet
               badge = { //we get all information about this badge
                 name : badgeData.name,
@@ -131,7 +131,7 @@ module.exports.public = function(req, res, next){
       else {
         var document = {}; //object to store all documents before adding them to the portfolio object 
         documents.forEach(function(documentData, index, array){ //for each portfolio document
-          if(documentData.visible){ //if it's marked as visible by the user
+          if(documentData.visibility){ //if it's marked as visible by the user
             if(!portfolio.portfolios) portfolio.portfolios = {}; //for the first document, portfolio.portfolios is not created yet
             if(!portfolio.portfolios[documentData.category]){ //for each new document category
               portfolio.portfolios[documentData.category] = { //we get all information about this category and add an empty array for its documents

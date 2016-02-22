@@ -12,7 +12,7 @@ var badgeModel = cozydb.getModel('badge', {
   "issuerName": {type: String, "default": ""},
   "issuerUrl": {type: String, "default": ""},
   "issuedOn": {type: String, "default": ""},
-  "visible": {type: Boolean, "default": false}
+  "visibility": {type: Boolean, "default": false}
 });
 
 var badgeGroupModel = cozydb.getModel('badgeGroup', {

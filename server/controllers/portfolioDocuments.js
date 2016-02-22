@@ -83,7 +83,7 @@ module.exports.updateVisibilities = function(req, res, next) {
     else { //we update the visibilities of all documents thanks their ids
       portfolioDocuments.forEach(function(document, index, array){
         if(!req.body[document.id]) return; //to avoid errors due to missing id
-        document.updateAttributes({"visible": req.body[document.id]}, function(err) {
+        document.updateAttributes({"visibility": req.body[document.id]}, function(err) {
           if(err !== null) {//should not happen, the case where id is not found is handled just before
             //warning here, could run here many res.send() callings
             res.status(500).send("ERROR server to update a document visibility");
@@ -166,7 +166,7 @@ module.exports.syncDYB = function(req, res, next) {
                   "creationDate": currentDocument.createDate,
                   "idSource": currentDocument.id,
                   "source": "DoYouBuzz",
-                  "visible": false
+                  "visibility": false
               	}
                 //to get the category we will use the extension of the path
                 //so we can get only two kinds of document : images or documents
