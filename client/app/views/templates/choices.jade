@@ -213,7 +213,7 @@ script(type="text/javascript").
     groups.forEach(function(group, group_index, array){
       badges = group.badges;
       badges.forEach(function(badge, badge_index, array){
-        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visible, group_index+"_"+badge_index);
+        buildBadge(badge.name, badge.imageUrl, badge.issuerName, badge.issuerUrl, badge.issuedOn, badge.description, badge.criteria, badge.visibility, group_index+"_"+badge_index);
         //we use group_index and badge_index here in order to get a unique id 
       });
     });
@@ -427,6 +427,7 @@ script(type="text/javascript").
   }
   
   //function to build a document inside its correct container/category/tab
+  //@myDocument : document object from the documents list sent by the server
   function buildDocument(myDocument){
     var documentUrl = myDocument.url != "" ? myDocument.url : "javascript:;"; //we can not have an HTML href attribute empty, we use javascript:; instead
     var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;"; //same thing for the related website
@@ -691,11 +692,11 @@ script(type="text/javascript").
       return "";
     }
     //if it's a youtube video
-    match = url.match(regexYoutube); //thanks to the regex, we grab the video id -> match[1]
+    /*match = url.match(regexYoutube); //thanks to the regex, we grab the video id -> match[1]
     if(match != null) {
       return "";
       //return '<div class="text-center"><iframe width="700" height="315" src="//www.youtube.com/embed/'+match[1]+'" frameborder="0" allowfullscreen></iframe></div>';
-    }
+    }*/
     //if it's a vimeo video
     if(regexVimeo.test(url)){
       return "";

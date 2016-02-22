@@ -4,7 +4,7 @@ var cozydb = require('cozydb');
 
 var stringBoolObject = cozydb.getModel('stringBoolObject', {
   "value": {type: String, "default": ""},
-   "visibility": {type: Boolean, "default": false}
+  "visibility": {type: Boolean, "default": false}
 });
 
 var userModel = cozydb.getModel('user', {

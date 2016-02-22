@@ -82,11 +82,11 @@ module.exports.updateVisibilities = function(req, res, next) {
     }
     else { //we update the visibilities of all documents thanks their ids
       portfolioDocuments.forEach(function(document, index, array){
-        if(!req.body[document.id]) return; //to avoid errors due to missing id
+        if(req.body[document.id] === undefined) return; //to avoid errors due to missing id
         document.updateAttributes({"visibility": req.body[document.id]}, function(err) {
           if(err !== null) {//should not happen, the case where id is not found is handled just before
-            //warning here, could run here many res.send() callings
             res.status(500).send("ERROR server to update a document visibility");
+            return;
           }
         });
       });
