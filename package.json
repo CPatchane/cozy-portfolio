@@ -31,6 +31,11 @@
     "test": "mocha tests/*.js",
     "start": "node server.js"
   },
-  "cozy-permissions": {},
+  "cozy-permissions": {
+    "user" : {},
+    "portfolioDocument": {},
+    "badgesGroup": {},
+    "accountSettings": {}
+  },
   "cozy-displayName": "Portfolio"
 }
