@@ -436,7 +436,7 @@ script(type="text/javascript").
     //if there is a source, we display it, the sourceID attribute will be used later to update the document
     var sourceP = myDocument.source == "" ? "" : '<p class="documentSource" documentID="'+ myDocument.id+'">Source du document : '+myDocument.source+'</p>';
     //for embeded element like video player, audio player, or an image (if the document is a video, an audio or an image)
-    var embededElement = getCorrectEmbedCode(url);
+    var embededElement = getCorrectEmbedCode(myDocument.url);
     //visibility preference
     var visibilityValue = myDocument.visibility ? "checked" : "";
     //HTML Structure building of the document
@@ -448,6 +448,7 @@ script(type="text/javascript").
                           '<input id="Edition'+ myDocument.id +'" class="editionCheckBox" type="checkbox"/>' +
                           '<label onclick="editDocument(this)" documentID="'+ myDocument.id +'"></label>' +
                           '<p class="documentTitle" id="title'+ myDocument.id +'">'+ myDocument.title +'</p>' + 
+                          embededElement +
                           '<p class="documentDescription" id="description'+ myDocument.id +'">' + myDocument.description + '</p>' +
                           '<a href="'+ documentUrl +'" id="url'+ myDocument.id +'" target="_blank" '+hiddenUrl+'> Lien du document</br></a>' +
                           '<p id="editUrlLabel'+ myDocument.id +'" hidden="true" style="margin-bottom:5px;">Url du document :</p>' +
@@ -683,11 +684,9 @@ script(type="text/javascript").
     var regexDailymotion = /^(?:https?:\/\/)?(?:www\.)?dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
     
     //all test and matching embeded code returned
-    var match;
     //if it's an image
     if(regexImage.test(url)){
-      return "";
-      //return('<div class="text-center"><img src="'+url+'"/></div>');
+      return('<div class="text-center embededElement"><img src="'+url+'"/></div>');
     }
     //if it's a soundcloud audio
     if(regexSoundcloud.test(url)){
