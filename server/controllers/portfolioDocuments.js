@@ -162,7 +162,7 @@ module.exports.syncDYB = function(req, res, next) {
                   "title": currentDocument.title,
                   "url": "http://www.doyoubuzz.com" + currentDocument.path,
                   "relatedWebsite": currentDocument.url,
-                  "description": currentDocument.description,
+                  "description": currentDocument.description.replace(/(\r\n|\n|\r)/gm, "</br>"),
                   "creationDate": currentDocument.createDate,
                   "idSource": currentDocument.id,
                   "source": "DoYouBuzz",
