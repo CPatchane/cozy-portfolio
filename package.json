@@ -1,11 +1,13 @@
 {
   "name": "cozy-portfolio",
+  "display-name": "Portfolio",
   "version": "1.0.0",
+  "author": "Cédric Patchane Lacane",
   "engines": [
-    "node >= 0.10.0"
+    "node >= 4.3.0"
   ],
-  "description": "myPortfolio will allow to create your portfolio automatically with information from DoYouBuzz and OpenBadges",
-  "license": "MIT",
+  "description": "Create your portfolio on your Cozy Cloud with the possibility to grab information from DoYouBuzz and OpenBadges",
+  "license": "AGPL-3.0",
   "repository": {
     "type": "git",
     "url": "https://CPatchane@bitbucket.org/CPatchane/cozy-portfolio.git"
@@ -30,5 +32,5 @@
     "start": "node server.js"
   },
   "cozy-permissions": {},
-  "cozy-displayName": "myPortfolio"
+  "cozy-displayName": "Portfolio"
 }
