@@ -1,6 +1,6 @@
 {
   "name": "cozy-portfolio",
-  "display-name": "Portfolio",
+  "cozy-displayName": "Portfolio",
   "version": "1.0.0",
   "author": "Cédric Patchane Lacane",
   "engine": {
@@ -44,6 +44,5 @@
     "accountSettings": {
       "description": "Informations needed for DoYouBuzz API and OpenBadges Backpack API"
     }
-  },
-  "cozy-displayName": "Portfolio"
+  }
 }
