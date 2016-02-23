@@ -9,19 +9,19 @@ helpers.options = {
 
 var client = new Client("http://"+helpers.options.serverHost+":"+helpers.options.serverPort+"/");
 
-describe("Template test", function () {
+describe("Portfolio test", function () {
 
   before(helpers.startApp);
   after(helpers.stopApp);
 
-  describe("When I GET /foo", function () {
+  describe("When I GET /", function () {
 
     this.err = null;
     this.res = null;
     this.body = null;
     var _this = this;
     before(function (done) {
-      client.get('foo', function (err, res, body) {
+      client.get('', function (err, res, body) {
           _this.err = err;
           _this.res = res;
           _this.body = body;
@@ -29,15 +29,13 @@ describe("Template test", function () {
       });
     });
 
-    it("It should sends me a successful Hello World!", function () {
+    it("It should sends me a 200 status code", function () {
       should.not.exist(_this.err);
       should.exist(_this.res);
       _this.res.should.have.property('statusCode');
       _this.res.statusCode.should.equal(200);
 
       should.exist(_this.body);
-      _this.body.should.have.property('message');
-      _this.body.message.should.equal('Hello, world!');
     });
   });
 });
