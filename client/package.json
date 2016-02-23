@@ -1,7 +1,7 @@
 {
   "author": "Cédric Patchane",
   "name": "cozy-portfolio",
-  "description": "Portfolio on CozyCloud",
+  "description": "Create your portfolio on your Cozy Cloud with the possibility to grab information from DoYouBuzz and OpenBadges",
   "version": "0.0.1",
   "homepage": "",
   "repository": {
