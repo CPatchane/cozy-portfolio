@@ -97,7 +97,7 @@ div.container
       
 script(type="text/javascript").
   /** Global variables **/
-  var groups = {}; //all groups of badges will be store in this object
+  var groups = []; //all groups of badges will be store in this object
   var documents = []; //all documents will be store in this array
   //we store in this next object all categories already built (or reserved) to avoid duplicated categories
   var categoriesAlreadyBuilt = {"Présentation" : true, "Badges" : true}; //exemple: categoriesAlreadyBuilt["Vidéos"] = true;
@@ -190,6 +190,7 @@ script(type="text/javascript").
   //function to get all badges from database and build them on the html page
   // @isUpdate : true if this is an update and not the first building of the badges tab
   function getAndBuildBadges(isUpdate){
+    console.log("OXO");
     //get all badges from database and build them on page
     //request
     var xmlHttpGroups = new XMLHttpRequest();
@@ -207,8 +208,7 @@ script(type="text/javascript").
                         '</div>';
       document.getElementById("TabsContainer").innerHTML += badgesTabHTML;
     }
-    if(groups.length == 0) return; //if there is no badges group returned by the request, we stop it here
-    
+
     var badges = {};
     //and we build each badge of each group
     groups.forEach(function(group, group_index, array){
@@ -226,7 +226,7 @@ script(type="text/javascript").
     }
     //if there is not any documents to display, we don't need the submit button (because there are no visibilities to update)
     //we disable the button
-    if(!Object.keys(groups).length == 0 && !documents.length == 0){
+    if(groups.length == 0 && documents.length == 0){
       document.getElementById("submitChanges").disabled = true;
       document.getElementById("noDocumentsMessage").removeAttribute("hidden");
     }else{ //in all other cases we need the button
@@ -414,7 +414,6 @@ script(type="text/javascript").
     //we get all documents
     documents = JSON.parse(xmlHttpDocuments.responseText);
     
-    if(documents.length == 0) return; //if we have no documents we stop here
     //for each document, we check if its category exists, if it doens't we create the category
     documents.forEach(function(myDocument, index, array){
       if(!categoriesAlreadyBuilt[myDocument.category]){ //new category
@@ -436,7 +435,7 @@ script(type="text/javascript").
     if(isUpdate)document.getElementById('TabsContainer').appendChild(document.getElementById('badgesTab'));
     //if there is not any documents to display, we don't need the submit button (because there are no visibilities to update)
     //we disable the button
-    if(Object.keys(groups).length == 0 && documents.length == 0){
+    if(groups.length == 0 && documents.length == 0){
       document.getElementById("submitChanges").disabled = true;
       document.getElementById("noDocumentsMessage").removeAttribute("hidden");
     }else{ //in all other cases we need the button
