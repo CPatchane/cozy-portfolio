@@ -58,7 +58,6 @@
 /*documents container of each tab*/
 .choicesContainer .docsContainer{
   padding:5px;
-  min-height: 100px;
 }
 
 /*changes to the visibility checkbox*/
@@ -185,10 +184,9 @@
 /*button to sync openBadges backpack badges*/
 #syncOBbutton{
   width:320px;
-  clear:both;
-  display: block;
-  margin: 0px auto;
-  margin-bottom:15px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
   background-color:rgba(126, 206, 234, 0.5);
 }
 
