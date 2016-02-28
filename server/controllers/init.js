@@ -15,9 +15,12 @@ module.exports.start = function(req, res, next){
 module.exports.public = function(req, res, next){
   var portfolio = {}; //all information about the portfolio with the permission to be visible will be stored here before be sent to the public page
   user.all(function(err, userInfos) { //we get all user information
-    if(err !== null || userInfos == null) {
+    if(err !== null) {
       res.status(404).send("");
       return;
+    }
+    else if(userInfos == null){//no user infos registered, we skip to the next step
+      getBadges();
     }
     else {
       userInfos = userInfos[0];
@@ -99,6 +102,9 @@ module.exports.public = function(req, res, next){
         res.status(404).send("");
         return;
       }
+      else if(badgesGroups == null){//no badges groups stored, we skip to the next step
+        getDocuments();
+      }
       else {
         var badge = {}; //object to store all badges before adding them to the portfolio object 
         badgesGroups.forEach(function(group, group_index, array){ //in all badges group
@@ -131,6 +137,18 @@ module.exports.public = function(req, res, next){
         res.status(404).send("");
         return;
       }
+      if(documents == null){//no documents stored in the database, we check the portfolio to render the correct page
+        //if the portfolio object is empty, there is not portfolio to show, we send a 404 code page
+        if(!Object.keys(portfolio).length){
+          res.status(404).send("404 Not found");
+          return;
+        }
+        //in all other cases, we build the html structure of the public portfolio page
+        res.render('public.jade', portfolio, function(err, html) {
+          res.status(200).send(html);
+          return;
+        });
+      }
       else {
         var document = {}; //object to store all documents before adding them to the portfolio object 
         documents.forEach(function(documentData, index, array){ //for each portfolio document
@@ -159,7 +177,7 @@ module.exports.public = function(req, res, next){
           res.status(404).send("404 Not found");
           return;
         }
-        //now we build the html structure of the public page
+        //in all other cases, we build the html structure of the public portfolio page
         res.render('public.jade', portfolio, function(err, html) {
           res.status(200).send(html);
           return;
