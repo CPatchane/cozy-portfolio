@@ -228,9 +228,11 @@ script(type="text/javascript").
     //we disable the button
     if(groups.length == 0 && documents.length == 0){
       document.getElementById("submitChanges").disabled = true;
+      document.getElementById("submitChanges").style.opacity = "0.3";
       document.getElementById("noDocumentsMessage").removeAttribute("hidden");
     }else{ //in all other cases we need the button
       document.getElementById("submitChanges").disabled = false;
+      document.getElementById("submitChanges").style.opacity = "1";
       document.getElementById("noDocumentsMessage").setAttribute("hidden", true);
     }
   }
@@ -437,9 +439,11 @@ script(type="text/javascript").
     //we disable the button
     if(groups.length == 0 && documents.length == 0){
       document.getElementById("submitChanges").disabled = true;
+      document.getElementById("submitChanges").style.opacity = "0.3";
       document.getElementById("noDocumentsMessage").removeAttribute("hidden");
     }else{ //in all other cases we need the button
       document.getElementById("submitChanges").disabled = false;
+      document.getElementById("submitChanges").style.opacity = "1";
       document.getElementById("noDocumentsMessage").setAttribute("hidden", true);
     }
   }
