@@ -19,7 +19,7 @@ module.exports.public = function(req, res, next){
       res.status(404).send("");
       return;
     }
-    else if(userInfos == null){//no user infos registered, we skip to the next step
+    else if(userInfos == null || userInfos.length == 0){//no user infos registered, we skip to the next step
       getBadges();
     }
     else {
@@ -102,7 +102,7 @@ module.exports.public = function(req, res, next){
         res.status(404).send("");
         return;
       }
-      else if(badgesGroups == null){//no badges groups stored, we skip to the next step
+      else if(badgesGroups == null || badgesGroups.length == 0){//no badges groups stored, we skip to the next step
         getDocuments();
       }
       else {
@@ -137,7 +137,7 @@ module.exports.public = function(req, res, next){
         res.status(404).send("");
         return;
       }
-      if(documents == null){//no documents stored in the database, we check the portfolio to render the correct page
+      if(documents == null || documents.length == 0){//no documents stored in the database, we check the portfolio to render the correct page
         //if the portfolio object is empty, there is not portfolio to show, we send a 404 code page
         if(!Object.keys(portfolio).length){
           res.status(404).send("404 Not found");
