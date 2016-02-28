@@ -252,7 +252,6 @@ h1 {
 
 /*FOR EMBEDED ELEMENTS*/
 .embededElement img{
-  max-height: 300px;
   border-radius: 2px;
   box-shadow: 0px 0px 8px rgba(0,0,0,0.7);
   border:1px solid black;
