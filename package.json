@@ -7,6 +7,7 @@
     "node": "*"
   },
   "description": "Create your portfolio on your Cozy Cloud with the possibility to grab information from DoYouBuzz and OpenBadges",
+  "icon-path": "client/public/icons/main_icon.svg",
   "license": "AGPL-3.0",
   "repository": {
     "type": "git",
