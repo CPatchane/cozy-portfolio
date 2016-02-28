@@ -37,6 +37,7 @@ div.container
     div.row#TabsContainer
       div.row.text-center
         h1.col-md-12 Mes choix
+        h4.col-md-12#noDocumentsMessage(hidden="true") Aucun documents à afficher. Vous pouvez synchroniser des documents DoYouBuzz ou en ajouter via la partie ci-dessous.
       //- It will contain all categories tabs dynamically here
     //- Submiting buttons and UI messages
     div.row#submitPart
@@ -222,6 +223,15 @@ script(type="text/javascript").
       var successMessage = document.getElementById("savedMessage");
       successMessage.innerHTML = "Badges mis à jour avec succès";
       successMessage.removeAttribute("hidden");
+    }
+    //if there is not any documents to display, we don't need the submit button (because there are no visibilities to update)
+    //we disable the button
+    if(!Object.keys(groups).length == 0 && !documents.length == 0){
+      document.getElementById("submitChanges").disabled = true;
+      document.getElementById("noDocumentsMessage").removeAttribute("hidden");
+    }else{ //in all other cases we need the button
+      document.getElementById("submitChanges").disabled = false;
+      document.getElementById("noDocumentsMessage").setAttribute("hidden", true);
     }
   }
   
@@ -424,6 +434,15 @@ script(type="text/javascript").
     //we put the badges category at the end of all categories, so if it's an update we move the badges tab to the end of all tabs
     //if it's not an update, the badges tab wouldn't exist and we would get an error
     if(isUpdate)document.getElementById('TabsContainer').appendChild(document.getElementById('badgesTab'));
+    //if there is not any documents to display, we don't need the submit button (because there are no visibilities to update)
+    //we disable the button
+    if(Object.keys(groups).length == 0 && documents.length == 0){
+      document.getElementById("submitChanges").disabled = true;
+      document.getElementById("noDocumentsMessage").removeAttribute("hidden");
+    }else{ //in all other cases we need the button
+      document.getElementById("submitChanges").disabled = false;
+      document.getElementById("noDocumentsMessage").setAttribute("hidden", true);
+    }
   }
   
   //function to build a document inside its correct container/category/tab
