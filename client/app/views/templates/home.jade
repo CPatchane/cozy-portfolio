@@ -130,7 +130,7 @@ script(type="text/javascript").
       document.getElementById("ErrorMessage").innerHTML = "Erreur serveur";
       document.getElementById("ErrorMessage").removeAttribute("hidden");
     }
-    data = JSON.parse(xmlHttp.responseText)[0]; // there is only one document for userInfos, so this is the first element of the returned array
+    data = JSON.parse(xmlHttp.responseText)[0] || {}; // there is only one document for userInfos, so this is the first element of the returned array, if this is the very first execution we create the object (because data will be undefined)
     for(var propertyName in data){ // for each information
       if(propertyName == "resumes"){//for resumes (array of resumes)
         //if there is at least one resume on DoYouBuzz, we display this part
