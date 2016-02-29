@@ -189,7 +189,8 @@ script(type="text/javascript").
       }
     }
     //parameters for the request, we need here the data object and the document id of the user document(gotten from the database in the global data object)
-    var parameters = "data="+JSON.stringify(dataToSend)+"&id="+data.id;
+    var idToSent = data.id || "";//id of the document received (or nothing if this is the very first execution)
+    var parameters = "data="+JSON.stringify(dataToSend)+"&id="+idToSent;
     //request
     var xhttpInfos = new XMLHttpRequest();
     xhttpInfos.open("PUT", "updateUserInfos", true);
