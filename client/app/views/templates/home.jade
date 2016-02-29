@@ -126,7 +126,7 @@ script(type="text/javascript").
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", "getUserInfos", false ); // false for synchronous request
     xmlHttp.send();
-    if(xmlHttp.status != 200 || xmlHttp.status != 304){ //erreur du côté serveur
+    if(xmlHttp.status != 200 && xmlHttp.status != 304){ //erreur du côté serveur
       document.getElementById("ErrorMessage").innerHTML = "Erreur serveur";
       document.getElementById("ErrorMessage").removeAttribute("hidden");
     }

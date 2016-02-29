@@ -145,7 +145,7 @@ script(type="text/javascript").
         xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttpInfos.send(parameters);
         
-        if(xhttpInfos.status != 200 || xhttpInfos.status != 304){
+        if(xhttpInfos.status != 200 && xhttpInfos.status != 304){
           var missingArgsMessage = document.getElementById("missingArguments");
           missingArgsMessage.innerHTML = "Echec de l'enregistrement des données.";
           missingArgsMessage.setAttribute("hidden", true);
