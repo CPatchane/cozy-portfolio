@@ -62,14 +62,16 @@ div.container
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.open( "GET", "getAccountsInfos", false ); // false for synchronous request
         xmlHttp.send( null );
-        //- accountSettings object getten from database and will be in the global scope
-        var accountSettingsData = JSON.parse(xmlHttp.responseText)[0];
-        document.getElementById("apiKey").value = accountSettingsData.doYouBuzzAPIKey;
-        document.getElementById("apiSecret").value = accountSettingsData.doYouBuzzAPISecret;
-        document.getElementById("openBadgesEmail").value = accountSettingsData.openBadgesEmail;
-        //- if this is a response from a DoYouBuzz authentification we display the message to say that the account is connected
-        if(accountSettingsData.DYBResponse == "OK"){
-          document.getElementById("DYBconnected").setAttribute("style", "");
+        if(xmlHttp == 200 || xmlHttp == 304){
+          //- accountSettings object getten from database and will be in the global scope
+          var accountSettingsData = JSON.parse(xmlHttp.responseText)[0];
+          document.getElementById("apiKey").value = accountSettingsData.doYouBuzzAPIKey;
+          document.getElementById("apiSecret").value = accountSettingsData.doYouBuzzAPISecret;
+          document.getElementById("openBadgesEmail").value = accountSettingsData.openBadgesEmail;
+          //- if this is a response from a DoYouBuzz authentification we display the message to say that the account is connected
+          if(accountSettingsData.DYBResponse == "OK"){
+            document.getElementById("DYBconnected").setAttribute("style", "");
+          }
         }
     //- row for submiting button and UI messages
     div.row
@@ -105,11 +107,10 @@ script(type="text/javascript").
       xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xmlHttp.onreadystatechange = function(){
         //if we got the correct elements, we open the url to the authentication page (in a new tab/window)
-        if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+        if (xmlHttp.readyState == 4 && (xmlHttp.status == 200 || xmlHttp.status == 304)) {
                  var uri = "http://www.doyoubuzz.com/fr/oauth/authorize" + "?" + xmlHttp.responseText;
                  window.open(uri, '_blank'); //open the link in a new window for a better user experience
-        }
-        else{
+        }else if(xmlHttp.readyState == 4){
           var missingArgsMessage = document.getElementById("missingArguments");
           missingArgsMessage.innerHTML = JSON.parse(xmlHttp.responseText);
           missingArgsMessage.setAttribute("hidden", true);
@@ -144,7 +145,7 @@ script(type="text/javascript").
         xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttpInfos.send(parameters);
         
-        if(xhttpInfos.status != 200){
+        if(xhttpInfos.status != 200 || xhttpInfos.status != 304){
           var missingArgsMessage = document.getElementById("missingArguments");
           missingArgsMessage.innerHTML = "Echec de l'enregistrement des données.";
           missingArgsMessage.setAttribute("hidden", true);

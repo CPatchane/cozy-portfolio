@@ -183,7 +183,7 @@ script(type="text/javascript").
     xmlHttpUpdateBadges.send( JSON.stringify(badgesToSubmit) );
     
     //UI messages
-    if(xmlHttpUpdateDocuments.status == 200 && xmlHttpUpdateBadges.status == 200){
+    if((xmlHttpUpdateDocuments.status == 200 || xmlHttpUpdateDocuments.status == 304) && (xmlHttpUpdateBadges.status == 200 || xmlHttpUpdateBadges.status == 304)){
       document.getElementById("savedMessage").innerHTML = "Changements sauvegardés avec succès";
       document.getElementById("savedMessage").removeAttribute("hidden");
     }else{//error
@@ -205,7 +205,7 @@ script(type="text/javascript").
     var xmlHttpGroups = new XMLHttpRequest();
     xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpGroups.send();
-    if(xmlHttpGroups.status != 200){ //if error
+    if(xmlHttpGroups.status != 200 && xmlHttpGroups.status != 304){ //if error
       document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour récupérer les badges";
       document.getElementById("errorMessage").removeAttribute("hidden");
       return;
@@ -291,7 +291,7 @@ script(type="text/javascript").
         var xmlHttpSync = new XMLHttpRequest();
         xmlHttpSync.open( "GET", "syncBadgesGroup", true ); // true for asynchronous request
         xmlHttpSync.onreadystatechange = function(){
-          if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 200) { //if success
+          if (xmlHttpSync.readyState == 4 && (xmlHttpSync.status == 200 || xmlHttpSync.status == 304)) { //if success
             //we rebuild all the badges tab content
             init(false, false, true); //badges update but not document update
           } else if (xmlHttpSync.readyState == 4 && xmlHttpSync.status == 404){ //if error 404
@@ -388,7 +388,7 @@ script(type="text/javascript").
     xmlHttpAddDocument.open( "POST", "addPortfolioDocument", true ); //true for asynchronous request
     xmlHttpAddDocument.setRequestHeader("Content-type", "application/json");
     xmlHttpAddDocument.onreadystatechange = function(){
-          if (xmlHttpAddDocument.readyState == 4 && xmlHttpAddDocument.status == 200) { //if success
+          if (xmlHttpAddDocument.readyState == 4 && (xmlHttpAddDocument.status == 200 || xmlHttpAddDocument.status == 304)) { //if success
             //we reset the form
             title.value = "";
             url.value = "";
@@ -431,7 +431,7 @@ script(type="text/javascript").
     var xmlHttpDocuments = new XMLHttpRequest();
     xmlHttpDocuments.open( "GET", "getPortfolioDocuments", false ); // false for synchronous request
     xmlHttpDocuments.send();
-    if(xmlHttpDocuments.status != 200){ //if error
+    if(xmlHttpDocuments.status != 200 && xmlHttpDocuments.status != 304){ //if error
       document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour récupérer les documents";
       document.getElementById("errorMessage").removeAttribute("hidden");
       return;
@@ -521,7 +521,7 @@ script(type="text/javascript").
       var xmlHttpRemoveDocument = new XMLHttpRequest();
       xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
       xmlHttpRemoveDocument.send();
-      if(xmlHttpRemoveDocument.status != 200){ //if error
+      if(xmlHttpRemoveDocument.status != 200 && xmlHttpRemoveDocument.status != 304){ //if error
         document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour supprimer le document demandé";
         document.getElementById("errorMessage").removeAttribute("hidden");
         return;
@@ -661,7 +661,7 @@ script(type="text/javascript").
       xmlHttpUpdateDocument.open( "PUT", "updatePortfolioDocument/"+documentID, false ); // false for synchronous request
       xmlHttpUpdateDocument.setRequestHeader("Content-type", "application/json");
       xmlHttpUpdateDocument.onreadystatechange = function(){
-          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 200) { //if success
+          if (xmlHttpUpdateDocument.readyState == 4 && (xmlHttpUpdateDocument.status == 200 || xmlHttpUpdateDocument.status == 304)) { //if success
             document.getElementById("Edition"+documentID).checked = false;
     	      isADocumentInEditingMode = false; //to allow an other element editing
           }else if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 404){
@@ -684,13 +684,18 @@ script(type="text/javascript").
   
   //function to get documents from DoYouBuzz
   function syncDYBDocuments(){
+    //remove potential UI Messages
+    var successMessage = document.getElementById("savedMessage");
+    var errorMessage = document.getElementById("errorMessage");
+    successMessage.setAttribute("hidden", "true");
+    errorMessage.setAttribute("hidden", "true");
     //request
     var xmlHttpSyncDYB = new XMLHttpRequest();
     xmlHttpSyncDYB.open( "GET", "syncDYBDocuments", false ); // false for synchronous request
     xmlHttpSyncDYB.send();
     
     //and display UI messages
-    if (xmlHttpSyncDYB.status == 200){
+    if (xmlHttpSyncDYB.status == 200 || xmlHttpSyncDYB.status == 304){
       var updates = JSON.parse(xmlHttpSyncDYB.responseText);
       //we update the html element of each concerned document
       updates.forEach(function(documentUpdate, index, array){
@@ -703,17 +708,14 @@ script(type="text/javascript").
         document.getElementById("editRelatedWebsite"+documentUpdate._id).innerHTML = documentUpdate.relatedWebsite;
       });
       //we need to update all new or updated documents
-      var successMessage = document.getElementById("savedMessage");
       successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
       successMessage.removeAttribute("hidden");
     }else if(xmlHttpSyncDYB.status == 404){
-      var erroMessage = document.getElementById("errorMessage");
-      erroMessage.innerHTML = "Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Vérifier également votre choix de CV dans votre profil de portfolio Cozy Cloud puis réessayer.";
-      erroMessage.removeAttribute("hidden");
+      errorMessage.innerHTML = "Vous n'avez pas d'éléments de portfolio sur votre CV DoYouBuzz. Vérifier également votre choix de CV dans votre profil de portfolio Cozy Cloud puis réessayer.";
+      errorMessage.removeAttribute("hidden");
     }else{
-      var erroMessage = document.getElementById("errorMessage");
-      erroMessage.innerHTML = "Une erreur est survenue lors de la synchronisation avec DoYouBuzz";
-      erroMessage.removeAttribute("hidden");
+      errorMessage.innerHTML = "Une erreur est survenue lors de la synchronisation avec DoYouBuzz";
+      errorMessage.removeAttribute("hidden");
     }
     
   }

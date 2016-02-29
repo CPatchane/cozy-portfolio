@@ -126,7 +126,7 @@ script(type="text/javascript").
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", "getUserInfos", false ); // false for synchronous request
     xmlHttp.send();
-    if(xmlHttp.status != 200){ //erreur du côté serveur
+    if(xmlHttp.status != 200 || xmlHttp.status != 304){ //erreur du côté serveur
       document.getElementById("ErrorMessage").innerHTML = "Erreur serveur";
       document.getElementById("ErrorMessage").removeAttribute("hidden");
     }
@@ -195,10 +195,10 @@ script(type="text/javascript").
     xhttpInfos.open("PUT", "updateUserInfos", true);
     xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhttpInfos.onreadystatechange = function(){
-        if (xhttpInfos.readyState == 4 && xhttpInfos.status == 200) { //if success, we display a successful message
+        if (xhttpInfos.readyState == 4 && (xhttpInfos.status == 200 || xhttpInfos.status == 304)) { //if success, we display a successful message
           document.getElementById("savedMessage").removeAttribute("hidden");
           document.getElementById("savedMessage").innerHTML = xhttpInfos.responseText;
-        }else if(xhttpInfos.readyState == 4 && xhttpInfos.status != 200){ //if error, we display an error message
+        }else if(xhttpInfos.readyState == 4){ //if error, we display an error message
           document.getElementById("ErrorMessage").removeAttribute("hidden");
           document.getElementById("ErrorMessage").innerHTML = xhttpInfos.responseText;
         }
@@ -226,12 +226,12 @@ script(type="text/javascript").
       xmlHttp.open( "POST", "getDYBUserInfos", true ); // true for asynchronous request
       xmlHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
       xmlHttp.onreadystatechange = function(){
-          if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {//if success, we display a succesful message
+          if (xmlHttp.readyState == 4 && (xmlHttp.status == 200 || xmlHttp.status == 304)) {//if success, we display a succesful message
             document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             document.getElementById("savedMessage").removeAttribute("hidden");
             document.getElementById("savedMessage").innerHTML = xmlHttp.responseText;
             getInfos();
-          }else if(xmlHttp.readyState == 4 && xmlHttp.status != 200){ // if error, we display an error message
+          }else if(xmlHttp.readyState == 4){ // if error, we display an error message
             document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             document.getElementById("ErrorMessage").removeAttribute("hidden");
             document.getElementById("ErrorMessage").innerHTML = xmlHttp.responseText;
