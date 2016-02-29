@@ -126,6 +126,11 @@ script(type="text/javascript").
     
     //get all badges from database and build them on page
     if(isFirstRunning || isBadgeUpdate)getAndBuildBadges(isBadgeUpdate);
+    
+    if(!isFirstRunning){
+      document.getElementById("savedMessage").innerHTML = "Documents mis à jours";
+      document.getElementById("savedMessage").removeAttribute("hidden");
+    }
   }
   
  
@@ -172,14 +177,19 @@ script(type="text/javascript").
       badgesToSubmit[badgesInputs[i].getAttribute("badge")] = badgesInputs[i].checked;
     }
     //request
-    var xmlHttpUpdate = new XMLHttpRequest();
-    xmlHttpUpdate.open( "PUT", "updateBadgesVisibilities", false ); // false for synchronous request
-    xmlHttpUpdate.setRequestHeader("Content-type", "application/json");
-    xmlHttpUpdate.send( JSON.stringify(badgesToSubmit) );
+    var xmlHttpUpdateBadges = new XMLHttpRequest();
+    xmlHttpUpdateBadges.open( "PUT", "updateBadgesVisibilities", false ); // false for synchronous request
+    xmlHttpUpdateBadges.setRequestHeader("Content-type", "application/json");
+    xmlHttpUpdateBadges.send( JSON.stringify(badgesToSubmit) );
     
-    //UI message
-    document.getElementById("savedMessage").innerHTML = "Changements sauvegardés avec succès";
-    document.getElementById("savedMessage").removeAttribute("hidden");
+    //UI messages
+    if(xmlHttpUpdateDocuments.status == 200 && xmlHttpUpdateBadges.status == 200){
+      document.getElementById("savedMessage").innerHTML = "Changements sauvegardés avec succès";
+      document.getElementById("savedMessage").removeAttribute("hidden");
+    }else{//error
+      document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue";
+      document.getElementById("errorMessage").removeAttribute("hidden");
+    }
   }
   
   
@@ -190,12 +200,16 @@ script(type="text/javascript").
   //function to get all badges from database and build them on the html page
   // @isUpdate : true if this is an update and not the first building of the badges tab
   function getAndBuildBadges(isUpdate){
-    console.log("OXO");
     //get all badges from database and build them on page
     //request
     var xmlHttpGroups = new XMLHttpRequest();
     xmlHttpGroups.open( "GET", "getBadgesGroup", false ); // false for synchronous request
     xmlHttpGroups.send();
+    if(xmlHttpGroups.status != 200){ //if error
+      document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour récupérer les badges";
+      document.getElementById("errorMessage").removeAttribute("hidden");
+      return;
+    }
     groups = JSON.parse(xmlHttpGroups.responseText);
     
     if(isUpdate){ // if this an update, we empty the badges tab
@@ -288,6 +302,10 @@ script(type="text/javascript").
             var errorMessage = document.getElementById("errorMessage");
             errorMessage.removeAttribute("hidden");
             errorMessage.innerHTML = "Erreur serveur : "+xmlHttpSync.responseText;
+          }else if(xmlHttpSync.readyState == 4){//if other errors
+            var errorMessage = document.getElementById("errorMessage");
+            errorMessage.removeAttribute("hidden");
+            errorMessage.innerHTML = "Une erreur du serveur est survenue";
           }
         }
         xmlHttpSync.send();
@@ -412,7 +430,12 @@ script(type="text/javascript").
   function getAndBuildDocuments(isUpdate){
     var xmlHttpDocuments = new XMLHttpRequest();
     xmlHttpDocuments.open( "GET", "getPortfolioDocuments", false ); // false for synchronous request
-    xmlHttpDocuments.send( );
+    xmlHttpDocuments.send();
+    if(xmlHttpDocuments.status != 200){ //if error
+      document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour récupérer les documents";
+      document.getElementById("errorMessage").removeAttribute("hidden");
+      return;
+    }
     //we get all documents
     documents = JSON.parse(xmlHttpDocuments.responseText);
     
@@ -489,6 +512,8 @@ script(type="text/javascript").
   //function to remove a document
   //@element : html structure of the document to remove
   function removeDocument(element){
+    document.getElementById("errorMessage").setAttribute("hidden", "true");
+    document.getElementById("savedMessage").setAttribute("hidden", "true");
     if(confirm("Voulez-vouz vraiment supprimer ce document? Cette action est irreversible.")){
       var documentIDtoRemove = element.getAttribute("documentID"); //we get the id of the document to send to the server
       
@@ -496,6 +521,11 @@ script(type="text/javascript").
       var xmlHttpRemoveDocument = new XMLHttpRequest();
       xmlHttpRemoveDocument.open( "GET", "deletePortfolioDocument/"+documentIDtoRemove, false ); // false for synchronous request
       xmlHttpRemoveDocument.send();
+      if(xmlHttpRemoveDocument.status != 200){ //if error
+        document.getElementById("errorMessage").innerHTML = "Une erreur du serveur est survenue pour supprimer le document demandé";
+        document.getElementById("errorMessage").removeAttribute("hidden");
+        return;
+      }
       
       //we remove now all HTML nodes not used anymore
       var childToRemove = element.parentNode.parentNode;
@@ -508,8 +538,9 @@ script(type="text/javascript").
       //this document is not build anymore because it's removed
       documentsAlreadyBuilt[documentIDtoRemove] = false;
       
-      //we now update documents on the page
-      init(false, true, false);
+      //UI Message
+      document.getElementById("savedMessage").innerHTML = "Document supprimé avec succès";
+      document.getElementById("savedMessage").removeAttribute("hidden");
     }
   }
   
@@ -633,12 +664,10 @@ script(type="text/javascript").
           if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 200) { //if success
             document.getElementById("Edition"+documentID).checked = false;
     	      isADocumentInEditingMode = false; //to allow an other element editing
-          }
-          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 404){
+          }else if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 404){
             alertElement.innerHTML = 'Le document n\'a pas été trouvé dans la base de données. Veuillez recharger la page ou l\'application.';
             alertElement.removeAttribute("hidden");
-          }
-          if (xmlHttpUpdateDocument.readyState == 4 && xmlHttpUpdateDocument.status == 500){
+          }else if (xmlHttpUpdateDocument.readyState == 4){ //other errors
             alertElement.innerHTML = 'Erreur serveur. Veuillez recharger la page ou l\'application.';
             alertElement.removeAttribute("hidden"); 
           }

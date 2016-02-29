@@ -119,10 +119,17 @@ script(type="text/javascript").
   getInfos();
   
   function getInfos(){
+    //remove all potential messages
+    document.getElementById("ErrorMessage").setAttribute("hidden", "true");
+    document.getElementById("savedMessage").setAttribute("hidden", "true");
     //requestion to the user information from the database
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", "getUserInfos", false ); // false for synchronous request
     xmlHttp.send();
+    if(xmlHttp.status != 200){ //erreur du côté serveur
+      document.getElementById("ErrorMessage").innerHTML = "Erreur serveur";
+      document.getElementById("ErrorMessage").removeAttribute("hidden");
+    }
     data = JSON.parse(xmlHttp.responseText)[0]; // there is only one document for userInfos, so this is the first element of the returned array
     for(var propertyName in data){ // for each information
       if(propertyName == "resumes"){//for resumes (array of resumes)
