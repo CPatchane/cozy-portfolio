@@ -71,8 +71,8 @@ module.exports.getFromDYB = function(req, res, next) {
     else {
       accountsInfos = accountsInfos[0];//there is only one element/document for accounts information
       //if we don't find tokens, the user have to connect the account in the accountSettings/Parametres page
-      if(!accountsInfos.doYouBuzzOauthVerifierToken || !accountsInfos.doYouBuzzOauthVerifierTokenSecret){
-        res.status(500).send("Erreur : Veuillez connecter votre compte DoYouBuzz dans les paramètres puis réssayer.");
+      if(!accountsInfos || !accountsInfos.doYouBuzzOauthVerifierToken || !accountsInfos.doYouBuzzOauthVerifierTokenSecret){
+        res.status(404).send("Erreur : Veuillez connecter votre compte DoYouBuzz dans les paramètres puis réssayer.");
       }else{
         //Oauthentication parameters
         var oauth =

@@ -167,6 +167,9 @@ script(type="text/javascript").
 
   //function to submit information and save them into the database
   function submitInfos(){
+    //remove all potential messages
+    document.getElementById("ErrorMessage").setAttribute("hidden", "true");
+    document.getElementById("savedMessage").setAttribute("hidden", "true");
     var formElements = document.getElementById("profilElements").getElementsByTagName("input");
     var description = document.getElementsByTagName("textarea")[0]; //for the description
     var dataToSend = {}; //object that will be sent to the database
@@ -219,6 +222,9 @@ script(type="text/javascript").
   
   
   function getDataFromDYBResume(){
+    //remove all potential messages
+    document.getElementById("ErrorMessage").setAttribute("hidden", "true");
+    document.getElementById("savedMessage").setAttribute("hidden", "true");
     //we warn about the user about this update
     if(confirm("Cette action mettre à jour les champs nom, prénom, email ainsi que la liste de vos CV DoYouBuzz. Continuer?")){
       document.getElementById("DYBloadingIcon").setAttribute("style", ""); //we display the loading icon

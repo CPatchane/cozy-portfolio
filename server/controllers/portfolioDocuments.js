@@ -108,7 +108,7 @@ module.exports.syncDYB = function(req, res, next) {
         accountsInfos = accountsInfos[0];
         user.all(function(err, userInfos) { //to get the active resume id
             if(err !== null || userInfos[0].activeResumeId == 0) { //if no resume was selected in the user profile
-              res.status(500).send("Vous n'avez pas choisi de CV DoYouBuzz au niveau de votre profil. Merci d'en choisir un et de réessayer");
+              res.status(404).send("Soit vous n'avez connecté votre compte DoYouBuzz dans le menu paramètre soit vous n'avez pas choisi de CV DoYouBuzz au niveau de votre profil. Merci de vérifier et de réessayer.");
               return;
             }
             else { //if we have the resume that the user has selected
@@ -124,7 +124,7 @@ module.exports.syncDYB = function(req, res, next) {
   function getDYBDocuments(userInfos, accountsInfos){
     //if we don't have any DYB tokens -> the DYB connection is needed in the settings view
     if(!accountsInfos.doYouBuzzOauthVerifierToken || !accountsInfos.doYouBuzzOauthVerifierTokenSecret){
-      res.status(500).send("Erreur : Veuillez connecter votre compte DoYouBuzz dans les paramètres puis réssayer.");
+      res.status(404).send("Veuillez connecter votre compte DoYouBuzz dans les paramètres puis réssayer.");
     }else{
       //OAuth authentification parameters
       var oauth =

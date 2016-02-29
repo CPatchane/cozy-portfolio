@@ -56,23 +56,6 @@ div.container
         h2 OpenBadges
         p Entrer l'adresse email associée à votre compte OpenBadges :
         input#openBadgesEmail(type='text', name='OBemail', placeholder='name@example.com')
-
-      script(type="text/javascript").
-        //- here is the code to do the request, to get all elements from the database and set all input values
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open( "GET", "getAccountsInfos", false ); // false for synchronous request
-        xmlHttp.send( null );
-        if(xmlHttp == 200 || xmlHttp == 304){
-          //- accountSettings object getten from database and will be in the global scope
-          var accountSettingsData = JSON.parse(xmlHttp.responseText)[0];
-          document.getElementById("apiKey").value = accountSettingsData.doYouBuzzAPIKey;
-          document.getElementById("apiSecret").value = accountSettingsData.doYouBuzzAPISecret;
-          document.getElementById("openBadgesEmail").value = accountSettingsData.openBadgesEmail;
-          //- if this is a response from a DoYouBuzz authentification we display the message to say that the account is connected
-          if(accountSettingsData.DYBResponse == "OK"){
-            document.getElementById("DYBconnected").setAttribute("style", "");
-          }
-        }
     //- row for submiting button and UI messages
     div.row
       div.col-md-12.submitButton.text-center
@@ -84,17 +67,36 @@ div.container
         
         
 script(type="text/javascript").
+    // here is the code to do the request, to get all elements from the database and set all input values
+    var accountSettingsData = {};
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "getAccountsInfos", false ); // false for synchronous request
+    xmlHttp.send();
+    if(xmlHttp.status == 200 || xmlHttp.status == 304){
+      // accountSettings object getten from database and will be in the global scope
+      accountSettingsData = JSON.parse(xmlHttp.responseText)[0] || {};//if this is the very first execution, that will be undefined so we want {}
+      console.log(accountSettingsData);
+      document.getElementById("apiKey").value = accountSettingsData.doYouBuzzAPIKey || "";
+      document.getElementById("apiSecret").value = accountSettingsData.doYouBuzzAPISecret || "";
+      document.getElementById("openBadgesEmail").value = accountSettingsData.openBadgesEmail || "";
+      // if this is a response from a DoYouBuzz authentification we display the message to say that the account is connected
+      if(accountSettingsData.DYBResponse == "OK"){
+        document.getElementById("DYBconnected").setAttribute("style", "");
+      }
+    }
+
     //function to request the url elements from database and to authenticate the DoYouBuzz account
     function getDYBConnection(){
       //loading animation
       document.getElementById("DYBloadingIcon").setAttribute("style", "");
-      var DYBapiKey = document.getElementById("apiKey").value;
-      var DYBapiSecret = document.getElementById("apiSecret").value;
+      var DYBapiKey = document.getElementById("apiKey").value || "";
+      var DYBapiSecret = document.getElementById("apiSecret").value || "";
       if(DYBapiKey == "" || DYBapiSecret == ""){
             // both elements are required, so if one is missing we stop here and inform the user
             var missingArgsMessage = document.getElementById("missingArguments");
             missingArgsMessage.innerHTML = "Les deux informations (clé et clé secrète) doivent être fournis pour connecter votre compte DoYouBuzz. Merci de les remplir.";
             missingArgsMessage.setAttribute("hidden", true);
+            document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             return;
       }
       //the callback is the URL to get back after the user will confirm the authentication on DoYouBuzz platform
@@ -123,10 +125,11 @@ script(type="text/javascript").
     function submitAccountInfos(){
         //we hide missing argumets message if it's displayed
         document.getElementById("missingArguments").setAttribute("hidden", true);
+        document.getElementById("savedMessage").setAttribute("hidden", true);
         //we get all inputs value
-        var DYBapiKey = document.getElementById("apiKey").value;
-        var DYBapiSecret = document.getElementById("apiSecret").value;
-        var OBemail = document.getElementById("openBadgesEmail").value;
+        var DYBapiKey = document.getElementById("apiKey").value || "";
+        var DYBapiSecret = document.getElementById("apiSecret").value || "";
+        var OBemail = document.getElementById("openBadgesEmail").value || "";
         
         //if we already have accountSettings object, we use its id to update it with this submiting
         var docId = accountSettingsData.id || "";
@@ -134,7 +137,7 @@ script(type="text/javascript").
         if(DYBapiKey == "" && DYBapiSecret == "" && OBemail == ""){
             var missingArgsMessage = document.getElementById("missingArguments");
             missingArgsMessage.innerHTML = "Aucun champs n'a été rempli. Veuillez en remplir pour enregistrer des informations.";
-            missingArgsMessage.setAttribute("hidden", true);
+            missingArgsMessage.removeAttribute("hidden");
             return;
         }
         //set parameters for the request
@@ -144,13 +147,12 @@ script(type="text/javascript").
         xhttpInfos.open("PUT", "updateAccountsInfos", false);
         xhttpInfos.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttpInfos.send(parameters);
-        
         if(xhttpInfos.status != 200 && xhttpInfos.status != 304){
           var missingArgsMessage = document.getElementById("missingArguments");
           missingArgsMessage.innerHTML = "Echec de l'enregistrement des données.";
-          missingArgsMessage.setAttribute("hidden", true);
-          return;
+          missingArgsMessage.removeAttribute("hidden");
+        }else{
+          document.getElementById("savedMessage").removeAttribute("hidden");
+          document.getElementById("savedMessage").innerHTML = "Vos paramètres sont enregistrées"; 
         }
-
-        document.getElementById("savedMessage").removeAttribute("hidden");
     }

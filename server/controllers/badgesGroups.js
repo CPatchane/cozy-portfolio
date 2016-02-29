@@ -60,9 +60,10 @@ module.exports.syncWithOB = function(req, res, next) {
     
     accounts.all(function(err, accountsInfos) {
       if(err !== null) {
-        res.status(404).send(" ERROR to find accounts informations");
-      }
-      else {
+        res.status(500).send(" ERROR to find accounts informations");
+      }else if(!accountsInfos.length){//if no documents
+        res.status(404).send("Aucun profil OpenBadges trouvé, veuillez ajouter ou corriger votre e-mail OpenBadges dans la section paramètres avant de réessayer. Merci.");
+      } else {
         userId = accountsInfos[0].openBadgesUserId;
         if(userId !== undefined && userId != 0){//if we have a userId we continue
           getBadgeGroups(userId);//we request badges groups from OpenBadges

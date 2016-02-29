@@ -9,7 +9,8 @@ var init = require('./init');
 module.exports = {
   //entry point of the client app in Cozy Cloud
   '': {
-    get: init.start
+    get: init.start, //entry point
+    put: accountsInfos.list //the "parametres" submit function bring automatically about a request PUT to /, so it's defined here but useless
   },
   //public page serving
   'public': {
