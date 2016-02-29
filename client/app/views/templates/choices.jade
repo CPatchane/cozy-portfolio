@@ -417,11 +417,11 @@ script(type="text/javascript").
     if(showFormAction){
       document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
       document.getElementById("addDocumentBlock").removeAttribute("style");
-      window.scrollTo(0,document.body.scrollHeight);//get the user to the top of the page
+      window.scrollTo(0,document.body.scrollHeight);//get the user to the bottom of the page
     }else{
       document.getElementById("addDocumentBlock").setAttribute("style", "display:none");
       document.getElementById("placeHolderAddDocumentBlock").removeAttribute("style");
-      window.scrollTo(0); //get the user to the bottom of the page to show all the adding form
+      window.scrollTo(0, 0); //get the user to the top of the page to show all the adding form
     }
   }
   
