@@ -567,8 +567,9 @@ script(type="text/javascript").
     var relatedWebsiteElement = document.getElementById("editRelatedWebsite"+documentID);
     var relatedWebsiteElementLabel = document.getElementById("editRelatedWebsiteLabel"+documentID);
     var alertElement = document.getElementById("alert"+documentID);
+    var embededElement = titleElement.parentElement.getElementsByClassName("embededElement")[0];
     
-    //we enter in the editing mode only if no other elements are in the editing mode
+    //we are entering in the editing mode only if no other elements are in the editing mode
     if(!wasEditingMode && !isADocumentInEditingMode){
       isADocumentInEditingMode = true; // to avoid multiple element editings
       // we hide link elements and display their <p> equivalent
@@ -589,7 +590,7 @@ script(type="text/javascript").
       //and check the checkbox which is the editing mode button
       document.getElementById("Edition"+documentID).checked = true;
       
-    }else{ //we leave the editing mode   
+    }else{ //we are leaving the editing mode   
       //check data entered
       alertElement.setAttribute("hidden", true);//remove potential error messages
       //to check the date
@@ -647,6 +648,12 @@ script(type="text/javascript").
       if(relatedWebsiteLink.href == "javascript:;") relatedWebsiteLink.setAttribute("hidden", true); //if it's empty, we hide it
       if(urlLink.href != "javascript:;") urlLink.removeAttribute("hidden"); //if it's not empty, we display it
       if(relatedWebsiteLink.href != "javascript:;") relatedWebsiteLink.removeAttribute("hidden"); //if it's not empty, we display it
+      //we update embed elements if they exists
+      if(embededElement != null){
+        if(embededElement.getElementsByTagName("img").length){
+          embededElement.getElementsByTagName("img")[0].src = urlElement.innerHTML != "" ? urlElement.innerHTML : "#";
+        }
+      }
       
       //element to send to the database for the update
       var dataToUpdate = {
@@ -707,6 +714,13 @@ script(type="text/javascript").
         document.getElementById("relatedWebsite"+documentUpdate._id).href = documentUpdate.relatedWebsite != "" ? documentUpdate.relatedWebsite : "javascript:;";
         document.getElementById("editUrl"+documentUpdate._id).innerHTML = documentUpdate.url;
         document.getElementById("editRelatedWebsite"+documentUpdate._id).innerHTML = documentUpdate.relatedWebsite;
+        //we update embeded elements if they exist
+        var embededElement = document.getElementById("title"+documentUpdate._id).parentElement.getElementsByClassName("embededElement")[0];
+        if(embededElement != null){
+          if(embededElement.getElementsByTagName("img").length){
+            embededElement.getElementsByTagName("img")[0].src = documentUpdate.url != "" ? documentUpdate.url : "#";
+          }
+        }
       });
       init(false, true, false); //documents update
       successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
