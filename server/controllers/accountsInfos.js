@@ -98,8 +98,9 @@ module.exports.getDYBConnection = function(req, res, next){
   //DoYouBuzz will retrun a string with the oauth_token_secret and other elements
   request.post({url: url, oauth: oauth}, function (e, r, body) {
     var bodyArguments = {};
-    if(body = ""){ // if doYouBuzz response nothing we stop here
-      res.status(500).send("Aucune réponse de DoYouBuzz. Veuillez revérifier vos clés API ou réessayer ultiérieurement.");
+    if(body == ""){ // if doYouBuzz responses nothing we stop here
+      res.status(404).send("Aucune réponse de DoYouBuzz. Veuillez revérifier vos clés API ou réessayer ultérieurement.");
+      return;
     }
     var gets = "?"+body; //need a ? at the beginning of the string for the next regex matching
     gets.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
