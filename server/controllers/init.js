@@ -167,8 +167,8 @@ module.exports.public = function(req, res, next){
               "url": documentData.url,
               "relatedWebsite": documentData.relatedWebsite,
               "creationDate": documentData.creationDate,
-              "emebededCode":getCorrectEmbedCode(documentData.url)
             }
+            if(getCorrectEmbedCode(documentData.url) != "") document.emebededCode = getCorrectEmbedCode(documentData.url);
             //add add the document to the matching category in portfolios
             portfolio.portfolios[documentData.category].documents.push(document);
           }
