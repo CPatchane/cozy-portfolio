@@ -26,7 +26,7 @@ module.exports.public = function(req, res, next){
       userInfos = userInfos[0];
       var userData = {};
       //user name
-      if(userInfos.firstName.visibility || userInfos.lastName.visibility){
+      if((userInfos.firstName && userInfos.firstName.visibility) || (userInfos.lastName && userInfos.lastName.visibility)){
         userData.name = "";
         if(userInfos.firstName.visibility) userData.name += userInfos.firstName.value;
         if(userInfos.lastName.visibility) 
@@ -36,7 +36,7 @@ module.exports.public = function(req, res, next){
         }
       }
       //age
-      if(userInfos.birthdayDate.visibility){
+      if(userInfos.birthdayDate && userInfos.birthdayDate.visibility){
         var today = new Date();
         //we need to transform the date format from JJ/MM/AAAA to AAAA-MM-JJ to compute the age
         var datePattern = /(\d{2})[/.-](\d{2})[/.-](\d{4})/;
@@ -50,23 +50,23 @@ module.exports.public = function(req, res, next){
         userData.age = age;
       }
       //description
-      if(userInfos.email.visibility){
+      if(userInfos.email && userInfos.email.visibility){
         userData.email = userInfos.email.value;
       }
       //email
-      if(userInfos.description.visibility){
+      if(userInfos.description && userInfos.description.visibility){
         userData.description = userInfos.description.value;
       }
       //statut
-      if(userInfos.status.visibility){
+      if(userInfos.status && userInfos.status.visibility){
         userData.status = userInfos.status.value;
       }
       //localisation
-      if(userInfos.localisation.visibility){
+      if(userInfos.localisation && userInfos.localisation.visibility){
         userData.localisation = userInfos.localisation.value;
       }
       //hobbies
-      if(userInfos.hobbies.visibility){
+      if(userInfos.hobbies && userInfos.hobbies.visibility){
         //we have to get all separated words from the string
         var hobbies = userInfos.hobbies.value.split(",");
         hobbies.forEach(function(hobby, index, array){
@@ -78,7 +78,7 @@ module.exports.public = function(req, res, next){
         userData.hobbies = hobbies;
       }
       //keywords
-      if(userInfos.keywords.visibility){
+      if(userInfos.keywords && userInfos.keywords.visibility){
         //we have to get all separated words from the string
         var keywords = userInfos.keywords.value.split(",");
         keywords.forEach(function(keyword, index, array){
