@@ -113,9 +113,9 @@ script(type="text/javascript").
   /***********************/
   
   //function run on page loading
-  // @isFirstRunning : true if this this is the very fist running of the function (here this is the page loading) -> build all documents and badges
-  // @isDocumentsUpdate : true if we want to build new document HTML structures on the page
-  // @isBadgeUpdate : true if we want to rebuild the badges HTML strucutre (when we sync with the OpenBadges backpack)
+  // isFirstRunning : true if this this is the very fist running of the function (here this is the page loading) -> build all documents and badges
+  // isDocumentsUpdate : true if we want to build new document HTML structures on the page
+  // isBadgeUpdate : true if we want to rebuild the badges HTML strucutre (when we sync with the OpenBadges backpack)
   function init(isFirstRunning, isDocumentsUpdate, isBadgeUpdate){
     //first, we remove all UI messages
     document.getElementById("savedMessage").setAttribute("hidden", true);
@@ -198,7 +198,7 @@ script(type="text/javascript").
   /**********************/
   
   //function to get all badges from database and build them on the html page
-  // @isUpdate : true if this is an update and not the first building of the badges tab
+  // isUpdate : true if this is an update and not the first building of the badges tab
   function getAndBuildBadges(isUpdate){
     //get all badges from database and build them on page
     //request
@@ -412,7 +412,7 @@ script(type="text/javascript").
   }
   
   //function to hide/display the document adding form and use instead the placeholder
-  //@showFormAction : false to hide the form and display the placehfolder, and true for the opposite action  
+  //showFormAction : false to hide the form and display the placehfolder, and true for the opposite action  
   function showAddDocumentForm(showFormAction){
     if(showFormAction){
       document.getElementById("placeHolderAddDocumentBlock").setAttribute("style", "display:none");
@@ -426,7 +426,7 @@ script(type="text/javascript").
   }
   
   //get all documents from database and build them on the page
-  // @isUpdate : true if this is an update and not the first building of the documents tabs
+  // isUpdate : true if this is an update and not the first building of the documents tabs
   function getAndBuildDocuments(isUpdate){
     var xmlHttpDocuments = new XMLHttpRequest();
     xmlHttpDocuments.open( "GET", "getPortfolioDocuments", false ); // false for synchronous request
@@ -472,7 +472,7 @@ script(type="text/javascript").
   }
   
   //function to build a document inside its correct container/category/tab
-  //@myDocument : document object from the documents list sent by the server
+  //myDocument : document object from the documents list sent by the server
   function buildDocument(myDocument){
     var documentUrl = myDocument.url != "" ? myDocument.url : "javascript:;"; //we can not have an HTML href attribute empty, we use javascript:; instead
     var documentRelatedWebsite = myDocument.relatedWebsite != "" ? myDocument.relatedWebsite : "javascript:;"; //same thing for the related website
@@ -510,7 +510,7 @@ script(type="text/javascript").
   }
   
   //function to remove a document
-  //@element : html structure of the document to remove
+  //element : html structure of the document to remove
   function removeDocument(element){
     document.getElementById("errorMessage").setAttribute("hidden", "true");
     document.getElementById("savedMessage").setAttribute("hidden", "true");
@@ -545,7 +545,7 @@ script(type="text/javascript").
   }
   
   //function to handle the editing mode of a document
-  //@labelElement : HTML label tag with is used to go into or out of the editing mode
+  //labelElement : HTML label tag with is used to go into or out of the editing mode
   function editDocument(labelElement){
     var documentID = labelElement.getAttribute("documentID"); //id of the document to edit
     var wasEditingMode = document.getElementById("Edition"+documentID).checked;//if this document was editing mode before, that means we want to get out of it
