@@ -91,10 +91,13 @@ module.exports.getFromDYB = function(req, res, next) {
             else {
               userInfos = userInfos[0]; //there is only one element/document for user information
               //object used to update the user information element/document
+              var firstNameVisibility = userInfos.firstName ? userInfos.firstName.visibility : false;
+              var lastNameVisibility = userInfos.lastName ? userInfos.lastName.visibility : false;
+              var emailVisibility = userInfos.email ? userInfos.email.visibility : false;
               var dataToUpdate = {
-                "firstName": {"value": data.user.firstname, "visibility": userInfos.firstName.visibility},
-                "lastName": {"value": data.user.lastname, "visibility": userInfos.lastName.visibility},
-                "email": {"value": data.user.email, "visibility": userInfos.email.visibility},
+                "firstName": {"value": data.user.firstname, "visibility": firstNameVisibility},
+                "lastName": {"value": data.user.lastname, "visibility": lastNameVisibility},
+                "email": {"value": data.user.email, "visibility": emailVisibility},
                 "resumes": data.user.resumes.resume,
               }
               if(userInfos.id == ""){ //first time execution -> so we create it
