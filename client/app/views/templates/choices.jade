@@ -697,8 +697,9 @@ script(type="text/javascript").
     //and display UI messages
     if (xmlHttpSyncDYB.status == 200 || xmlHttpSyncDYB.status == 304){
       var updates = JSON.parse(xmlHttpSyncDYB.responseText);
-      //we update the html element of each concerned document
+      //we update the html element of each concerned document and update them
       updates.forEach(function(documentUpdate, index, array){
+        if(document.getElementById("title"+documentUpdate._id) == null) return;//this document is not already built, we continue, it will be built after
         document.getElementById("title"+documentUpdate._id).innerHTML = documentUpdate.title;
         document.getElementById("description"+documentUpdate._id).innerHTML = documentUpdate.description;
         document.getElementById("date"+documentUpdate._id).innerHTML = documentUpdate.creationDate;
@@ -707,7 +708,7 @@ script(type="text/javascript").
         document.getElementById("editUrl"+documentUpdate._id).innerHTML = documentUpdate.url;
         document.getElementById("editRelatedWebsite"+documentUpdate._id).innerHTML = documentUpdate.relatedWebsite;
       });
-      //we need to update all new or updated documents
+      init(false, true, false); //documents update
       successMessage.innerHTML = "Documents DoYouBuzz synchronisés";
       successMessage.removeAttribute("hidden");
     }else if(xmlHttpSyncDYB.status == 404){
