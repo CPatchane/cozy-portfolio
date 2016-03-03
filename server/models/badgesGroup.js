@@ -15,15 +15,15 @@ var badgeModel = cozydb.getModel('badge', {
   "visibility": {type: Boolean, "default": false}
 });
 
-var badgeGroupModel = cozydb.getModel('badgeGroup', {
+var badgesGroupModel = cozydb.getModel('badgesGroup', {
 	"groupId" : {type: Number, "default": 0},
 	"name" : {type: String, "default": ""},
 	"totalBadges" : {type: Number, "default": 0},
 	"badges" : {type: [badgeModel], "default": []}
 });
 
-badgeGroupModel.all = function(callback) {
-  badgeGroupModel.request("all", {}, function(err, badgeGroup) {
+badgesGroupModel.all = function(callback) {
+  badgesGroupModel.request("all", {}, function(err, badgeGroup) {
     if (err) {
       callback(err);
     } else {
@@ -32,4 +32,4 @@ badgeGroupModel.all = function(callback) {
   });
 };
 
-module.exports  = badgeGroupModel;
+module.exports  = badgesGroupModel;
