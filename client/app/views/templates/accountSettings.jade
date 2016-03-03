@@ -47,10 +47,12 @@ div.container
         input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret')
         //- button to connect or to reconnect the DoYouBuzz account to the portfolio
         button.btn.btn-warning#DYBconnection(type="button", onclick="getDYBConnection()") (Re)Connecter mon compte DoYouBuzz.
+        //- Link for the user to go to the DoYouBuzz authentication page when available (mandatory an <a> because to open a link in a new, it must be a USER BEHAVIOR to prevent popup blocker)
+        a#DYBAuthenticationLink(hidden="true", target="_blank") Cliquer maintenant ici pour vous authentifier à votre compte DoYouBuzz
         //- loading spinner rolling animation
         div.spinner#DYBloadingIcon(style="display:none;")
         //- This message will be displayed after a connection has been succeed
-        div.btn.btn-success#DYBconnected(type="button", style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
+        div.alert.alert-success#DYBconnected(style="display: none;") Votre compte DoYouBuzz est maintenant enregistré.
       //- part for OpenBadges, we need only the email here
       div.col-md-6
         h2 OpenBadges
@@ -67,26 +69,36 @@ div.container
         
         
 script(type="text/javascript").
+    //if this is a response from DYB we have arguments and a different link
+    var url = window.location.href;
+    url = url.split("?");
+    if(url.length > 1){//remove arguments (that was saved on the server before)
+      url = url[0];
+      url = url.replace(/apps/, "#apps");
+      url += "accountSettings";
+      window.location = url;//and redirect to this correct page
+    }
     // here is the code to do the request, to get all elements from the database and set all input values
-    var accountSettingsData = {};
+    var accountSettingsData = {};//global object for accounts informations from server
     var xmlHttp = new XMLHttpRequest();
     xmlHttp.open( "GET", "getAccountsInfos", false ); // false for synchronous request
     xmlHttp.send();
     if(xmlHttp.status == 200 || xmlHttp.status == 304){
       // accountSettings object getten from database and will be in the global scope
       accountSettingsData = JSON.parse(xmlHttp.responseText)[0] || {};//if this is the very first execution, that will be undefined so we want {}
-      console.log(accountSettingsData);
       document.getElementById("apiKey").value = accountSettingsData.doYouBuzzAPIKey || "";
       document.getElementById("apiSecret").value = accountSettingsData.doYouBuzzAPISecret || "";
       document.getElementById("openBadgesEmail").value = accountSettingsData.openBadgesEmail || "";
       // if this is a response from a DoYouBuzz authentification we display the message to say that the account is connected
-      if(accountSettingsData.DYBResponse == "OK"){
-        document.getElementById("DYBconnected").setAttribute("style", "");
+      if(accountSettingsData.DYBResponse == "OK"){//finally not unused due to the refresh above -> need to be enhanced for better UX
+        //document.getElementById("DYBconnected").setAttribute("style", "");
       }
     }
 
     //function to request the url elements from database and to authenticate the DoYouBuzz account
     function getDYBConnection(){
+      //remove potential authentication link
+      document.getElementById("DYBAuthenticationLink").setAttribute("hidden", "true");
       //loading animation
       document.getElementById("DYBloadingIcon").setAttribute("style", "");
       var DYBapiKey = document.getElementById("apiKey").value || "";
@@ -95,12 +107,12 @@ script(type="text/javascript").
             // both elements are required, so if one is missing we stop here and inform the user
             var missingArgsMessage = document.getElementById("missingArguments");
             missingArgsMessage.innerHTML = "Les deux informations (clé et clé secrète) doivent être fournis pour connecter votre compte DoYouBuzz. Merci de les remplir.";
-            missingArgsMessage.setAttribute("hidden", true);
+            missingArgsMessage.removeAttribute("hidden");
             document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
             return;
       }
       //the callback is the URL to get back after the user will confirm the authentication on DoYouBuzz platform
-      var callback = window.location;
+      var callback = window.location.href;//to come back to the cozycloud app
       //the request (asynchronous here)
       var xmlHttp = new XMLHttpRequest();
       //parameters for the request
@@ -110,12 +122,15 @@ script(type="text/javascript").
       xmlHttp.onreadystatechange = function(){
         //if we got the correct elements, we open the url to the authentication page (in a new tab/window)
         if (xmlHttp.readyState == 4 && (xmlHttp.status == 200 || xmlHttp.status == 304)) {
-                 var uri = "http://www.doyoubuzz.com/fr/oauth/authorize" + "?" + xmlHttp.responseText;
-                 window.open(uri, '_blank'); //open the link in a new window for a better user experience
+          var uri = "http://www.doyoubuzz.com/fr/oauth/authorize" + "?" + xmlHttp.responseText;
+          document.getElementById("DYBAuthenticationLink").href = uri;
+          document.getElementById("DYBAuthenticationLink").removeAttribute("hidden");
+          document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
         }else if(xmlHttp.readyState == 4){
           var missingArgsMessage = document.getElementById("missingArguments");
-          missingArgsMessage.innerHTML = JSON.parse(xmlHttp.responseText);
-          missingArgsMessage.setAttribute("hidden", true);
+          missingArgsMessage.innerHTML = xmlHttp.responseText;
+          missingArgsMessage.removeAttribute("hidden");
+          document.getElementById("DYBloadingIcon").setAttribute("style", "display:none");
         }
       }
       xmlHttp.send( parameters );
