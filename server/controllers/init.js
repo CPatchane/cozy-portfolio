@@ -166,7 +166,8 @@ module.exports.public = function(req, res, next){
               "description": documentData.description,
               "url": documentData.url,
               "relatedWebsite": documentData.relatedWebsite,
-              "creationDate": documentData.creationDate
+              "creationDate": documentData.creationDate,
+              "emebededCode":getCorrectEmbedCode(documentData.url)
             }
             //add add the document to the matching category in portfolios
             portfolio.portfolios[documentData.category].documents.push(document);
@@ -184,5 +185,44 @@ module.exports.public = function(req, res, next){
         });
       }
     });
+  }
+  
+  //function for embed elements
+  function getCorrectEmbedCode(url){
+    if(url == "") return "";
+    //all regular expressions needed to check the url and get the correct type of document
+    //image regex
+    var regexImage = /\.(jpe?g|png|gif|bmp|tiff)$/i; //only jpeg, jpg, png, gif, bmp, tiff
+    //audio regex -> not functional for now as we need a client id from soundcloud API
+    var regexSoundcloud = /^https?:\/\/(soundcloud.com|snd.sc)\/(.*)$/; //only soundcloud (snc.sc is also soundcloud)
+    //video regex
+    var regexYoutube = /(?:youtube(?:-nocookie)?\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    var regexVimeo = /^(?:https?:\/\/)?(?:www\.)?(vimeo.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/;
+    var regexDailymotion = /^(?:https?:\/\/)?(?:www\.)?dailymotion.com\/(video|hub)\/([^_]+)[^#]*(#video=([^_&]+))?/;
+    
+    //all test and matching embeded code returned
+    //if it's an image
+    if(regexImage.test(url)){
+      return('<div class="text-center embededElement"><img src="'+url+'"/></div>');
+    }
+    //if it's a soundcloud audio
+    if(regexSoundcloud.test(url)){
+      return "";
+    }
+    //if it's a youtube video
+    /*match = url.match(regexYoutube); //thanks to the regex, we grab the video id -> match[1]
+    if(match != null) {
+      return "";
+      //return '<div class="text-center"><iframe width="700" height="315" src="//www.youtube.com/embed/'+match[1]+'" frameborder="0" allowfullscreen></iframe></div>';
+    }*/
+    //if it's a vimeo video
+    if(regexVimeo.test(url)){
+      return "";
+    }
+    //if it's a dailymotion video
+    if(regexDailymotion.test(url)){
+      return "";
+    }
+    return "";
   }
 }
