@@ -114,8 +114,8 @@ script(type="text/javascript").
   
   //function run on page loading
   // @isFirstRunning : true if this this is the very fist running of the function (here this is the page loading) -> build all documents and badges
-  // @isDocumentsUpdate : true if we want to update the documents HTML Structure on the page (build a new one or remove one)
-  // @isBadgeUpdate : true if we want to update the badges HTML strucutre (when we sync with the OpenBadges backpack)
+  // @isDocumentsUpdate : true if we want to build new document HTML structures on the page
+  // @isBadgeUpdate : true if we want to rebuild the badges HTML strucutre (when we sync with the OpenBadges backpack)
   function init(isFirstRunning, isDocumentsUpdate, isBadgeUpdate){
     //first, we remove all UI messages
     document.getElementById("savedMessage").setAttribute("hidden", true);
