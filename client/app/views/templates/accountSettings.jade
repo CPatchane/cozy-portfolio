@@ -99,6 +99,7 @@ script(type="text/javascript").
     function getDYBConnection(){
       //remove potential authentication link
       document.getElementById("DYBAuthenticationLink").setAttribute("hidden", "true");
+      missingArgsMessage.setAttribute("hidden", "true");
       //loading animation
       document.getElementById("DYBloadingIcon").setAttribute("style", "");
       var DYBapiKey = document.getElementById("apiKey").value || "";
