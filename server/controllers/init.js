@@ -114,7 +114,7 @@ module.exports.public = function(req, res, next){
               badge = { //we get all information about this badge
                 name : badgeData.name,
                 issuerName : badgeData.issuerName,
-                hostedUrl : badgeData.hostedUrl,
+                hostedUrl : badgeData.criteria,
                 description: badgeData.description,
                 imageUrl: badgeData.imageUrl,
                 isserUrl: badgeData.issuerUrl,
