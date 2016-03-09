@@ -714,6 +714,7 @@ script(type="text/javascript").
         document.getElementById("relatedWebsite"+documentUpdate._id).href = documentUpdate.relatedWebsite != "" ? documentUpdate.relatedWebsite : "javascript:;";
         document.getElementById("editUrl"+documentUpdate._id).innerHTML = documentUpdate.url;
         document.getElementById("editRelatedWebsite"+documentUpdate._id).innerHTML = documentUpdate.relatedWebsite;
+        document.getElementById("Visibility"+documentUpdate._id).checked = documentUpdate.visibility;
         //we update embeded elements if they exist
         var embededElement = document.getElementById("title"+documentUpdate._id).parentElement.getElementsByClassName("embededElement")[0];
         if(embededElement != null){
