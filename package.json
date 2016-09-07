@@ -37,7 +37,7 @@
     "start": "node server.js"
   },
   "cozy-permissions": {
-    "user" : {
+    "user-portfolio" : {
       "description": "Informations about user profil"
     },
     "portfolioDocument": {
@@ -46,7 +46,7 @@
     "badgesGroup": {
       "description": "All badges informations (OpenBadges)"
     },
-    "accounts": {
+    "accounts-portfolio": {
       "description": "Informations needed for DoYouBuzz API and OpenBadges Backpack API"
     }
   }
