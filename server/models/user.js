@@ -7,7 +7,7 @@ var stringBoolObject = cozydb.getModel('stringBoolObject', {
   "visibility": {type: Boolean, "default": false}
 });
 
-var userModel = cozydb.getModel('user', {
+var userModel = cozydb.getModel('user-portfolio', {
   "firstName" : stringBoolObject,
   "lastName" : stringBoolObject,
   "birthdayDate" : stringBoolObject,
