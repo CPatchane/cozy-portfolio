@@ -6,7 +6,7 @@ link(href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.0/flatly/bootstrap.min.css",
 style
   include main.css
   include accountSettings.css
-  
+
 div.container
   //- Left side menu elements
   div.col-md-2.leftMenu
@@ -66,8 +66,8 @@ div.container
         //- UI messages
         div.alert.alert-success#savedMessage(hidden="true") Vos paramètres sont enregistrées
         div.alert.alert-danger#missingArguments(hidden="true") Des données sont manquantes ou invalides, merci de vérifier puis de réessayer.
-        
-        
+
+
 script(type="text/javascript").
     //if this is a response from DYB we have arguments and a different link
     var url = window.location.href;
@@ -99,7 +99,7 @@ script(type="text/javascript").
     function getDYBConnection(){
       //remove potential authentication link
       document.getElementById("DYBAuthenticationLink").setAttribute("hidden", "true");
-      missingArgsMessage.setAttribute("hidden", "true");
+      if (missingArgsMessage) missingArgsMessage.setAttribute("hidden", "true");
       //loading animation
       document.getElementById("DYBloadingIcon").setAttribute("style", "");
       var DYBapiKey = document.getElementById("apiKey").value || "";
@@ -146,7 +146,7 @@ script(type="text/javascript").
         var DYBapiKey = document.getElementById("apiKey").value || "";
         var DYBapiSecret = document.getElementById("apiSecret").value || "";
         var OBemail = document.getElementById("openBadgesEmail").value || "";
-        
+
         //if we already have accountSettings object, we use its id to update it with this submiting
         var docId = accountSettingsData.id || "";
         //we need at least one element to save it into the database
@@ -157,7 +157,7 @@ script(type="text/javascript").
             return;
         }
         //set parameters for the request
-        var parameters = "DYBapiKey=" + DYBapiKey + "&DYBapiSecret=" + DYBapiSecret + "&OBemail=" + OBemail + "&id=" + docId; 
+        var parameters = "DYBapiKey=" + DYBapiKey + "&DYBapiSecret=" + DYBapiSecret + "&OBemail=" + OBemail + "&id=" + docId;
         var xhttpInfos = new XMLHttpRequest();
         //asynchronous request
         xhttpInfos.open("PUT", "updateAccountsInfos", false);
@@ -169,6 +169,6 @@ script(type="text/javascript").
           missingArgsMessage.removeAttribute("hidden");
         }else{
           document.getElementById("savedMessage").removeAttribute("hidden");
-          document.getElementById("savedMessage").innerHTML = "Vos paramètres sont enregistrées"; 
+          document.getElementById("savedMessage").innerHTML = "Vos paramètres sont enregistrées";
         }
     }
