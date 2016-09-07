@@ -9,32 +9,10 @@
   var aliases = {};
   var has = ({}).hasOwnProperty;
 
-  var endsWith = function(str, suffix) {
-    return str.indexOf(suffix, str.length - suffix.length) !== -1;
-  };
-
-  var _cmp = 'components/';
-  var unalias = function(alias, loaderPath) {
-    var start = 0;
-    if (loaderPath) {
-      if (loaderPath.indexOf(_cmp) === 0) {
-        start = _cmp.length;
-      }
-      if (loaderPath.indexOf('/', start) > 0) {
-        loaderPath = loaderPath.substring(start, loaderPath.indexOf('/', start));
-      }
-    }
-    var result = aliases[alias + '/index.js'] || aliases[loaderPath + '/deps/' + alias + '/index.js'];
-    if (result) {
-      return _cmp + result.substring(0, result.length - '.js'.length);
-    }
-    return alias;
-  };
-
-  var _reg = /^\.\.?(\/|$)/;
+  var expRe = /^\.\.?(\/|$)/;
   var expand = function(root, name) {
     var results = [], part;
-    var parts = (_reg.test(name) ? root + '/' + name : name).split('/');
+    var parts = (expRe.test(name) ? root + '/' + name : name).split('/');
     for (var i = 0, length = parts.length; i < length; i++) {
       part = parts[i];
       if (part === '..') {
@@ -58,58 +36,119 @@
   };
 
   var initModule = function(name, definition) {
-    var module = {id: name, exports: {}};
+    var hot = null;
+    hot = hmr && hmr.createHot(name);
+    var module = {id: name, exports: {}, hot: hot};
     cache[name] = module;
     definition(module.exports, localRequire(name), module);
     return module.exports;
   };
 
+  var expandAlias = function(name) {
+    return aliases[name] ? expandAlias(aliases[name]) : name;
+  };
+
+  var _resolve = function(name, dep) {
+    return expandAlias(expand(dirname(name), dep));
+  };
+
   var require = function(name, loaderPath) {
-    var path = expand(name, '.');
     if (loaderPath == null) loaderPath = '/';
-    path = unalias(name, loaderPath);
+    var path = expandAlias(name);
 
     if (has.call(cache, path)) return cache[path].exports;
     if (has.call(modules, path)) return initModule(path, modules[path]);
 
-    var dirIndex = expand(path, './index');
-    if (has.call(cache, dirIndex)) return cache[dirIndex].exports;
-    if (has.call(modules, dirIndex)) return initModule(dirIndex, modules[dirIndex]);
-
-    throw new Error('Cannot find module "' + name + '" from '+ '"' + loaderPath + '"');
+    throw new Error("Cannot find module '" + name + "' from '" + loaderPath + "'");
   };
 
   require.alias = function(from, to) {
     aliases[to] = from;
   };
 
+  var extRe = /\.[^.\/]+$/;
+  var indexRe = /\/index(\.[^\/]+)?$/;
+  var addExtensions = function(bundle) {
+    if (extRe.test(bundle)) {
+      var alias = bundle.replace(extRe, '');
+      if (!has.call(aliases, alias) || aliases[alias].replace(extRe, '') === alias + '/index') {
+        aliases[alias] = bundle;
+      }
+    }
+
+    if (indexRe.test(bundle)) {
+      var iAlias = bundle.replace(indexRe, '');
+      if (!has.call(aliases, iAlias)) {
+        aliases[iAlias] = bundle;
+      }
+    }
+  };
+
   require.register = require.define = function(bundle, fn) {
     if (typeof bundle === 'object') {
       for (var key in bundle) {
         if (has.call(bundle, key)) {
-          modules[key] = bundle[key];
+          require.register(key, bundle[key]);
         }
       }
     } else {
       modules[bundle] = fn;
+      delete cache[bundle];
+      addExtensions(bundle);
     }
   };
 
   require.list = function() {
-    var result = [];
+    var list = [];
     for (var item in modules) {
       if (has.call(modules, item)) {
-        result.push(item);
+        list.push(item);
       }
     }
-    return result;
+    return list;
   };
 
-  require.brunch = true;
+  var hmr = globals._hmr && new globals._hmr(_resolve, require, modules, cache);
   require._cache = cache;
+  require.hmr = hmr && hmr.wrap;
+  require.brunch = true;
   globals.require = require;
 })();
-require.register("application", function(exports, require, module) {
+
+(function() {
+var global = window;
+var __makeRelativeRequire = function(require, mappings, pref) {
+  var none = {};
+  var tryReq = function(name, pref) {
+    var val;
+    try {
+      val = require(pref + '/node_modules/' + name);
+      return val;
+    } catch (e) {
+      if (e.toString().indexOf('Cannot find module') === -1) {
+        throw e;
+      }
+
+      if (pref.indexOf('node_modules') !== -1) {
+        var s = pref.split('/');
+        var i = s.lastIndexOf('node_modules');
+        var newPref = s.slice(0, i).join('/');
+        return tryReq(name, newPref);
+      }
+    }
+    return none;
+  };
+  return function(name) {
+    if (name in mappings) name = mappings[name];
+    if (!name) return;
+    if (name[0] !== '.' && pref) {
+      var val = tryReq(name, pref);
+      if (val !== none) return val;
+    }
+    return require(name);
+  }
+};
+require.register("application.js", function(exports, require, module) {
 // Application bootstrapper.
 var Application = {
   initialize: function () {
@@ -136,7 +175,7 @@ module.exports = Application;
 
 });
 
-require.register("initialize", function(exports, require, module) {
+require.register("initialize.js", function(exports, require, module) {
 var application = require('./application');
 
 //entry point of the web application
@@ -146,7 +185,7 @@ $(function () {
 });
 });
 
-require.register("lib/router", function(exports, require, module) {
+require.register("lib/router.js", function(exports, require, module) {
 var application = require('../application');
 
 module.exports = Backbone.Router.extend({
@@ -176,26 +215,26 @@ module.exports = Backbone.Router.extend({
 
 });
 
-require.register("lib/view_helper", function(exports, require, module) {
+require.register("lib/view_helper.js", function(exports, require, module) {
 // Put your handlebars.js helpers here.
 
 });
 
-;require.register("models/collection", function(exports, require, module) {
+;require.register("models/collection.js", function(exports, require, module) {
 // Base class for all collections.
 module.exports = Backbone.Collection.extend({
 });
 
 });
 
-require.register("models/model", function(exports, require, module) {
+require.register("models/model.js", function(exports, require, module) {
 // Base class for all models.
 module.exports = Backbone.Model.extend({
 });
 
 });
 
-require.register("views/accountSettings_view", function(exports, require, module) {
+require.register("views/accountSettings_view.js", function(exports, require, module) {
 var View = require('./view');
 var template = require('./templates/accountSettings');
 
@@ -206,7 +245,7 @@ module.exports = View.extend({
 
 });
 
-require.register("views/choices_view", function(exports, require, module) {
+require.register("views/choices_view.js", function(exports, require, module) {
 var View = require('./view');
 var template = require('./templates/choices');
 
@@ -217,7 +256,7 @@ module.exports = View.extend({
 
 });
 
-require.register("views/home_view", function(exports, require, module) {
+require.register("views/home_view.js", function(exports, require, module) {
 var View = require('./view');
 var template = require('./templates/home');
 
@@ -228,7 +267,7 @@ module.exports = View.extend({
 
 });
 
-require.register("views/templates/accountSettings", function(exports, require, module) {
+require.register("views/templates/accountSettings.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
@@ -247,7 +286,7 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
-;require.register("views/templates/choices", function(exports, require, module) {
+;require.register("views/templates/choices.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
@@ -266,7 +305,7 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
-;require.register("views/templates/home", function(exports, require, module) {
+;require.register("views/templates/home.jade", function(exports, require, module) {
 var __templateData = function template(locals) {
 var buf = [];
 var jade_mixins = {};
@@ -285,7 +324,7 @@ if (typeof define === 'function' && define.amd) {
 }
 });
 
-;require.register("views/view", function(exports, require, module) {
+;require.register("views/view.js", function(exports, require, module) {
 require('../lib/view_helper');
 
 // Base class for all views.
@@ -307,6 +346,10 @@ module.exports = Backbone.View.extend({
 });
 
 });
+
+require.register("___globals___", function(exports, require, module) {
+  
+});})();require('___globals___');
 
 
 //# sourceMappingURL=app.js.map
