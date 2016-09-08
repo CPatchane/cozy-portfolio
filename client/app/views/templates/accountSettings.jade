@@ -44,7 +44,7 @@ div.container
         p Entrer votre clé API obtenu de DoYouBuzz (#[a(href='#') Aide]) :
         input#apiKey(type='text', name='DYBapiKey', placeholder='API Key')
         p Entrer votre clé API secrète obtenu de DoYouBuzz (#[a(href='#') Aide]) :
-        input#apiSecret(type='text', name='DYBapiSecret', placeholder='API Secret')
+        input#apiSecret(type='password', name='DYBapiSecret', placeholder='API Secret')
         //- button to connect or to reconnect the DoYouBuzz account to the portfolio
         button.btn.btn-warning#DYBconnection(type="button", onclick="getDYBConnection()") (Re)Connecter mon compte DoYouBuzz.
         //- Link for the user to go to the DoYouBuzz authentication page when available (mandatory an <a> because to open a link in a new, it must be a USER BEHAVIOR to prevent popup blocker)
