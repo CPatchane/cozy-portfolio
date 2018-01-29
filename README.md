@@ -1,6 +1,6 @@
 # UNMAINTAINED
 
-Since this application was initially developed for the Cozy V2 platform and not migrated to be supported by Cozy V3, it's not longer maintained. You can also find more informations about the student project on the [sedelaPOC repository](https://github.com/jmgilliot/sedelaPOC).
+Since this application was initially developed for the Cozy V2 platform and not migrated to be supported by Cozy V3, it's not longer maintained (missing time). You can also find more informations about the student project on the [sedelaPOC repository](https://github.com/jmgilliot/sedelaPOC).
 
 # Description
 
